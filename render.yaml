@@ -36,7 +36,4 @@ services:
     startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: airo-backend
-          property: url
+        sync: false # Paste the URL of your backend here (e.g. https://airo-backend.onrender.com)
