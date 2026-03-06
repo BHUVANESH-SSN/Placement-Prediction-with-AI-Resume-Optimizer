@@ -32,7 +32,7 @@ const GeneratedResume = ({ resumeData, pdfPath, onRegenerate }: GeneratedResumeP
           <button
             onClick={() => {
               if (pdfPath) {
-                const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                const backendUrl = process.env.NEXT_PUBLIC_JD_BACKEND_URL || "http://localhost:8000";
                 window.open(`${backendUrl}/api/download?path=${encodeURIComponent(pdfPath)}`, "_blank");
               }
             }}

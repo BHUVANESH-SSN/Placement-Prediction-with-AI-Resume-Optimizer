@@ -78,7 +78,7 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
         formData.append("resume_json", resumeText);
       }
 
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const backendUrl = process.env.NEXT_PUBLIC_JD_BACKEND_URL || "http://localhost:8000";
       const auth = getAuth();
       const response = await fetch(`${backendUrl}/api/extract`, {
         method: "POST",

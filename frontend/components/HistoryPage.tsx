@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_RT_BACKEND_URL || "http://localhost:8000";
 const USER_ID =
   typeof window !== "undefined"
     ? localStorage.getItem("user_id") || "664f1b2c8e1d2a3b4c5d6e7f"
