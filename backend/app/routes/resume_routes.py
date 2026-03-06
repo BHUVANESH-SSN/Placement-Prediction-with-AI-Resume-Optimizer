@@ -16,12 +16,12 @@ def read_root():
 # We will need the sample resume here, or as an input. For now we use the one from example_tailored.py
 import sys
 import os
-# __file__ is backend/app/routes/resume_routes.py
-# 1 up = routes dir
-# 2 up = app dir
-# 3 up = backend dir
-# 4 up = root project folder (where example_tailored.py is)
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+# Add both the backend dir (for Docker/Render where backend/ is the root)
+# and the project root (for local dev) to sys.path
+_backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_project_root = os.path.dirname(_backend_dir)
+sys.path.insert(0, _backend_dir)
+sys.path.insert(0, _project_root)
 
 from example_tailored import sample_resume
 from resume_generator import generate_tailored_resume
