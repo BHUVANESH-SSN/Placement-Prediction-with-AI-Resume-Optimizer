@@ -1,21 +1,30 @@
 import re
-import spacy
-from sentence_transformers import SentenceTransformer, util
+import os
 
-# Load NLP models once
-try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    print("Downloading en_core_web_sm...")
-    spacy.cli.download("en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
+# Lazy-load heavy ML models so uvicorn can bind the port immediately
+_nlp = None
+_model = None
 
-try:
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-except Exception:
-    import os
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
-    model = SentenceTransformer("all-MiniLM-L6-v2")
+def _get_nlp():
+    global _nlp
+    if _nlp is None:
+        import spacy
+        try:
+            _nlp = spacy.load("en_core_web_sm")
+        except OSError:
+            print("Downloading en_core_web_sm...")
+            spacy.cli.download("en_core_web_sm")
+            _nlp = spacy.load("en_core_web_sm")
+    return _nlp
+
+def _get_model():
+    global _model
+    if _model is None:
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
+        from sentence_transformers import SentenceTransformer
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _model
+
 
 ############################################################
 # -------------------- COMMON UTILS ----------------------- #
@@ -28,7 +37,7 @@ def clean_text(text: str) -> str:
 
 
 def extract_noun_keywords(text: str):
-    doc = nlp(clean_text(text))
+    doc = _get_nlp()(clean_text(text))
     keywords = set()
 
     for token in doc:
@@ -70,9 +79,10 @@ def weighted_keyword_score(jd_keywords: dict, resume_text: str):
 
 
 def semantic_similarity_score(jd_text: str, resume_text: str):
-    emb1 = model.encode(jd_text, convert_to_tensor=True)
-    emb2 = model.encode(resume_text, convert_to_tensor=True)
+    emb1 = _get_model().encode(jd_text, convert_to_tensor=True)
+    emb2 = _get_model().encode(resume_text, convert_to_tensor=True)
 
+    from sentence_transformers import util
     similarity = util.cos_sim(emb1, emb2).item()
 
     return round(similarity * 100, 2)
