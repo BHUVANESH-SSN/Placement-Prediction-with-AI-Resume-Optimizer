@@ -10,10 +10,15 @@ class AuthMiddleware(BaseHTTPMiddleware):
             "/auth",
             "/docs",
             "/openapi.json",
-            "/redoc"
+            "/redoc",
         )
 
-        if request.url.path.startswith(public_paths):
+        if (
+            request.method == "OPTIONS" or 
+            request.url.path in public_paths or 
+            request.url.path == "/" or
+            any(request.url.path.startswith(p) for p in public_paths)
+        ):
             return await call_next(request)
 
         token = request.headers.get("Authorization")

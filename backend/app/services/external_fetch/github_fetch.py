@@ -1,12 +1,15 @@
 import httpx
 import asyncio
 
-async def fetch_github(username: str):
+async def fetch_github(username: str, token: str = None):
     try:
+        headers = {}
+        if token:
+            headers["Authorization"] = f"token {token}"
+            
         async with httpx.AsyncClient(timeout=5) as client:
-
-            user_req = client.get(f"https://api.github.com/users/{username}")
-            repos_req = client.get(f"https://api.github.com/users/{username}/repos")
+            user_req = client.get(f"https://api.github.com/users/{username}", headers=headers)
+            repos_req = client.get(f"https://api.github.com/users/{username}/repos", headers=headers)
 
             user_res, repos_res = await asyncio.gather(user_req, repos_req)
 

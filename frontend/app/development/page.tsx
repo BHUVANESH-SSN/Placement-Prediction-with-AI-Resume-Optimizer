@@ -23,16 +23,16 @@ interface ContributionData { total_contributions: number; weeks: ContributionWee
 
 /* ── DESIGN SYSTEM ── */
 const C = {
-  ink:        '#0f172a',
-  paper:      '#f8fafc',
-  surface:    '#ffffff',
-  accent:     '#7c3aed',
-  accentHov:  '#6d28d9',
+  ink: '#0f172a',
+  paper: '#f8fafc',
+  surface: '#ffffff',
+  accent: '#7c3aed',
+  accentHov: '#6d28d9',
   accentSoft: '#ede9fe',
-  accent2:    '#ef4444',
-  muted:      '#64748b',
-  border:     '#e2e8f0',
-  success:    '#16a34a',
+  accent2: '#ef4444',
+  muted: '#64748b',
+  border: '#e2e8f0',
+  success: '#16a34a',
 };
 
 const LANG_COLORS: Record<string, string> = {
@@ -77,6 +77,8 @@ export function Navbar({ active }: { active?: string }) {
         <button key={label} onClick={() => {
           if (label === 'Dashboard') router.push('/home');
           if (label === 'Development') router.push('/development');
+          if (label === 'Resume builder') router.push('/resume');
+          if (label === 'DSA') router.push('/dsa');
         }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
           {label}
         </button>
@@ -212,9 +214,9 @@ function GithubBanner({ github }: { github: GithubData }) {
         {github.bio && <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 16px', lineHeight: 1.6 }}>{github.bio}</p>}
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
           {[
-            { icon: <Users size={14} />,     label: `${github.followers} followers` },
+            { icon: <Users size={14} />, label: `${github.followers} followers` },
             { icon: <UserCheck size={14} />, label: `${github.following} following` },
-            { icon: <BookOpen size={14} />,  label: `${github.public_repos} repos` },
+            { icon: <BookOpen size={14} />, label: `${github.public_repos} repos` },
           ].map(({ icon, label }, i) => (
             <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, fontWeight: 600 }}>{icon} {label}</span>
           ))}
@@ -299,7 +301,7 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
     if (!githubId.trim()) return;
     setLoading(true);
     try {
-      const res = await apiPostAuth('/form/github/getcode', { github_id: githubId });
+      const res = await apiPostAuth('/dev/github/getcode', { github_id: githubId });
       setCode(res.verification_code); setStep('verify');
     } catch { setToast({ msg: 'Failed to get code', type: 'error' }); }
     finally { setLoading(false); }
@@ -308,7 +310,7 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
   async function link() {
     setLoading(true);
     try {
-      await apiPostAuth('/form/github/link', { github_id: githubId, code });
+      await apiPostAuth('/dev/github/link', { github_id: githubId, code });
       setToast({ msg: 'GitHub linked!', type: 'success' });
       setTimeout(onLinked, 1000);
     } catch (e: any) { setToast({ msg: e?.message || 'Linking failed', type: 'error' }); }
@@ -388,7 +390,7 @@ export default function DevelopmentPage() {
 
   const fetchContributions = useCallback(async (username: string) => {
     try {
-      const data = await apiGet(`/form/github/contributions/${encodeURIComponent(username)}`);
+      const data = await apiGet(`/dev/github/contributions/${encodeURIComponent(username)}`);
       setContributions(data);
     } catch { }
   }, []);
@@ -407,7 +409,7 @@ export default function DevelopmentPage() {
   async function updateGithub() {
     setUpdating(true);
     try {
-      await apiPostAuth('/form/github/update', {});
+      await apiPostAuth('/dev/github/update', {});
       if (auth?.email) await fetchData(auth.email);
       if (github?.username) await fetchContributions(github.username);
       setToast({ msg: 'GitHub data refreshed!', type: 'success' });
@@ -489,10 +491,10 @@ export default function DevelopmentPage() {
               <GithubBanner github={github} />
 
               <div style={{ display: 'flex', gap: 20, marginBottom: 56, flexWrap: 'wrap' }}>
-                <StatCard icon={<Star size={22} />}       label="Total Stars"   value={github.stars}        color="#f59e0b" />
-                <StatCard icon={<BookOpen size={22} />}   label="Public Repos"  value={github.public_repos} color={C.accent} />
-                <StatCard icon={<Users size={22} />}      label="Followers"     value={github.followers}    color="#06b6d4" />
-                <StatCard icon={<TrendingUp size={22} />} label="Following"     value={github.following}    color={C.success} />
+                <StatCard icon={<Star size={22} />} label="Total Stars" value={github.stars} color="#f59e0b" />
+                <StatCard icon={<BookOpen size={22} />} label="Public Repos" value={github.public_repos} color={C.accent} />
+                <StatCard icon={<Users size={22} />} label="Followers" value={github.followers} color="#06b6d4" />
+                <StatCard icon={<TrendingUp size={22} />} label="Following" value={github.following} color={C.success} />
                 {contributions && (
                   <StatCard icon={<Zap size={22} />} label="Contributions" value={contributions.total_contributions.toLocaleString()} color="#f97316" />
                 )}

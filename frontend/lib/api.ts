@@ -12,7 +12,7 @@ export function getAuth() {
   if (typeof window === 'undefined') return null;
   const token = localStorage.getItem('access_token');
   const email = localStorage.getItem('user_email');
-  const name  = localStorage.getItem('user_name');
+  const name = localStorage.getItem('user_name');
   return token ? { token, email, name } : null;
 }
 
@@ -41,9 +41,18 @@ async function request(path: string, method: string, body?: Record<string, unkno
     });
 
     const text = await res.text();
-    const data = text ? JSON.parse(text) : {};
+    let data;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = { message: text || `Error ${res.status}` };
+    }
 
-    if (!res.ok) throw new Error(data.detail || data.message || `Error ${res.status}`);
+    if (!res.ok) {
+      const detail = data.detail || data.message || `Error ${res.status}`;
+      const msg = typeof detail === 'object' ? JSON.stringify(detail) : detail;
+      throw new Error(msg);
+    }
     return data;
 
   } catch (err) {
