@@ -78,7 +78,7 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume builder', 'DSA'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA'];
   return (
     <nav style={{
       display: 'flex',
@@ -397,52 +397,154 @@ export default function HomePage() {
     skill: (i: number) => patch({ skills: (profile?.skills ?? []).filter((_, idx) => idx !== i) }, 'Skill removed'),
   };
 
+  const [sbHover, setSbHover] = useState(false);
+  const SB_MIN = 88;
+  const SB_MAX = 285;
+  const NAV_H = 60;
+
   if (!auth) return null;
 
   const displayName = profile?.full_name || auth.name || auth.email?.split('@')[0] || 'User';
   const initials = displayName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
   const fmtDate = (d?: string) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present';
 
-  const SIDEBAR_W = 285;
-  const NAV_H = 60;
-
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
       <Navbar active="Dashboard" />
 
       {/* SIDEBAR */}
-      <aside style={{ position: 'fixed', top: NAV_H, left: 0, width: SIDEBAR_W, height: `calc(100vh - ${NAV_H}px)`, overflowY: 'auto', borderRight: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', padding: '40px 28px 40px 34px', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+      <aside
+        onMouseEnter={() => setSbHover(true)}
+        onMouseLeave={() => setSbHover(false)}
+        style={{
+          position: 'fixed',
+          top: NAV_H,
+          left: 0,
+          width: sbHover ? SB_MAX : SB_MIN,
+          height: `calc(100vh - ${NAV_H}px)`,
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          borderRight: `1px solid ${C.border}`,
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(20px)',
+          padding: sbHover ? '40px 28px 40px 34px' : '40px 14px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: sbHover ? 'flex-start' : 'center',
+          zIndex: 100,
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          scrollbarWidth: 'none'
+        }}>
         {/* Avatar */}
-        <div style={{ width: 72, height: 72, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 24, marginBottom: 16, flexShrink: 0, boxShadow: `0 12px 30px ${C.accent}45` }}>{initials}</div>
+        <div style={{
+          width: sbHover ? 72 : 52,
+          height: sbHover ? 72 : 52,
+          borderRadius: '50%',
+          background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontWeight: 800,
+          fontSize: sbHover ? 24 : 18,
+          marginBottom: sbHover ? 16 : 32,
+          flexShrink: 0,
+          boxShadow: `0 12px 30px ${C.accent}45`,
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}>{initials}</div>
 
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px' }}>{displayName}</p>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
+        <div style={{ opacity: sbHover ? 1 : 0, height: sbHover ? 'auto' : 0, transition: 'all 0.3s', visibility: sbHover ? 'visible' : 'hidden', width: '100%' }}>
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
+        </div>
 
         {/* Institute */}
         {profile?.institute && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', padding: '10px 13px', fontSize: 13.5, color: C.ink, fontFamily: 'Montserrat, sans-serif', textAlign: 'left', marginBottom: 24, background: 'rgba(124, 58, 237, 0.05)', borderRadius: 12, border: `1px solid ${C.accentSoft}` }}>
-            <Building2 size={16} color={C.accent} />
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{profile.institute}</span>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            padding: sbHover ? '10px 13px' : '0',
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            fontSize: 13.5,
+            color: C.ink,
+            fontFamily: 'Montserrat, sans-serif',
+            marginBottom: sbHover ? 24 : 12,
+            background: 'rgba(124, 58, 237, 0.05)',
+            borderRadius: 12,
+            border: `1px solid ${C.accentSoft}`,
+            transition: 'all 0.3s'
+          }} title={!sbHover ? profile.institute : ''}>
+            <Building2 size={20} color={C.accent} style={{ flexShrink: 0 }} />
+            {sbHover && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{profile.institute}</span>}
           </div>
         )}
 
         <button onClick={() => setModal('contact')}
           onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
-          style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 13px', fontSize: 13, color: C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, transition: 'all 0.2s', marginBottom: 8 }}>
-          <Pencil size={14} /> Edit Profile Info
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            background: 'none',
+            border: `1.5px solid ${C.border}`,
+            borderRadius: 12,
+            padding: sbHover ? '10px 13px' : '0',
+            fontSize: 13,
+            color: C.muted,
+            cursor: 'pointer',
+            fontFamily: 'Montserrat, sans-serif',
+            fontWeight: 600,
+            transition: 'all 0.2s',
+            marginBottom: 8,
+            flexShrink: 0
+          }} title={!sbHover ? 'Edit Profile' : ''}>
+          <Pencil size={18} style={{ flexShrink: 0 }} />
+          {sbHover && <span>Edit Profile Info</span>}
         </button>
+
+        <div style={{ flex: 1 }} />
 
         <button onClick={logout}
           onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent2; e.currentTarget.style.color = C.accent2; e.currentTarget.style.background = '#fff0f0'; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; e.currentTarget.style.background = 'none'; }}
-          style={{ width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 14px', fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.muted, transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <LogOut size={15} /> Logout
+          style={{
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            background: 'none',
+            border: `1.5px solid ${C.border}`,
+            borderRadius: 12,
+            padding: sbHover ? '10px 14px' : '0',
+            fontFamily: 'Montserrat, sans-serif',
+            fontSize: 13.5,
+            fontWeight: 600,
+            cursor: 'pointer',
+            color: C.muted,
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            flexShrink: 0
+          }} title={!sbHover ? 'Logout' : ''}>
+          <LogOut size={18} style={{ flexShrink: 0 }} />
+          {sbHover && <span>Logout</span>}
         </button>
       </aside>
 
       {/* MAIN */}
-      <main style={{ marginLeft: SIDEBAR_W, paddingTop: NAV_H, minHeight: '100vh' }}>
+      <main style={{
+        marginLeft: sbHover ? SB_MAX : SB_MIN,
+        paddingTop: NAV_H,
+        minHeight: '100vh',
+        transition: 'margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}>
         <div style={{ padding: '56px 64px 110px' }}>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 48 }}>
