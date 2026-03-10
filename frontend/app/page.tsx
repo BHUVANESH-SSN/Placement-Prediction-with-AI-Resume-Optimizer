@@ -208,11 +208,14 @@ export default function LandingPage() {
             {/* ── Navbar ── */}
             <nav style={S.nav}>
                 <div style={S.logo}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6c47ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="16 18 22 12 16 6" />
-                        <polyline points="8 6 2 12 8 18" />
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6c47ff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="8 7 2 12 8 17" />
+                        <polyline points="16 7 22 12 16 17" />
                     </svg>
-                    AIRO<span style={{ color: '#6c47ff' }}>.</span>
+                    <span style={{ display: 'flex', alignItems: 'baseline', lineHeight: 1 }}>
+                        AIRO
+                        <div style={{ width: '6px', height: '6px', backgroundColor: '#6c47ff', marginLeft: '4px' }} />
+                    </span>
                 </div>
                 <div style={S.navLinks}>
                     <Link href="/login" style={S.btnFlat} className="hover:text-ink">Log in</Link>

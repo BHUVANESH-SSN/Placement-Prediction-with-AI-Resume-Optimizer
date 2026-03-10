@@ -1,13 +1,29 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAuth, clearAuth, apiGet, apiPatch } from '@/lib/api';
+import { apiGet, apiPatch, clearAuth, getAuth } from '@/lib/api';
 import {
-  GraduationCap, Briefcase, Trophy, Zap, Laptop2, MapPin, Phone,
-  LogOut, CheckCircle2, Building2, Calendar, Star, Package, Globe,
-  Github, Clock, Pencil, Trash2, Plus, PencilLine, Award,
+  Award,
+  Briefcase,
+  Building2, Calendar,
+  CheckCircle2,
+  Clock,
+  Github,
+  Globe,
+  GraduationCap,
+  Laptop2,
+  LogOut,
+  MapPin,
+  Package,
+  Pencil,
+  PencilLine,
+  Phone,
+  Plus,
+  Star,
+  Trash2,
+  Trophy, Zap,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /* ── TYPES ── */
 interface Auth { token: string; email: string | null; name: string | null; }
@@ -25,16 +41,16 @@ interface Certification { title: string; issuer: string; issue_date?: string; li
 
 /* ── DESIGN SYSTEM ── */
 const C = {
-  ink:        '#0f172a',
-  paper:      '#f8fafc',
-  surface:    '#ffffff',
-  accent:     '#7c3aed',
-  accentHov:  '#6d28d9',
+  ink: '#0f172a',
+  paper: '#f8fafc',
+  surface: '#ffffff',
+  accent: '#7c3aed',
+  accentHov: '#6d28d9',
   accentSoft: '#ede9fe',
-  accent2:    '#ef4444',
-  muted:      '#64748b',
-  border:     '#e2e8f0',
-  success:    '#16a34a',
+  accent2: '#ef4444',
+  muted: '#64748b',
+  border: '#e2e8f0',
+  success: '#16a34a',
 };
 
 /* ── INPUT STYLES ── */
@@ -66,17 +82,65 @@ export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
   const NAV = ['Dashboard', 'Development', 'Resume builder', 'DSA'];
   return (
-    <nav style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 60, gap: 36, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
-      {NAV.map(label => (
-        <button key={label} onClick={() => {
-          if (label === 'Dashboard') router.push('/home');
-          if (label === 'Development') router.push('/development');
-          if (label === 'Resume builder') router.push('/resume');
-          if (label === 'DSA') router.push('/dsa');
-        }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
-          {label}
-        </button>
-      ))}
+    <nav style={{
+      display: 'flex',
+      alignItems: 'center',
+      height: 60,
+      padding: '0 34px',
+      background: 'rgba(255,255,255,0.82)',
+      backdropFilter: 'blur(16px)',
+      borderBottom: `1px solid ${C.border}`,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 200
+    }}>
+      {/* Logo on the left */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/home')}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6c47ff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="8 7 2 12 8 17" />
+          <polyline points="16 7 22 12 16 17" />
+        </svg>
+        <span style={{
+          fontFamily: 'Montserrat, sans-serif',
+          fontWeight: 900,
+          fontSize: '18px',
+          letterSpacing: '-0.5px',
+          color: '#0d0d14',
+          display: 'flex',
+          alignItems: 'baseline',
+          lineHeight: 1,
+        }}>
+          AIRO
+          <div style={{
+            width: '6px',
+            height: '6px',
+            backgroundColor: '#6c47ff',
+            marginLeft: '4px'
+          }} />
+        </span>
+      </div>
+
+      {/* Centered navigation links */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 36,
+        marginRight: '120px' // Offset to balance the logo's space
+      }}>
+        {NAV.map(label => (
+          <button key={label} onClick={() => {
+            if (label === 'Dashboard') router.push('/home');
+            if (label === 'Development') router.push('/development');
+            if (label === 'Resume builder') router.push('/resume');
+            if (label === 'DSA') router.push('/dsa');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            {label}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 }
@@ -313,12 +377,12 @@ export default function HomePage() {
   }
 
   const del = {
-    edu:  (i: number) => patch({ education:      (profile?.education      ?? []).filter((_, idx) => idx !== i) }, 'Education removed'),
-    proj: (i: number) => patch({ projects:       (profile?.projects       ?? []).filter((_, idx) => idx !== i) }, 'Project removed'),
-    exp:  (i: number) => patch({ experience:     (profile?.experience     ?? []).filter((_, idx) => idx !== i) }, 'Experience removed'),
-    ach:  (i: number) => patch({ achievements:   (profile?.achievements   ?? []).filter((_, idx) => idx !== i) }, 'Achievement removed'),
+    edu: (i: number) => patch({ education: (profile?.education ?? []).filter((_, idx) => idx !== i) }, 'Education removed'),
+    proj: (i: number) => patch({ projects: (profile?.projects ?? []).filter((_, idx) => idx !== i) }, 'Project removed'),
+    exp: (i: number) => patch({ experience: (profile?.experience ?? []).filter((_, idx) => idx !== i) }, 'Experience removed'),
+    ach: (i: number) => patch({ achievements: (profile?.achievements ?? []).filter((_, idx) => idx !== i) }, 'Achievement removed'),
     cert: (i: number) => patch({ certifications: (profile?.certifications ?? []).filter((_, idx) => idx !== i) }, 'Certification removed'),
-    skill:(i: number) => patch({ skills:         (profile?.skills         ?? []).filter((_, idx) => idx !== i) }, 'Skill removed'),
+    skill: (i: number) => patch({ skills: (profile?.skills ?? []).filter((_, idx) => idx !== i) }, 'Skill removed'),
   };
 
   if (!auth) return null;
@@ -399,9 +463,9 @@ export default function HomePage() {
                       title={e.branch || e.degree} subtitle={e.institution}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Institution', value: e.institution || '—' },
-                        { icon: <Star size={14} />,      label: 'CGPA',        value: e.cgpa ? String(e.cgpa) : '—' },
-                        { icon: <Calendar size={14} />,  label: 'Start Year',  value: e.start_year ? String(e.start_year) : '—' },
-                        { icon: <Calendar size={14} />,  label: 'End Year',    value: e.end_year ? String(e.end_year) : 'Present' },
+                        { icon: <Star size={14} />, label: 'CGPA', value: e.cgpa ? String(e.cgpa) : '—' },
+                        { icon: <Calendar size={14} />, label: 'Start Year', value: e.start_year ? String(e.start_year) : '—' },
+                        { icon: <Calendar size={14} />, label: 'End Year', value: e.end_year ? String(e.end_year) : 'Present' },
                       ]}
                       onEdit={() => router.push(`/profile/education?edit=${i}`)}
                       onDelete={() => del.edu(i)} />
@@ -423,14 +487,14 @@ export default function HomePage() {
                       yearBadge={p.tech_stack?.slice(0, 2).join(' · ') || undefined}
                       title={p.title} subtitle={p.description}
                       stats={[
-                        { icon: <Package size={14} />, label: 'Stack',     value: p.tech_stack?.slice(0, 2).join(', ') || '—' },
+                        { icon: <Package size={14} />, label: 'Stack', value: p.tech_stack?.slice(0, 2).join(', ') || '—' },
                         { icon: <Package size={14} />, label: 'More Tech', value: p.tech_stack && p.tech_stack.length > 2 ? `+${p.tech_stack.length - 2} more` : '—' },
                       ]}
                       footer={
                         (p.github_link || p.live_link) ? (
                           <div style={{ display: 'flex', gap: 16 }}>
                             {p.github_link && <a href={p.github_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Github size={13} /> GitHub</a>}
-                            {p.live_link   && <a href={p.live_link}   target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
+                            {p.live_link && <a href={p.live_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
                           </div>
                         ) : undefined
                       }
@@ -484,7 +548,7 @@ export default function HomePage() {
                       title={e.role || 'Role'} subtitle={e.company}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Company', value: e.company || '—' },
-                        { icon: <Calendar size={14} />,  label: 'Period',  value: `${fmtDate(e.start_date)} – ${fmtDate(e.end_date)}` },
+                        { icon: <Calendar size={14} />, label: 'Period', value: `${fmtDate(e.start_date)} – ${fmtDate(e.end_date)}` },
                       ]}
                       footer={e.description ? (
                         <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, lineHeight: 1.65, margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.description}</p>
@@ -531,7 +595,7 @@ export default function HomePage() {
                       title={c.title} subtitle={c.issuer}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Issuer', value: c.issuer || '—' },
-                        { icon: <Calendar size={14} />,  label: 'Issued', value: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' },
+                        { icon: <Calendar size={14} />, label: 'Issued', value: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' },
                       ]}
                       footer={c.link ? (
                         <a href={c.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}>

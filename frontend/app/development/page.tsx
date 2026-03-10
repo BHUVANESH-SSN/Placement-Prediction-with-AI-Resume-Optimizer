@@ -1,13 +1,23 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAuth, clearAuth, apiGet, apiPost, apiPostAuth } from '@/lib/api';
+import { apiGet, apiPostAuth, clearAuth, getAuth } from '@/lib/api';
 import {
-  Github, Star, BookOpen, Users, UserCheck,
-  Code2, Globe, RefreshCw, CheckCircle2, Copy,
-  TrendingUp, Zap, LogOut, MapPin, Phone,
+  BookOpen,
+  CheckCircle2,
+  Code2,
+  Copy,
+  Github,
+  Globe,
+  LogOut, MapPin, Phone,
+  RefreshCw,
+  Star,
+  TrendingUp,
+  UserCheck,
+  Users,
+  Zap,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /* ── TYPES ── */
 interface Auth { token: string; email: string | null; name: string | null; }
@@ -72,17 +82,65 @@ export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
   const NAV = ['Dashboard', 'Development', 'Resume builder', 'DSA'];
   return (
-    <nav style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 60, gap: 36, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
-      {NAV.map(label => (
-        <button key={label} onClick={() => {
-          if (label === 'Dashboard') router.push('/home');
-          if (label === 'Development') router.push('/development');
-          if (label === 'Resume builder') router.push('/resume');
-          if (label === 'DSA') router.push('/dsa');
-        }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
-          {label}
-        </button>
-      ))}
+    <nav style={{
+      display: 'flex',
+      alignItems: 'center',
+      height: 60,
+      padding: '0 34px',
+      background: 'rgba(255,255,255,0.82)',
+      backdropFilter: 'blur(16px)',
+      borderBottom: `1px solid ${C.border}`,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 200
+    }}>
+      {/* Logo on the left */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/home')}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="8 7 2 12 8 17" />
+          <polyline points="16 7 22 12 16 17" />
+        </svg>
+        <span style={{
+          fontFamily: 'Montserrat, sans-serif',
+          fontWeight: 900,
+          fontSize: '18px',
+          letterSpacing: '-0.5px',
+          color: '#0d0d14',
+          display: 'flex',
+          alignItems: 'baseline',
+          lineHeight: 1,
+        }}>
+          AIRO
+          <div style={{
+            width: '6px',
+            height: '6px',
+            backgroundColor: '#7c3aed',
+            marginLeft: '4px'
+          }} />
+        </span>
+      </div>
+
+      {/* Centered navigation links */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 36,
+        marginRight: '120px' // Offset to balance the logo's space
+      }}>
+        {NAV.map(label => (
+          <button key={label} onClick={() => {
+            if (label === 'Dashboard') router.push('/home');
+            if (label === 'Development') router.push('/development');
+            if (label === 'Resume builder') router.push('/resume');
+            if (label === 'DSA') router.push('/dsa');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            {label}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 }
