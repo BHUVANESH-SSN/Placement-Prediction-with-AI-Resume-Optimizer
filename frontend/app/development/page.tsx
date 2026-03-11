@@ -1,13 +1,23 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAuth, clearAuth, apiGet, apiPost, apiPostAuth } from '@/lib/api';
+import { apiGet, apiPostAuth, clearAuth, getAuth } from '@/lib/api';
 import {
-  Github, Star, BookOpen, Users, UserCheck,
-  Code2, Globe, RefreshCw, CheckCircle2, Copy,
-  TrendingUp, Zap, LogOut, MapPin, Phone,
+  BookOpen,
+  CheckCircle2,
+  Code2,
+  Copy,
+  Github,
+  Globe,
+  LogOut,
+  RefreshCw,
+  Star,
+  TrendingUp,
+  UserCheck,
+  Users,
+  Zap
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /* ── TYPES ── */
 interface Auth { token: string; email: string | null; name: string | null; }
@@ -20,6 +30,9 @@ interface GithubData {
 interface ContributionDay { date: string; count: number; level: 0 | 1 | 2 | 3 | 4; }
 interface ContributionWeek { days: ContributionDay[]; }
 interface ContributionData { total_contributions: number; weeks: ContributionWeek[]; }
+interface Profile {
+  full_name?: string; phone?: string; location?: string; institute?: string;
+}
 
 /* ── DESIGN SYSTEM ── */
 const C = {
@@ -70,19 +83,67 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume builder', 'DSA'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Roadmap'];
   return (
-    <nav style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 60, gap: 36, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
-      {NAV.map(label => (
-        <button key={label} onClick={() => {
-          if (label === 'Dashboard') router.push('/home');
-          if (label === 'Development') router.push('/development');
-          if (label === 'Resume builder') router.push('/resume');
-          if (label === 'DSA') router.push('/dsa');
-        }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
-          {label}
-        </button>
-      ))}
+    <nav style={{
+      display: 'flex',
+      alignItems: 'center',
+      height: 60,
+      padding: '0 34px',
+      background: 'rgba(255,255,255,0.82)',
+      backdropFilter: 'blur(16px)',
+      borderBottom: `1px solid ${C.border}`,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 200
+    }}>
+      {/* Logo on the left */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/home')}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="8 7 2 12 8 17" />
+          <polyline points="16 7 22 12 16 17" />
+        </svg>
+        <span style={{
+          fontFamily: 'Montserrat, sans-serif',
+          fontWeight: 900,
+          fontSize: '18px',
+          letterSpacing: '-0.5px',
+          color: '#0d0d14',
+          display: 'flex',
+          alignItems: 'baseline',
+          lineHeight: 1,
+        }}>
+          AIRO
+          <div style={{
+            width: '6px',
+            height: '6px',
+            backgroundColor: '#7c3aed',
+            marginLeft: '4px'
+          }} />
+        </span>
+      </div>
+
+      {/* Centered navigation links */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 36,
+        marginRight: '120px' // Offset to balance the logo's space
+      }}>
+        {NAV.map(label => (
+          <button key={label} onClick={() => {
+            if (label === 'Dashboard') router.push('/home');
+            if (label === 'Development') router.push('/development');
+            if (label === 'Resume builder') router.push('/resume');
+            if (label === 'DSA') router.push('/dsa');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            {label}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 }
@@ -117,26 +178,46 @@ function RepoCard({ repo }: { repo: RepoDetail }) {
   const langColor = repo.language ? getLangColor(repo.language) : C.muted;
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ minWidth: 340, maxWidth: 340, flexShrink: 0, borderRadius: 20, background: `linear-gradient(90deg, ${C.accent}, ${C.accent}80) top / 100% 4px no-repeat, ${C.surface}`, border: `1px solid ${hov ? C.accent + '55' : C.border}`, boxShadow: hov ? '0 25px 60px rgba(15,23,42,0.14)' : '0 4px 18px rgba(15,23,42,0.07)', transform: hov ? 'translateY(-7px) scale(1.01)' : 'none', transition: 'all 0.3s cubic-bezier(.4,0,.2,1)', overflow: 'hidden', padding: '20px 22px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-        <BookOpen size={16} color={C.accent} />
-        <a href={repo.url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 15, color: C.ink, textDecoration: 'none' }}>{repo.name}</a>
-      </div>
-      {repo.description && (
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, lineHeight: 1.6, margin: '0 0 16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{repo.description}</p>
-      )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        {repo.language && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'Montserrat, sans-serif', fontSize: 12, fontWeight: 700, color: langColor }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: langColor, display: 'inline-block' }} />{repo.language}
-          </span>
+      style={{
+        flex: 1,
+        minWidth: 'calc(33.333% - 16px)',
+        borderRadius: 24,
+        background: C.surface,
+        border: `1px solid ${hov ? C.accent + '40' : C.border}`,
+        boxShadow: hov ? '0 20px 40px rgba(15,23,42,0.1)' : '0 4px 12px rgba(15,23,42,0.04)',
+        transform: hov ? 'translateY(-5px)' : 'none',
+        transition: 'all 0.3s cubic-bezier(.4,0,.2,1)',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+      <div style={{ padding: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: C.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.accent }}>
+            <BookOpen size={20} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: C.paper, padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700, color: C.muted }}>
+            <Star size={12} color="#f59e0b" fill="#f59e0b" /> {repo.stars}
+          </div>
+        </div>
+
+        <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 10px', lineHeight: 1.4 }}>{repo.name}</h3>
+
+        {repo.description && (
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, color: C.muted, lineHeight: 1.6, margin: '0 0 24px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{repo.description}</p>
         )}
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, fontWeight: 600 }}>
-          <Star size={12} color="#f59e0b" fill="#f59e0b" /> {repo.stars}
-        </span>
-        <a href={repo.url} target="_blank" rel="noopener noreferrer" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}>
-          <Globe size={12} /> View
-        </a>
+
+        <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {repo.language && (
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 12, fontWeight: 700, color: C.ink }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: langColor }} />{repo.language}
+            </span>
+          )}
+          <a href={repo.url} target="_blank" rel="noopener noreferrer"
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, background: hov ? C.accent : 'transparent', color: hov ? '#fff' : C.accent, border: `1.5px solid ${C.accent}`, padding: '8px 16px', borderRadius: 10, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s' }}>
+            <Github size={14} /> Visit
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -262,28 +343,60 @@ function TopLanguages({ languages }: { languages: string[] }) {
   );
 }
 
-/* ── REPOS SECTION — named component so hook runs at component top level ── */
+/* ── REPOS SECTION ── */
 function ReposSection({ github }: { github: GithubData }) {
   const reveal = useScrollReveal(0);
-  const sorted = [...github.repo_details].sort((a, b) => b.stars - a.stars);
+  const [search, setSearch] = useState('');
+  const [filterLang, setFilterLang] = useState('All');
+
+  const repos = github.repo_details;
+  const langs = ['All', ...Array.from(new Set(repos.map(r => r.language).filter(Boolean)))];
+
+  const filtered = repos
+    .filter(r => (filterLang === 'All' || r.language === filterLang))
+    .filter(r => r.name.toLowerCase().includes(search.toLowerCase()) || r.description?.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => b.stars - a.stars);
+
   return (
     <div ref={reveal.ref} style={reveal.style}>
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: 24, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
             <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>Repositories</h2>
-            <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{github.repo_details.length}</span>
+            <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{repos.length}</span>
           </div>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: 0 }}>Your public repositories, sorted by stars</p>
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: 0 }}>Discover your public work and contributions</p>
         </div>
-        <a href={`https://github.com/${github.username}?tab=repositories`} target="_blank" rel="noopener noreferrer"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: C.accent, color: '#fff', borderRadius: 14, padding: '12px 24px', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 13.5, textDecoration: 'none', boxShadow: `0 6px 20px ${C.accent}40` }}>
-          <Github size={15} /> View All
-        </a>
+
+        <div style={{ display: 'flex', gap: 12, flex: 1, maxWidth: 500 }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <input
+              style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 12, border: `1px solid ${C.border}`, fontFamily: 'Montserrat, sans-serif', fontSize: 14 }}
+              placeholder="Search repositories..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <Globe size={18} color={C.muted} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }} />
+          </div>
+          <select
+            style={{ padding: '0 12px', borderRadius: 12, border: `1px solid ${C.border}`, background: C.surface, fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 600, color: C.ink, cursor: 'pointer', outline: 'none' }}
+            value={filterLang}
+            onChange={e => setFilterLang(e.target.value)}
+          >
+            {langs.map(l => <option key={l!} value={l!}>{l}</option>)}
+          </select>
+        </div>
       </div>
-      <div style={{ display: 'flex', gap: 22, overflowX: 'auto', padding: '14px 0 20px', scrollbarWidth: 'none', overflowY: 'visible' }}>
-        {sorted.map((repo, i) => <RepoCard key={i} repo={repo} />)}
-      </div>
+
+      {filtered.length > 0 ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+          {filtered.map((repo, i) => <RepoCard key={i} repo={repo} />)}
+        </div>
+      ) : (
+        <div style={{ padding: '60px 0', textAlign: 'center', background: C.paper, borderRadius: 24, border: `2px dashed ${C.border}` }}>
+          <p style={{ fontSize: 16, color: C.muted, fontWeight: 600, fontFamily: 'Montserrat, sans-serif' }}>No repositories found matching your current filters.</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -378,12 +491,12 @@ export default function DevelopmentPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
-  const [profile, setProfile] = useState<{ full_name?: string; phone?: string; location?: string } | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const fetchData = useCallback(async (email: string) => {
     try {
       const data = await apiGet(`/form/get-profile/${encodeURIComponent(email)}`);
-      setProfile({ full_name: data.full_name, phone: data.phone, location: data.location });
+      setProfile({ full_name: data.full_name, phone: data.phone, location: data.location, institute: data.institute });
       if (data.github) setGithub(data.github);
     } catch { }
   }, []);
@@ -421,56 +534,156 @@ export default function DevelopmentPage() {
 
   const displayName = profile?.full_name || auth?.name || auth?.email?.split('@')[0] || 'User';
   const initials = displayName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
-  const SIDEBAR_W = 285;
+  const [sbHover, setSbHover] = useState(false);
+  const SB_MIN = 88;
+  const SB_MAX = 285;
   const NAV_H = 60;
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
       <Navbar active="Development" />
 
-      <aside style={{ position: 'fixed', top: NAV_H, left: 0, width: SIDEBAR_W, height: `calc(100vh - ${NAV_H}px)`, overflowY: 'auto', borderRight: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', padding: '40px 28px 40px 34px', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
-        <div style={{ width: 72, height: 72, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 24, marginBottom: 16, flexShrink: 0, boxShadow: `0 12px 30px ${C.accent}45`, overflow: 'hidden' }}>
+      <aside
+        onMouseEnter={() => setSbHover(true)}
+        onMouseLeave={() => setSbHover(false)}
+        style={{
+          position: 'fixed',
+          top: NAV_H,
+          left: 0,
+          width: sbHover ? SB_MAX : SB_MIN,
+          height: `calc(100vh - ${NAV_H}px)`,
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          borderRight: `1px solid ${C.border}`,
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(20px)',
+          padding: sbHover ? '40px 28px 40px 34px' : '40px 14px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: sbHover ? 'flex-start' : 'center',
+          zIndex: 100,
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          scrollbarWidth: 'none'
+        }}>
+        <div style={{
+          width: sbHover ? 72 : 52,
+          height: sbHover ? 72 : 52,
+          borderRadius: '50%',
+          background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontWeight: 800,
+          fontSize: sbHover ? 24 : 18,
+          marginBottom: sbHover ? 16 : 32,
+          flexShrink: 0,
+          boxShadow: `0 12px 30px ${C.accent}45`,
+          overflow: 'hidden',
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}>
           {github?.profile_image ? <img src={github.profile_image} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
         </div>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px' }}>{displayName}</p>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 8px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth?.email}</p>
-        {github && (
-          <a href={`https://github.com/${github.username}`} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.accent, fontWeight: 700, textDecoration: 'none', marginBottom: 24 }}>
-            <Github size={14} /> @{github.username}
-          </a>
-        )}
-        {profile?.location && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8, color: C.muted, fontSize: 13.5 }}>
-            <MapPin size={15} color={C.muted} />
-            <span style={{ fontFamily: 'Montserrat, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.location}</span>
+
+        <div style={{ opacity: sbHover ? 1 : 0, height: sbHover ? 'auto' : 0, transition: 'all 0.3s', visibility: sbHover ? 'visible' : 'hidden', width: '100%' }}>
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 8px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth?.email}</p>
+          {github && (
+            <a href={`https://github.com/${github.username}`} target="_blank" rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.accent, fontWeight: 700, textDecoration: 'none', marginBottom: 24 }}>
+              <Github size={14} /> @{github.username}
+            </a>
+          )}
+        </div>
+
+        {profile?.institute && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            padding: sbHover ? '10px 13px' : '0',
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            fontSize: 13,
+            color: C.ink,
+            fontFamily: 'Montserrat, sans-serif',
+            marginBottom: sbHover ? 24 : 12,
+            background: 'rgba(124, 58, 237, 0.05)',
+            borderRadius: 12,
+            border: `1px solid ${C.accentSoft}`,
+            transition: 'all 0.3s'
+          }} title={!sbHover ? profile.institute : ''}>
+            <Building2 size={20} color={C.accent} style={{ flexShrink: 0 }} />
+            {sbHover && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{profile.institute}</span>}
           </div>
         )}
-        {profile?.phone && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 24, color: C.muted, fontSize: 13.5 }}>
-            <Phone size={15} color={C.muted} />
-            <span style={{ fontFamily: 'Montserrat, sans-serif' }}>{profile.phone}</span>
-          </div>
-        )}
+
         {github && (
           <button onClick={updateGithub} disabled={updating}
             onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 13px', fontSize: 13, color: C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, transition: 'all 0.2s', marginBottom: 8, opacity: updating ? 0.6 : 1 }}>
-            <RefreshCw size={14} style={{ animation: updating ? 'spin 1s linear infinite' : 'none' }} />
-            {updating ? 'Refreshing…' : 'Refresh GitHub'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              width: sbHover ? '100%' : 44,
+              height: 44,
+              justifyContent: sbHover ? 'flex-start' : 'center',
+              background: 'none',
+              border: `1.5px solid ${C.border}`,
+              borderRadius: 12,
+              padding: sbHover ? '10px 13px' : '0',
+              fontSize: 13,
+              color: C.muted,
+              cursor: 'pointer',
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: 600,
+              transition: 'all 0.2s',
+              marginBottom: 8,
+              opacity: updating ? 0.6 : 1,
+              flexShrink: 0
+            }} title={!sbHover ? 'Refresh GitHub' : ''}>
+            <RefreshCw size={18} style={{ animation: updating ? 'spin 1s linear infinite' : 'none', flexShrink: 0 }} />
+            {sbHover && <span>{updating ? 'Refreshing…' : 'Refresh GitHub'}</span>}
           </button>
         )}
+
         <div style={{ flex: 1 }} />
+
         <button onClick={logout}
           onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent2; e.currentTarget.style.color = C.accent2; e.currentTarget.style.background = '#fff0f0'; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; e.currentTarget.style.background = 'none'; }}
-          style={{ width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 14px', fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.muted, transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <LogOut size={14} /> Logout
+          style={{
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            background: 'none',
+            border: `1.5px solid ${C.border}`,
+            borderRadius: 12,
+            padding: sbHover ? '10px 14px' : '0',
+            fontFamily: 'Montserrat, sans-serif',
+            fontSize: 13.5,
+            fontWeight: 600,
+            cursor: 'pointer',
+            color: C.muted,
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            flexShrink: 0
+          }} title={!sbHover ? 'Logout' : ''}>
+          <LogOut size={18} style={{ flexShrink: 0 }} />
+          {sbHover && <span>Logout</span>}
         </button>
       </aside>
 
-      <main style={{ marginLeft: SIDEBAR_W, paddingTop: NAV_H, minHeight: '100vh' }}>
+      <main style={{
+        marginLeft: sbHover ? SB_MAX : SB_MIN,
+        paddingTop: NAV_H,
+        minHeight: '100vh',
+        transition: 'margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}>
         <div style={{ padding: '56px 64px 110px' }}>
           <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
             My <span style={{ color: C.accent }}>Development</span>

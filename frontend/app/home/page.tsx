@@ -1,13 +1,27 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAuth, clearAuth, apiGet, apiPatch } from '@/lib/api';
+import { apiGet, apiPatch, clearAuth, getAuth } from '@/lib/api';
 import {
-  GraduationCap, Briefcase, Trophy, Zap, Laptop2, MapPin, Phone,
-  LogOut, CheckCircle2, Building2, Calendar, Star, Package, Globe,
-  Github, Clock, Pencil, Trash2, Plus, PencilLine, Award,
+  Award,
+  Briefcase,
+  Building2, Calendar,
+  CheckCircle2,
+  Clock,
+  Github,
+  Globe,
+  GraduationCap,
+  Laptop2,
+  LogOut,
+  Package,
+  Pencil,
+  PencilLine,
+  Plus,
+  Star,
+  Trash2,
+  Trophy, Zap
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /* ── TYPES ── */
 interface Auth { token: string; email: string | null; name: string | null; }
@@ -17,7 +31,7 @@ interface Skill { name: string; category?: string; level?: number; }
 interface Experience { role?: string; company?: string; start_date?: string; end_date?: string; description?: string; }
 interface Achievement { title: string; description?: string; date?: string; }
 interface Profile {
-  full_name?: string; email?: string; phone?: string; location?: string;
+  full_name?: string; email?: string; phone?: string; location?: string; institute?: string;
   education?: Education[]; projects?: Project[]; skills?: Skill[];
   experience?: Experience[]; achievements?: Achievement[]; certifications?: Certification[];
 }
@@ -25,16 +39,16 @@ interface Certification { title: string; issuer: string; issue_date?: string; li
 
 /* ── DESIGN SYSTEM ── */
 const C = {
-  ink:        '#0f172a',
-  paper:      '#f8fafc',
-  surface:    '#ffffff',
-  accent:     '#7c3aed',
-  accentHov:  '#6d28d9',
+  ink: '#0f172a',
+  paper: '#f8fafc',
+  surface: '#ffffff',
+  accent: '#7c3aed',
+  accentHov: '#6d28d9',
   accentSoft: '#ede9fe',
-  accent2:    '#ef4444',
-  muted:      '#64748b',
-  border:     '#e2e8f0',
-  success:    '#16a34a',
+  accent2: '#ef4444',
+  muted: '#64748b',
+  border: '#e2e8f0',
+  success: '#16a34a',
 };
 
 /* ── INPUT STYLES ── */
@@ -64,19 +78,67 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume builder', 'DSA'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA'];
   return (
-    <nav style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 60, gap: 36, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
-      {NAV.map(label => (
-        <button key={label} onClick={() => {
-          if (label === 'Dashboard') router.push('/home');
-          if (label === 'Development') router.push('/development');
-          if (label === 'Resume builder') router.push('/resume');
-          if (label === 'DSA') router.push('/dsa');
-        }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
-          {label}
-        </button>
-      ))}
+    <nav style={{
+      display: 'flex',
+      alignItems: 'center',
+      height: 60,
+      padding: '0 34px',
+      background: 'rgba(255,255,255,0.82)',
+      backdropFilter: 'blur(16px)',
+      borderBottom: `1px solid ${C.border}`,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 200
+    }}>
+      {/* Logo on the left */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/home')}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6c47ff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="8 7 2 12 8 17" />
+          <polyline points="16 7 22 12 16 17" />
+        </svg>
+        <span style={{
+          fontFamily: 'Montserrat, sans-serif',
+          fontWeight: 900,
+          fontSize: '18px',
+          letterSpacing: '-0.5px',
+          color: '#0d0d14',
+          display: 'flex',
+          alignItems: 'baseline',
+          lineHeight: 1,
+        }}>
+          AIRO
+          <div style={{
+            width: '6px',
+            height: '6px',
+            backgroundColor: '#6c47ff',
+            marginLeft: '4px'
+          }} />
+        </span>
+      </div>
+
+      {/* Centered navigation links */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 36,
+        marginRight: '120px' // Offset to balance the logo's space
+      }}>
+        {NAV.map(label => (
+          <button key={label} onClick={() => {
+            if (label === 'Dashboard') router.push('/home');
+            if (label === 'Development') router.push('/development');
+            if (label === 'Resume builder') router.push('/resume');
+            if (label === 'DSA') router.push('/dsa');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            {label}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 }
@@ -106,17 +168,31 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
   );
 }
 
-/* ── CONTACT MODAL ── */
-function ContactModal({ phone, location, onSave, onClose }: { phone: string; location: string; onSave: (p: string, l: string) => Promise<void>; onClose: () => void; }) {
-  const [p, setP] = useState(phone); const [l, setL] = useState(location); const [saving, setSaving] = useState(false);
+/* ── PROFILE MODAL ── */
+function ProfileModal({ data, onSave, onClose }: { data: Partial<Profile>; onSave: (p: Partial<Profile>) => Promise<void>; onClose: () => void; }) {
+  const [f, setF] = useState(data.full_name || '');
+  const [e, setE] = useState(data.email || '');
+  const [p, setP] = useState(data.phone || '');
+  const [l, setL] = useState(data.location || '');
+  const [i, setI] = useState(data.institute || '');
+  const [saving, setSaving] = useState(false);
+
   return (
-    <Modal title="Edit Contact Info" onClose={onClose}>
-      <div style={fg}><label style={mlbl}>Phone Number</label><input style={inp} placeholder="+91 9876543210" value={p} onChange={e => setP(e.target.value)} /></div>
-      <div style={fg}><label style={mlbl}>Location</label><input style={inp} placeholder="Chennai, Tamil Nadu" value={l} onChange={e => setL(e.target.value)} /></div>
-      <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+    <Modal title="Edit Profile Details" onClose={onClose}>
+      <div style={fg}><label style={mlbl}>Full Name</label><input style={inp} placeholder="Alex Johnson" value={f} onChange={ev => setF(ev.target.value)} /></div>
+      <div style={fg}><label style={mlbl}>Email Address</label><input style={inp} placeholder="you@example.com" value={e} onChange={ev => setE(ev.target.value)} /></div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div style={fg}><label style={mlbl}>Phone Number</label><input style={inp} placeholder="+1 234 567 890" value={p} onChange={ev => setP(ev.target.value)} /></div>
+        <div style={fg}><label style={mlbl}>City / Location</label><input style={inp} placeholder="New York, NY" value={l} onChange={ev => setL(ev.target.value)} /></div>
+      </div>
+
+      <div style={fg}><label style={mlbl}>Educational Institute</label><input style={inp} placeholder="Stanford University" value={i} onChange={ev => setI(ev.target.value)} /></div>
+
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
         <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 600 }}>Cancel</button>
-        <button onClick={async () => { setSaving(true); await onSave(p, l); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
-          {saving ? 'Saving…' : 'Save'}
+        <button onClick={async () => { setSaving(true); await onSave({ full_name: f, email: e, phone: p, location: l, institute: i }); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
+          {saving ? 'Saving…' : 'Save Changes'}
         </button>
       </div>
     </Modal>
@@ -313,13 +389,18 @@ export default function HomePage() {
   }
 
   const del = {
-    edu:  (i: number) => patch({ education:      (profile?.education      ?? []).filter((_, idx) => idx !== i) }, 'Education removed'),
-    proj: (i: number) => patch({ projects:       (profile?.projects       ?? []).filter((_, idx) => idx !== i) }, 'Project removed'),
-    exp:  (i: number) => patch({ experience:     (profile?.experience     ?? []).filter((_, idx) => idx !== i) }, 'Experience removed'),
-    ach:  (i: number) => patch({ achievements:   (profile?.achievements   ?? []).filter((_, idx) => idx !== i) }, 'Achievement removed'),
+    edu: (i: number) => patch({ education: (profile?.education ?? []).filter((_, idx) => idx !== i) }, 'Education removed'),
+    proj: (i: number) => patch({ projects: (profile?.projects ?? []).filter((_, idx) => idx !== i) }, 'Project removed'),
+    exp: (i: number) => patch({ experience: (profile?.experience ?? []).filter((_, idx) => idx !== i) }, 'Experience removed'),
+    ach: (i: number) => patch({ achievements: (profile?.achievements ?? []).filter((_, idx) => idx !== i) }, 'Achievement removed'),
     cert: (i: number) => patch({ certifications: (profile?.certifications ?? []).filter((_, idx) => idx !== i) }, 'Certification removed'),
-    skill:(i: number) => patch({ skills:         (profile?.skills         ?? []).filter((_, idx) => idx !== i) }, 'Skill removed'),
+    skill: (i: number) => patch({ skills: (profile?.skills ?? []).filter((_, idx) => idx !== i) }, 'Skill removed'),
   };
+
+  const [sbHover, setSbHover] = useState(false);
+  const SB_MIN = 88;
+  const SB_MAX = 285;
+  const NAV_H = 60;
 
   if (!auth) return null;
 
@@ -327,58 +408,188 @@ export default function HomePage() {
   const initials = displayName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
   const fmtDate = (d?: string) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present';
 
-  const SIDEBAR_W = 285;
-  const NAV_H = 60;
-
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
       <Navbar active="Dashboard" />
 
       {/* SIDEBAR */}
-      <aside style={{ position: 'fixed', top: NAV_H, left: 0, width: SIDEBAR_W, height: `calc(100vh - ${NAV_H}px)`, overflowY: 'auto', borderRight: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', padding: '40px 28px 40px 34px', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+      <aside
+        onMouseEnter={() => setSbHover(true)}
+        onMouseLeave={() => setSbHover(false)}
+        style={{
+          position: 'fixed',
+          top: NAV_H,
+          left: 0,
+          width: sbHover ? SB_MAX : SB_MIN,
+          height: `calc(100vh - ${NAV_H}px)`,
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          borderRight: `1px solid ${C.border}`,
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(20px)',
+          padding: sbHover ? '40px 28px 40px 34px' : '40px 14px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: sbHover ? 'flex-start' : 'center',
+          zIndex: 100,
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          scrollbarWidth: 'none'
+        }}>
         {/* Avatar */}
-        <div style={{ width: 72, height: 72, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 24, marginBottom: 16, flexShrink: 0, boxShadow: `0 12px 30px ${C.accent}45` }}>{initials}</div>
+        <div style={{
+          width: sbHover ? 72 : 52,
+          height: sbHover ? 72 : 52,
+          borderRadius: '50%',
+          background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontWeight: 800,
+          fontSize: sbHover ? 24 : 18,
+          marginBottom: sbHover ? 16 : 32,
+          flexShrink: 0,
+          boxShadow: `0 12px 30px ${C.accent}45`,
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}>{initials}</div>
 
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px' }}>{displayName}</p>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
+        <div style={{ opacity: sbHover ? 1 : 0, height: sbHover ? 'auto' : 0, transition: 'all 0.3s', visibility: sbHover ? 'visible' : 'hidden', width: '100%' }}>
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
+          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
+        </div>
 
-        {/* Location */}
+        {/* Institute */}
+        {profile?.institute && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            padding: sbHover ? '10px 13px' : '0',
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            fontSize: 13.5,
+            color: C.ink,
+            fontFamily: 'Montserrat, sans-serif',
+            marginBottom: sbHover ? 24 : 12,
+            background: 'rgba(124, 58, 237, 0.05)',
+            borderRadius: 12,
+            border: `1px solid ${C.accentSoft}`,
+            transition: 'all 0.3s'
+          }} title={!sbHover ? profile.institute : ''}>
+            <Building2 size={20} color={C.accent} style={{ flexShrink: 0 }} />
+            {sbHover && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{profile.institute}</span>}
+          </div>
+        )}
+
         <button onClick={() => setModal('contact')}
-          onMouseEnter={e => (e.currentTarget.style.borderColor = C.accent)}
-          onMouseLeave={e => (e.currentTarget.style.borderColor = C.border)}
-          style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 13px', fontSize: 13.5, color: profile?.location ? C.ink : C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', textAlign: 'left', marginBottom: 8, transition: 'border-color 0.2s' }}>
-          <MapPin size={16} color={C.muted} />
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile?.location || 'Add location'}</span>
+          onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            background: 'none',
+            border: `1.5px solid ${C.border}`,
+            borderRadius: 12,
+            padding: sbHover ? '10px 13px' : '0',
+            fontSize: 13,
+            color: C.muted,
+            cursor: 'pointer',
+            fontFamily: 'Montserrat, sans-serif',
+            fontWeight: 600,
+            transition: 'all 0.2s',
+            marginBottom: 8,
+            flexShrink: 0
+          }} title={!sbHover ? 'Edit Profile' : ''}>
+          <Pencil size={18} style={{ flexShrink: 0 }} />
+          {sbHover && <span>Edit Profile Info</span>}
         </button>
 
-        {/* Phone */}
-        <button onClick={() => setModal('contact')}
-          onMouseEnter={e => (e.currentTarget.style.borderColor = C.accent)}
-          onMouseLeave={e => (e.currentTarget.style.borderColor = C.border)}
-          style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 13px', fontSize: 13.5, color: profile?.phone ? C.ink : C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', textAlign: 'left', marginBottom: 32, transition: 'border-color 0.2s' }}>
-          <Phone size={16} color={C.muted} />
-          <span>{profile?.phone || 'Add phone'}</span>
-        </button>
+        <div style={{ flex: 1 }} />
 
         <button onClick={logout}
           onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent2; e.currentTarget.style.color = C.accent2; e.currentTarget.style.background = '#fff0f0'; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; e.currentTarget.style.background = 'none'; }}
-          style={{ width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 14px', fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.muted, transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <LogOut size={15} /> Logout
+          style={{
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            background: 'none',
+            border: `1.5px solid ${C.border}`,
+            borderRadius: 12,
+            padding: sbHover ? '10px 14px' : '0',
+            fontFamily: 'Montserrat, sans-serif',
+            fontSize: 13.5,
+            fontWeight: 600,
+            cursor: 'pointer',
+            color: C.muted,
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            flexShrink: 0
+          }} title={!sbHover ? 'Logout' : ''}>
+          <LogOut size={18} style={{ flexShrink: 0 }} />
+          {sbHover && <span>Logout</span>}
         </button>
       </aside>
 
       {/* MAIN */}
-      <main style={{ marginLeft: SIDEBAR_W, paddingTop: NAV_H, minHeight: '100vh' }}>
+      <main style={{
+        marginLeft: sbHover ? SB_MAX : SB_MIN,
+        paddingTop: NAV_H,
+        minHeight: '100vh',
+        transition: 'margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}>
         <div style={{ padding: '56px 64px 110px' }}>
 
-          <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
-            My <span style={{ color: C.accent }}>Profile</span>
-          </h1>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: '0 0 56px', fontWeight: 500 }}>
-            Manage, update, and track all your profile information
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 48 }}>
+            <div>
+              <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
+                Welcome, <span style={{ color: C.accent }}>{displayName.split(' ')[0]}</span>
+              </h1>
+              <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: 0, fontWeight: 500 }}>
+                {new Date().getHours() < 12 ? 'Good morning! ' : new Date().getHours() < 18 ? 'Good afternoon! ' : 'Good evening! '}
+                Ready to land your next big role?
+              </p>
+            </div>
+            {/* AI Insights Panel */}
+            <div style={{ background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, borderRadius: 24, padding: '20px 24px', maxWidth: 320, color: '#fff', boxShadow: `0 12px 30px ${C.accent}40`, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: -10, right: -10, opacity: 0.1 }}><Zap size={100} /></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <Zap size={18} />
+                <span style={{ fontSize: 13, fontWeight: 900, letterSpacing: 0.5 }}>AI INSIGHTS</span>
+              </div>
+              <p style={{ fontSize: 13, lineHeight: 1.5, fontWeight: 600, margin: 0 }}>
+                Your resume strength is <span style={{ textDecoration: 'underline' }}>Good</span>. Add a few more projects to reach the Top 5% of candidates.
+              </p>
+            </div>
+          </div>
 
+          {/* Quick Actions Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 66 }}>
+            {[
+              { title: 'Resume Builder', desc: 'Craft professional resumes', icon: <Plus size={24} />, route: '/resume', color: '#7c3aed' },
+              { title: 'Resume Optimizer', desc: 'Tailor for specific JDs', icon: <Zap size={24} />, route: '/resume', color: '#f97316' },
+              { title: 'DSA Practice', desc: 'Sharpen logic & algorithms', icon: <Star size={24} />, route: '/dsa', color: '#16a34a' },
+              { title: 'Dev Portfolio', desc: 'Analyze GitHub presence', icon: <Github size={24} />, route: '/development', color: '#06b6d4' },
+            ].map(act => (
+              <button key={act.title} onClick={() => router.push(act.route)}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = `0 15px 35px ${act.color}25`; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 18px rgba(15,23,42,0.06)'; }}
+                style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '24px', textAlign: 'left', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(.4,0,.2,1)', boxShadow: '0 4px 18px rgba(15,23,42,0.06)', display: 'flex', gap: 16, alignItems: 'center' }}>
+                <div style={{ width: 54, height: 54, borderRadius: 16, background: `${act.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: act.color, flexShrink: 0 }}>{act.icon}</div>
+                <div>
+                  <h3 style={{ margin: '0 0 4px', fontSize: 16, fontWeight: 800, color: C.ink, fontFamily: 'Montserrat, sans-serif' }}>{act.title}</h3>
+                  <p style={{ margin: 0, fontSize: 12, color: C.muted, fontWeight: 500, fontFamily: 'Montserrat, sans-serif' }}>{act.desc}</p>
+                </div>
+              </button>
+            ))}
+          </div>
           {loading ? (
             <div style={{ textAlign: 'center', padding: 100 }}>
               <span className="spinner" style={{ borderColor: `${C.accent}25`, borderTopColor: C.accent, width: 40, height: 40 }} />
@@ -399,9 +610,9 @@ export default function HomePage() {
                       title={e.branch || e.degree} subtitle={e.institution}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Institution', value: e.institution || '—' },
-                        { icon: <Star size={14} />,      label: 'CGPA',        value: e.cgpa ? String(e.cgpa) : '—' },
-                        { icon: <Calendar size={14} />,  label: 'Start Year',  value: e.start_year ? String(e.start_year) : '—' },
-                        { icon: <Calendar size={14} />,  label: 'End Year',    value: e.end_year ? String(e.end_year) : 'Present' },
+                        { icon: <Star size={14} />, label: 'CGPA', value: e.cgpa ? String(e.cgpa) : '—' },
+                        { icon: <Calendar size={14} />, label: 'Start Year', value: e.start_year ? String(e.start_year) : '—' },
+                        { icon: <Calendar size={14} />, label: 'End Year', value: e.end_year ? String(e.end_year) : 'Present' },
                       ]}
                       onEdit={() => router.push(`/profile/education?edit=${i}`)}
                       onDelete={() => del.edu(i)} />
@@ -423,14 +634,14 @@ export default function HomePage() {
                       yearBadge={p.tech_stack?.slice(0, 2).join(' · ') || undefined}
                       title={p.title} subtitle={p.description}
                       stats={[
-                        { icon: <Package size={14} />, label: 'Stack',     value: p.tech_stack?.slice(0, 2).join(', ') || '—' },
+                        { icon: <Package size={14} />, label: 'Stack', value: p.tech_stack?.slice(0, 2).join(', ') || '—' },
                         { icon: <Package size={14} />, label: 'More Tech', value: p.tech_stack && p.tech_stack.length > 2 ? `+${p.tech_stack.length - 2} more` : '—' },
                       ]}
                       footer={
                         (p.github_link || p.live_link) ? (
                           <div style={{ display: 'flex', gap: 16 }}>
                             {p.github_link && <a href={p.github_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Github size={13} /> GitHub</a>}
-                            {p.live_link   && <a href={p.live_link}   target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
+                            {p.live_link && <a href={p.live_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
                           </div>
                         ) : undefined
                       }
@@ -484,7 +695,7 @@ export default function HomePage() {
                       title={e.role || 'Role'} subtitle={e.company}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Company', value: e.company || '—' },
-                        { icon: <Calendar size={14} />,  label: 'Period',  value: `${fmtDate(e.start_date)} – ${fmtDate(e.end_date)}` },
+                        { icon: <Calendar size={14} />, label: 'Period', value: `${fmtDate(e.start_date)} – ${fmtDate(e.end_date)}` },
                       ]}
                       footer={e.description ? (
                         <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, lineHeight: 1.65, margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.description}</p>
@@ -531,7 +742,7 @@ export default function HomePage() {
                       title={c.title} subtitle={c.issuer}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Issuer', value: c.issuer || '—' },
-                        { icon: <Calendar size={14} />,  label: 'Issued', value: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' },
+                        { icon: <Calendar size={14} />, label: 'Issued', value: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' },
                       ]}
                       footer={c.link ? (
                         <a href={c.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}>
@@ -551,9 +762,11 @@ export default function HomePage() {
       </main>
 
       {modal === 'contact' && (
-        <ContactModal phone={profile?.phone || ''} location={profile?.location || ''}
-          onSave={async (p, l) => { await patch({ phone: p, location: l }, 'Contact updated!'); }}
-          onClose={() => setModal(null)} />
+        <ProfileModal
+          data={profile || {}}
+          onSave={async (updates) => { await patch(updates, 'Profile updated!'); }}
+          onClose={() => setModal(null)}
+        />
       )}
       {modal === 'skills' && (
         <SkillsModal existing={profile?.skills ?? []}
