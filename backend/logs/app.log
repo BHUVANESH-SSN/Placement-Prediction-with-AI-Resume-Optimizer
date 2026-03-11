@@ -134,3 +134,6 @@
 2026-03-09 21:23:48,532 | INFO | 127.0.0.1 | GET /dev/github/contributions/BHUVANESH-SSN | 200 | 1292.38ms
 2026-03-09 21:23:49,756 | INFO | 127.0.0.1 | GET /dev/github/contributions/BHUVANESH-SSN | 200 | 1219.24ms
 2026-03-09 21:24:13,563 | INFO | 127.0.0.1 | POST /api/extract | 422 | 2.0ms
+2026-03-09 21:27:46,606 | INFO | 127.0.0.1 | GET /docs | 200 | 0.51ms
+2026-03-09 21:27:46,820 | INFO | 127.0.0.1 | GET /openapi.json | 200 | 0.97ms
+2026-03-09 21:34:40,358 | INFO | 127.0.0.1 | GET / | 200 | 1.53ms
