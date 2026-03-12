@@ -17,7 +17,7 @@ const EMPTY: CertEntry = { title: '', issuer: '', issue_date: '', link: '' };
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 999, background: type === 'success' ? '#22c55e' : '#ef4444', color: 'white', borderRadius: 10, padding: '12px 18px', fontFamily: 'Montserrat,sans-serif', fontWeight: 500, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 16px rgba(0,0,0,.12)' }}>
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 999, background: type === 'success' ? '#22c55e' : '#ef4444', color: 'white', borderRadius: 10, padding: '12px 18px', fontFamily: 'Fira Code', monospace, fontWeight: 500, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 16px rgba(0,0,0,.12)' }}>
       {type === 'success' ? '✓' : '✕'} {msg}
     </div>
   );
@@ -41,8 +41,8 @@ function formToServer(e: CertEntry) {
   };
 }
 
-const inp: React.CSSProperties = { width: '100%', padding: '10px 14px', borderRadius: 8, border: '1.5px solid #e5e7eb', fontFamily: 'Montserrat,sans-serif', fontSize: 14, outline: 'none', background: 'white', color: '#1a1a2e', boxSizing: 'border-box' };
-const lbl: React.CSSProperties = { fontSize: 12.5, fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: 5, fontFamily: 'Montserrat,sans-serif' };
+const inp: React.CSSProperties = { width: '100%', padding: '10px 14px', borderRadius: 8, border: '1.5px solid #e5e7eb', fontFamily: 'Fira Code', monospace, fontSize: 14, outline: 'none', background: 'white', color: '#1a1a2e', boxSizing: 'border-box' };
+const lbl: React.CSSProperties = { fontSize: 12.5, fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: 5, fontFamily: 'Fira Code', monospace };
 
 export default function CertificationsPage() {
   const router       = useRouter();
@@ -135,33 +135,33 @@ export default function CertificationsPage() {
     <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
       <Navbar active="Dashboard" />
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 24px 80px' }}>
-        <button onClick={() => router.push('/home')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 13.5, marginBottom: 24, padding: 0, fontFamily: 'Montserrat,sans-serif' }}>
+        <button onClick={() => router.push('/home')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 13.5, marginBottom: 24, padding: 0, fontFamily: 'Fira Code', monospace }}>
           ← Back to Dashboard
         </button>
 
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 28, color: '#1a1a2e', marginBottom: 4 }}>
+          <h1 style={{ fontFamily: 'Fira Code', monospace, fontWeight: 800, fontSize: 28, color: '#1a1a2e', marginBottom: 4 }}>
             🏆 {isEditMode ? 'Edit Certification' : 'Add Certifications'}
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: 14, fontFamily: 'Montserrat,sans-serif' }}>
+          <p style={{ color: '#9ca3af', fontSize: 14, fontFamily: 'Fira Code', monospace }}>
             {isEditMode ? 'Update certification details' : 'Showcase your earned certificates'}
           </p>
         </div>
 
         {!isEditMode && allCerts.length > 0 && (
           <div style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.5px', color: '#9ca3af', textTransform: 'uppercase', marginBottom: 12, fontFamily: 'Montserrat,sans-serif' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.5px', color: '#9ca3af', textTransform: 'uppercase', marginBottom: 12, fontFamily: 'Fira Code', monospace }}>
               Saved Certifications ({allCerts.length})
             </p>
             {allCerts.map((cert, i) => (
               <div key={i} style={{ background: 'white', borderRadius: 10, padding: '14px 18px', border: '1px solid #e5e7eb', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ width: 34, height: 34, borderRadius: 8, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>🏆</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: 14, color: '#1a1a2e', marginBottom: 1 }}>{cert.title}</p>
-                  <p style={{ fontSize: 13, color: '#9ca3af', fontFamily: 'Montserrat,sans-serif' }}>{cert.issuer}{cert.issue_date ? ` · ${cert.issue_date}` : ''}</p>
+                  <p style={{ fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 14, color: '#1a1a2e', marginBottom: 1 }}>{cert.title}</p>
+                  <p style={{ fontSize: 13, color: '#9ca3af', fontFamily: 'Fira Code', monospace }}>{cert.issuer}{cert.issue_date ? ` · ${cert.issue_date}` : ''}</p>
                 </div>
-                <button onClick={() => router.push(`/profile/certifications?edit=${i}`)} style={{ background: 'none', border: '1.5px solid #e5e7eb', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#6b7280', cursor: 'pointer', fontFamily: 'Montserrat,sans-serif', fontWeight: 600, flexShrink: 0 }}>✏️ Edit</button>
-                <button onClick={() => handleDelete(i)} disabled={loading} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#ef4444', cursor: 'pointer', fontFamily: 'Montserrat,sans-serif', fontWeight: 600, flexShrink: 0 }}>🗑 Delete</button>
+                <button onClick={() => router.push(`/profile/certifications?edit=${i}`)} style={{ background: 'none', border: '1.5px solid #e5e7eb', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#6b7280', cursor: 'pointer', fontFamily: 'Fira Code', monospace, fontWeight: 600, flexShrink: 0 }}>✏️ Edit</button>
+                <button onClick={() => handleDelete(i)} disabled={loading} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#ef4444', cursor: 'pointer', fontFamily: 'Fira Code', monospace, fontWeight: 600, flexShrink: 0 }}>🗑 Delete</button>
               </div>
             ))}
           </div>
@@ -169,7 +169,7 @@ export default function CertificationsPage() {
 
         <form onSubmit={handleSave}>
           <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e5e7eb', padding: '28px 32px', boxShadow: '0 1px 4px rgba(0,0,0,.06)' }}>
-            <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 20 }}>
+            <h2 style={{ fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 20 }}>
               {isEditMode ? 'Edit Certification' : 'New Certification'}
             </h2>
 
@@ -177,8 +177,8 @@ export default function CertificationsPage() {
               <div key={i} style={{ border: '1.5px solid #e5e7eb', borderRadius: 12, padding: '20px 22px', marginBottom: 16 }}>
                 {!isEditMode && entries.length > 1 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                    <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: 13, color: '#1a1a2e' }}>{cert.title || `Certification #${i + 1}`}</span>
-                    <button type="button" onClick={() => { setEntries(p => p.filter((_, idx) => idx !== i)); setErrors(p => p.filter((_, idx) => idx !== i)); }} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '3px 9px', color: '#ef4444', fontSize: 12, cursor: 'pointer', fontFamily: 'Montserrat,sans-serif' }}>Remove</button>
+                    <span style={{ fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 13, color: '#1a1a2e' }}>{cert.title || `Certification #${i + 1}`}</span>
+                    <button type="button" onClick={() => { setEntries(p => p.filter((_, idx) => idx !== i)); setErrors(p => p.filter((_, idx) => idx !== i)); }} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '3px 9px', color: '#ef4444', fontSize: 12, cursor: 'pointer', fontFamily: 'Fira Code', monospace }}>Remove</button>
                   </div>
                 )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -186,12 +186,12 @@ export default function CertificationsPage() {
                     <div>
                       <label style={lbl}>Certificate Title *</label>
                       <input style={{ ...inp, border: `1.5px solid ${errors[i]?.title ? '#ef4444' : '#e5e7eb'}` }} placeholder="e.g. AWS Cloud Practitioner" value={cert.title} onChange={e => change(i, 'title', e.target.value)} />
-                      {errors[i]?.title && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'Montserrat,sans-serif', marginTop: 3, display: 'block' }}>{errors[i].title}</span>}
+                      {errors[i]?.title && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'Fira Code', monospace, marginTop: 3, display: 'block' }}>{errors[i].title}</span>}
                     </div>
                     <div>
                       <label style={lbl}>Issuing Organization *</label>
                       <input style={{ ...inp, border: `1.5px solid ${errors[i]?.issuer ? '#ef4444' : '#e5e7eb'}` }} placeholder="e.g. Amazon Web Services" value={cert.issuer} onChange={e => change(i, 'issuer', e.target.value)} />
-                      {errors[i]?.issuer && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'Montserrat,sans-serif', marginTop: 3, display: 'block' }}>{errors[i].issuer}</span>}
+                      {errors[i]?.issuer && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'Fira Code', monospace, marginTop: 3, display: 'block' }}>{errors[i].issuer}</span>}
                     </div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -209,14 +209,14 @@ export default function CertificationsPage() {
             ))}
 
             {!isEditMode && (
-              <button type="button" onClick={() => { setEntries(p => [...p, { ...EMPTY }]); setErrors(p => [...p, {}]); }} style={{ width: '100%', padding: '12px', border: '2px dashed #e5e7eb', borderRadius: 10, background: 'transparent', cursor: 'pointer', color: '#f97316', fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: 13.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 24 }}>
+              <button type="button" onClick={() => { setEntries(p => [...p, { ...EMPTY }]); setErrors(p => [...p, {}]); }} style={{ width: '100%', padding: '12px', border: '2px dashed #e5e7eb', borderRadius: 10, background: 'transparent', cursor: 'pointer', color: '#f97316', fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 13.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 24 }}>
                 + Add Another Certification
               </button>
             )}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
-              <button type="button" onClick={() => router.push('/home')} style={{ padding: '12px 24px', border: '1.5px solid #e5e7eb', borderRadius: 10, background: 'none', cursor: 'pointer', color: '#6b7280', fontFamily: 'Montserrat,sans-serif', fontSize: 14 }}>Cancel</button>
-              <button type="submit" disabled={loading} style={{ padding: '12px 32px', background: '#1a1a2e', border: 'none', borderRadius: 10, color: 'white', fontFamily: 'Montserrat,sans-serif', fontWeight: 700, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+              <button type="button" onClick={() => router.push('/home')} style={{ padding: '12px 24px', border: '1.5px solid #e5e7eb', borderRadius: 10, background: 'none', cursor: 'pointer', color: '#6b7280', fontFamily: 'Fira Code', monospace, fontSize: 14 }}>Cancel</button>
+              <button type="submit" disabled={loading} style={{ padding: '12px 32px', background: '#1a1a2e', border: 'none', borderRadius: 10, color: 'white', fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Saving...' : isEditMode ? '✓ Update Certification' : '✓ Save Certifications'}
               </button>
             </div>

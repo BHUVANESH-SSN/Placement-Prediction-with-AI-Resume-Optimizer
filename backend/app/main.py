@@ -6,8 +6,10 @@ Routers registered:
   /auth    — Authentication (login, signup, OTP)
   /form    — Profile data (education, summary, profile)
   /dev     — Developer integrations (GitHub, LeetCode, LinkedIn)
-  /api     — Resume extraction + PDF generation   ← was previously MISSING
-  /resume  — Resume version history               ← was previously MISSING
+  /api     — Resume extraction + PDF generation
+  /resume  — Resume version history
+  /coach   — (legacy, replaced by /chatbot)
+  /chatbot — resuMate Chatbot (SSE streaming analysis + follow-up chat)
 """
 
 from fastapi import FastAPI
@@ -23,6 +25,8 @@ from app.routes.form_routes import form_router
 from app.routes.dev_routes import dev_router        # NEW: developer integrations
 from app.routes.resume_routes import resume_router  # FIX: was never registered
 from app.routes.predict_routes import predict_router  # ML placement prediction
+from app.routes.coach_routes import coach_router       # Legacy coach route (kept for backwards compat)
+from app.routes.chatbot_routes import chatbot_router   # resuMate Chatbot
 
 app = FastAPI(
     title="AIRO — AI Resume Optimizer API",
@@ -47,6 +51,8 @@ app.include_router(form_router)    # /form/*
 app.include_router(dev_router)     # /dev/*
 app.include_router(resume_router)  # /api/extract, /api/download, /resume/*
 app.include_router(predict_router) # /predict
+app.include_router(coach_router)   # /coach (legacy)
+app.include_router(chatbot_router) # /chatbot
 
 
 # ── Health Check ─────────────────────────────────────────────────────────────

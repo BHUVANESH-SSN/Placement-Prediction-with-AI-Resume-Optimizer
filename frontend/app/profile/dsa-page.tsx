@@ -1,40 +1,65 @@
 'use client';
 
-import { apiGet, apiPostAuth, clearAuth, getAuth } from '@/lib/api';
+import { apiGet, apiPatch, apiPostAuth, clearAuth, getAuth } from '@/lib/api';
 import {
   Award,
   CheckCircle2,
   Code2,
   Copy,
-  Flame,
-  LogOut, MapPin, Phone,
+  Globe,
+  LogOut,
+  RefreshCw,
   Target,
   TrendingUp,
   Trophy,
-  Zap,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-/* ── TYPES ── */
+/* ?????? TYPES ?????? */
 interface Auth { token: string; email: string | null; name: string | null; }
 interface LeetCodeData {
   username: string;
+  real_name?: string;
   about?: string;
   ranking?: number;
   reputation?: number;
+  avatar?: string;
+  country?: string;
+  skill_tags?: string[];
   total_solved?: number;
   easy_solved?: number;
   medium_solved?: number;
   hard_solved?: number;
-  acceptance_rate?: number;
-  contribution_points?: number;
-  profile_image?: string;
-  badges?: { name: string; icon?: string }[];
-  recent_submissions?: { title: string; status: string; lang: string; timestamp: string }[];
+  beats_easy?: number;
+  beats_medium?: number;
+  beats_hard?: number;
+  streak?: number;
+  total_active_days?: number;
+  submission_calendar?: Record<string, number>;
+  badges?: { name: string; icon?: string; id?: string }[];
+  languages?: { name: string; count: number }[];
+  topic_tags?: {
+    advanced?: { name: string; count: number }[];
+    intermediate?: { name: string; count: number }[];
+    fundamental?: { name: string; count: number }[];
+  };
+  contest?: {
+    rating?: number;
+    global_ranking?: number;
+    top_percentage?: number;
+    attended_count?: number;
+  };
+  contest_history?: {
+    attended?: boolean;
+    rating?: number;
+    ranking?: number;
+    title?: string;
+    start_time?: number;
+  }[];
 }
 
-/* ── DESIGN SYSTEM ── */
+/* ?????? DESIGN SYSTEM ?????? */
 const C = {
   ink: '#0f172a',
   paper: '#f8fafc',
@@ -50,88 +75,49 @@ const C = {
   yellow: '#eab308',
 };
 
-/* ── SCROLL REVEAL ── */
+/* ?????? SCROLL REVEAL ?????? */
 function useScrollReveal(delay = 0) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const el = ref.current; if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => setVisible(e.isIntersecting),
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
-    );
+    const obs = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.06 });
     obs.observe(el); return () => obs.disconnect();
   }, []);
   return {
     ref,
     style: {
       opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0px)' : 'translateY(32px)',
-      transition: `opacity 0.55s cubic-bezier(.4,0,.2,1) ${delay}ms, transform 0.55s cubic-bezier(.4,0,.2,1) ${delay}ms`,
+      transform: visible ? 'translateY(0)' : 'translateY(28px)',
+      transition: `opacity 0.5s ease ${delay}ms, transform 0.5s ease ${delay}ms`,
     } as React.CSSProperties,
   };
 }
 
-/* ── NAVBAR ── */
+/* ?????? NAVBAR ?????? */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
   return (
-    <nav style={{
-      display: 'flex',
-      alignItems: 'center',
-      height: 60,
-      padding: '0 34px',
-      background: 'rgba(255,255,255,0.82)',
-      backdropFilter: 'blur(16px)',
-      borderBottom: `1px solid ${C.border}`,
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 200
-    }}>
-      {/* Logo on the left */}
+    <nav style={{ display: 'flex', alignItems: 'center', height: 60, padding: '0 34px', background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/home')}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="8 7 2 12 8 17" />
-          <polyline points="16 7 22 12 16 17" />
+          <polyline points="8 7 2 12 8 17" /><polyline points="16 7 22 12 16 17" />
         </svg>
-        <span style={{
-          fontFamily: 'Montserrat, sans-serif',
-          fontWeight: 900,
-          fontSize: '18px',
-          letterSpacing: '-0.5px',
-          color: '#0d0d14',
-          display: 'flex',
-          alignItems: 'baseline',
-          lineHeight: 1,
-        }}>
-          AIRO
-          <div style={{
-            width: '6px',
-            height: '6px',
-            backgroundColor: '#7c3aed',
-            marginLeft: '4px'
-          }} />
+        <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: '18px', letterSpacing: '-0.5px', color: '#0d0d14', display: 'flex', alignItems: 'baseline', lineHeight: 1 }}>
+          AIRO<div style={{ width: '6px', height: '6px', backgroundColor: '#7c3aed', marginLeft: '4px' }} />
         </span>
       </div>
-
-      {/* Centered navigation links */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        justifyContent: 'center',
-        gap: 36,
-        marginRight: '120px' // Offset to balance the logo's space
-      }}>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 36, marginRight: '120px' }}>
         {NAV.map(label => (
           <button key={label} onClick={() => {
             if (label === 'Dashboard') router.push('/home');
             if (label === 'Development') router.push('/development');
             if (label === 'Resume Builder') router.push('/resume');
             if (label === 'DSA') router.push('/dsa');
-          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            if (label === 'Predict') router.push('/predict');
+            if (label === 'resuMate') router.push('/career-coach');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
             {label}
           </button>
         ))}
@@ -140,76 +126,66 @@ export function Navbar({ active }: { active?: string }) {
   );
 }
 
-/* ── TOAST ── */
+/* ?????? TOAST ?????? */
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)' }}>
-      {type === 'success' ? <CheckCircle2 size={16} /> : '✕'} {msg}
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: "'Fira Code', monospace", fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)' }}>
+      {type === 'success' ? <CheckCircle2 size={16} /> : '???'} {msg}
     </div>
   );
 }
 
-/* ── STAT CARD ── */
-function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string | number; color: string }) {
-  const reveal = useScrollReveal(80);
-  return (
-    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '22px 26px', display: 'flex', alignItems: 'center', gap: 18, boxShadow: '0 4px 18px rgba(15,23,42,0.06)', flex: 1, minWidth: 160 }}>
-      <div style={{ width: 48, height: 48, borderRadius: 14, background: color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>{icon}</div>
-      <div>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 26, color: C.ink, margin: 0, lineHeight: 1 }}>{value}</p>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '4px 0 0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ── DONUT CHART ── */
-function DonutChart({ easy, medium, hard, total }: { easy: number; medium: number; hard: number; total: number }) {
-  const reveal = useScrollReveal(100);
-  const SIZE = 200, SW = 24, r = (SIZE - SW) / 2;
-  const circ = 2 * Math.PI * r;
-  const cx = SIZE / 2, cy = SIZE / 2;
+/* ?????? DONUT CHART WITH BEATS ?????? */
+function DonutChart({ easy, medium, hard, total, beatsEasy, beatsMedium, beatsHard }: {
+  easy: number; medium: number; hard: number; total: number;
+  beatsEasy?: number; beatsMedium?: number; beatsHard?: number;
+}) {
+  const reveal = useScrollReveal(60);
+  const SIZE = 180, SW = 22, r = (SIZE - SW) / 2, circ = 2 * Math.PI * r;
   const safe = total || 1;
   let offset = 0;
   const segs = [
-    { val: easy, color: C.success, label: 'Easy' },
-    { val: medium, color: C.orange, label: 'Medium' },
-    { val: hard, color: C.accent2, label: 'Hard' },
+    { val: easy, color: C.success, label: 'Easy', beats: beatsEasy },
+    { val: medium, color: C.orange, label: 'Medium', beats: beatsMedium },
+    { val: hard, color: C.accent2, label: 'Hard', beats: beatsHard },
   ].map(s => {
     const dash = circ * (s.val / safe);
-    const arc = { dash, offset: -offset, color: s.color, val: s.val, label: s.label };
+    const arc = { ...s, dash, offset: -offset };
     offset += dash;
     return arc;
   });
 
   return (
-    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '32px', boxShadow: '0 4px 18px rgba(15,23,42,0.06)' }}>
-      <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 18, color: C.ink, margin: '0 0 24px' }}>Problem Distribution</h3>
-      <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '28px 28px 24px', boxShadow: '0 2px 10px rgba(15,23,42,0.05)' }}>
+      <h3 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 15, color: C.muted, margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Problems Solved</h3>
+      <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
         <div style={{ position: 'relative', width: SIZE, height: SIZE, flexShrink: 0 }}>
           <svg width={SIZE} height={SIZE} style={{ transform: 'rotate(-90deg)' }}>
-            <circle cx={cx} cy={cy} r={r} fill="none" stroke="#f1f5f9" strokeWidth={SW} />
+            <circle cx={SIZE / 2} cy={SIZE / 2} r={r} fill="none" stroke="#f1f5f9" strokeWidth={SW} />
             {segs.map((a, i) => a.val > 0 && (
-              <circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={a.color} strokeWidth={SW}
+              <circle key={i} cx={SIZE / 2} cy={SIZE / 2} r={r} fill="none" stroke={a.color} strokeWidth={SW}
                 strokeDasharray={`${a.dash} ${circ - a.dash}`} strokeDashoffset={a.offset} strokeLinecap="round" />
             ))}
           </svg>
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 36, color: C.ink, lineHeight: 1 }}>{total}</span>
-            <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, marginTop: 4, fontWeight: 600 }}>Total Solved</span>
+            <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 34, color: C.ink, lineHeight: 1 }}>{total}</span>
+            <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: C.muted, marginTop: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Solved</span>
           </div>
         </div>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
           {segs.map(s => (
-            <div key={s.label} style={{ marginBottom: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 700, color: C.ink }}>{s.label}</span>
-                <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 800, color: s.color }}>{s.val}</span>
+            <div key={s.label}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, alignItems: 'baseline' }}>
+                <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 700, color: s.color }}>{s.label}</span>
+                <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 800, color: C.ink }}>{s.val}</span>
               </div>
-              <div style={{ height: 8, background: '#f1f5f9', borderRadius: 99, overflow: 'hidden' }}>
-                <div style={{ width: `${safe ? (s.val / safe) * 100 : 0}%`, height: '100%', background: s.color, borderRadius: 99, transition: 'width 0.6s ease' }} />
+              <div style={{ height: 6, background: '#f1f5f9', borderRadius: 99 }}>
+                <div style={{ width: `${safe ? (s.val / safe) * 100 : 0}%`, height: '100%', background: s.color, borderRadius: 99, transition: 'width 0.7s ease' }} />
               </div>
+              {s.beats !== undefined && (
+                <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, color: C.muted, margin: '3px 0 0' }}>Beats {s.beats}%</p>
+              )}
             </div>
           ))}
         </div>
@@ -218,93 +194,149 @@ function DonutChart({ easy, medium, hard, total }: { easy: number; medium: numbe
   );
 }
 
-/* ── ACCEPTANCE RATE GAUGE ── */
-function AcceptanceGauge({ rate }: { rate: number }) {
-  const reveal = useScrollReveal(120);
-  const SIZE = 180;
-  const SW = 20;
-  const r = (SIZE - SW) / 2;
-  const circ = Math.PI * r;
-  const progress = circ * (rate / 100);
+/* ?????? CONTEST CARD ?????? */
+function ContestCard({ contest, history }: {
+  contest: LeetCodeData['contest'];
+  history: LeetCodeData['contest_history'];
+}) {
+  const reveal = useScrollReveal(100);
+  if (!contest?.rating && !contest?.attended_count) return null;
+
+  const attended = history?.filter(h => h.attended) || [];
+  const W = 260, H = 80;
+  const ratings = attended.slice(-15).map(h => h.rating || 0);
+  const minR = Math.min(...ratings, 1400) - 50;
+  const maxR = Math.max(...ratings, 1600) + 50;
+  const rangeR = maxR - minR || 1;
+
+  const pts = ratings.map((r, i) =>
+    `${Math.round((i / Math.max(ratings.length - 1, 1)) * W)},${Math.round(H - ((r - minR) / rangeR) * H)}`
+  ).join(' ');
+
+  const ratingColor = (r?: number) => !r ? C.muted : r >= 2000 ? '#f97316' : r >= 1600 ? '#eab308' : C.accent;
 
   return (
-    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '32px', boxShadow: '0 4px 18px rgba(15,23,42,0.06)', textAlign: 'center' }}>
-      <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 18, color: C.ink, margin: '0 0 24px' }}>Acceptance Rate</h3>
-      <div style={{ position: 'relative', width: SIZE, height: SIZE / 2 + 20, margin: '0 auto' }}>
-        <svg width={SIZE} height={SIZE / 2 + 20} style={{ overflow: 'visible' }}>
-          <path d={`M ${SW / 2} ${SIZE / 2} A ${r} ${r} 0 0 1 ${SIZE - SW / 2} ${SIZE / 2}`}
-            fill="none" stroke="#f1f5f9" strokeWidth={SW} strokeLinecap="round" />
-          <path d={`M ${SW / 2} ${SIZE / 2} A ${r} ${r} 0 0 1 ${SIZE - SW / 2} ${SIZE / 2}`}
-            fill="none" stroke={rate >= 70 ? C.success : rate >= 50 ? C.orange : C.accent2}
-            strokeWidth={SW} strokeLinecap="round"
-            strokeDasharray={`${progress} ${circ}`} />
-        </svg>
-        <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, textAlign: 'center' }}>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 32, color: C.ink }}>{rate}%</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── LEETCODE BANNER ── */
-function LeetCodeBanner({ leetcode }: { leetcode: LeetCodeData }) {
-  const reveal = useScrollReveal(0);
-  return (
-    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 28, padding: '36px 40px', marginBottom: 40, boxShadow: '0 4px 24px rgba(15,23,42,0.08)', display: 'flex', alignItems: 'center', gap: 36, flexWrap: 'wrap' }}>
-      {leetcode.profile_image && <img src={leetcode.profile_image} alt="LeetCode avatar" style={{ width: 100, height: 100, borderRadius: '50%', border: `3px solid ${C.accentSoft}`, boxShadow: `0 8px 24px ${C.accent}30`, flexShrink: 0 }} />}
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8, flexWrap: 'wrap' }}>
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: 0 }}>{leetcode.username}</h2>
-          <a href={`https://leetcode.com/${leetcode.username}`} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 5, background: C.accentSoft, color: C.accent, borderRadius: 10, padding: '6px 14px', fontFamily: 'Montserrat, sans-serif', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
-            <Code2 size={13} /> Open LeetCode
-          </a>
-        </div>
-        {leetcode.about && <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 16px', lineHeight: 1.6 }}>{leetcode.about}</p>}
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-          {leetcode.ranking && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, fontWeight: 600 }}>
-              <Trophy size={14} /> Ranking: {leetcode.ranking.toLocaleString()}
-            </span>
-          )}
-          {leetcode.reputation !== undefined && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, fontWeight: 600 }}>
-              <Award size={14} /> Reputation: {leetcode.reputation}
-            </span>
-          )}
-          {leetcode.contribution_points !== undefined && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, fontWeight: 600 }}>
-              <Zap size={14} /> Contributions: {leetcode.contribution_points}
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── BADGES SECTION ── */
-function BadgesSection({ badges }: { badges: { name: string; icon?: string }[] }) {
-  const reveal = useScrollReveal(140);
-  if (!badges || badges.length === 0) return null;
-
-  return (
-    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '28px 32px', boxShadow: '0 4px 18px rgba(15,23,42,0.06)', marginBottom: 40 }}>
-      <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 18, color: C.ink, margin: '0 0 20px' }}>Badges & Achievements</h3>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        {badges.map((badge, i) => (
-          <div key={i} style={{ background: `linear-gradient(135deg, ${C.yellow}20, ${C.orange}20)`, border: `1.5px solid ${C.yellow}`, borderRadius: 12, padding: '10px 18px', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 20 }}>{badge.icon || '🏅'}</span>
-            <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 700, color: C.ink }}>{badge.name}</span>
+    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '28px 28px 24px', boxShadow: '0 2px 10px rgba(15,23,42,0.05)' }}>
+      <h3 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 15, color: C.muted, margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Contest Rating</h3>
+      <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        <div>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 40, color: ratingColor(contest?.rating), margin: '0 0 4px', lineHeight: 1 }}>
+            {contest?.rating ? Math.round(contest.rating) : '???'}
+          </p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.muted, margin: '0 0 16px' }}>Rating</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {contest?.global_ranking && (
+              <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.ink, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Trophy size={13} color={C.yellow} /> #{contest.global_ranking.toLocaleString()} Global
+              </span>
+            )}
+            {contest?.top_percentage !== undefined && (
+              <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.ink, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Award size={13} color={C.orange} /> Top {contest.top_percentage.toFixed(1)}%
+              </span>
+            )}
+            {contest?.attended_count !== undefined && (
+              <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <TrendingUp size={13} /> {contest.attended_count} contests
+              </span>
+            )}
           </div>
-        ))}
+        </div>
+        {ratings.length >= 2 && (
+          <div style={{ flex: 1, minWidth: 140 }}>
+            <svg width="100%" height={H + 10} viewBox={`0 0 ${W} ${H + 10}`} style={{ overflow: 'visible' }}>
+              <polyline points={pts} fill="none" stroke={ratingColor(contest?.rating)} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              {ratings.map((r, i) => {
+                const x = Math.round((i / Math.max(ratings.length - 1, 1)) * W);
+                const y = Math.round(H - ((r - minR) / rangeR) * H);
+                return <circle key={i} cx={x} cy={y} r={3} fill={ratingColor(contest?.rating)} />;
+              })}
+            </svg>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, color: C.muted, margin: '4px 0 0', textAlign: 'center' }}>Last {ratings.length} contests</p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-/* ── LINK LEETCODE PANEL ── */
+/* ?????? LANGUAGE BARS ?????? */
+function LanguageBars({ languages }: { languages: { name: string; count: number }[] }) {
+  const reveal = useScrollReveal(60);
+  if (!languages || languages.length === 0) return null;
+  const top = languages.slice(0, 6);
+  const maxCount = top[0]?.count || 1;
+
+  const LANG_COLORS: Record<string, string> = {
+    Python: '#3572A5', JavaScript: '#f1e05a', TypeScript: '#2b7489', Java: '#b07219',
+    'C++': '#f34b7d', C: '#555555', Go: '#00ADD8', Rust: '#dea584',
+    Kotlin: '#F18E33', Swift: '#ffac45', Ruby: '#701516', SQL: '#e38c00',
+  };
+
+  return (
+    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '24px 28px', boxShadow: '0 2px 10px rgba(15,23,42,0.05)' }}>
+      <h3 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 15, color: C.muted, margin: '0 0 18px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Languages</h3>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {top.map(l => {
+          const color = LANG_COLORS[l.name] || C.accent;
+          return (
+            <div key={l.name}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 700, color: C.ink }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />{l.name}
+                </span>
+                <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, fontWeight: 600 }}>{l.count}</span>
+              </div>
+              <div style={{ height: 7, background: '#f1f5f9', borderRadius: 99 }}>
+                <div style={{ width: `${(l.count / maxCount) * 100}%`, height: '100%', background: color, borderRadius: 99, transition: 'width 0.7s ease' }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ?????? TOPIC TAGS ?????? */
+function TopicTags({ topicTags }: { topicTags: LeetCodeData['topic_tags'] }) {
+  const reveal = useScrollReveal(80);
+  if (!topicTags) return null;
+  const sections = [
+    { key: 'fundamental' as const, label: 'Fundamental', color: C.success },
+    { key: 'intermediate' as const, label: 'Intermediate', color: C.orange },
+    { key: 'advanced' as const, label: 'Advanced', color: C.accent2 },
+  ];
+
+  const hasAny = sections.some(s => (topicTags[s.key] || []).length > 0);
+  if (!hasAny) return null;
+
+  return (
+    <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '24px 28px', boxShadow: '0 2px 10px rgba(15,23,42,0.05)' }}>
+      <h3 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 15, color: C.muted, margin: '0 0 18px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Topic Tags</h3>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {sections.map(s => {
+          const tags = topicTags[s.key] || [];
+          if (tags.length === 0) return null;
+          return (
+            <div key={s.key}>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, fontWeight: 700, color: s.color, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {tags.slice(0, 8).map(tag => (
+                  <span key={tag.name} style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, fontWeight: 700, color: s.color, background: s.color + '15', border: `1px solid ${s.color}30`, borderRadius: 99, padding: '3px 10px', whiteSpace: 'nowrap' }}>
+                    {tag.name} ?? {tag.count}
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ━━━━ LINK LEETCODE PANEL ━━━━ */
 function LinkLeetCodePanel({ onLinked }: { onLinked: () => void }) {
   const [step, setStep] = useState<'enter' | 'verify'>('enter');
   const [leetcodeId, setLeetcodeId] = useState('');
@@ -317,13 +349,9 @@ function LinkLeetCodePanel({ onLinked }: { onLinked: () => void }) {
     setLoading(true);
     try {
       const res = await apiPostAuth('/dev/leetcode/getcode', { leetcode_id: leetcodeId });
-      setCode(res.verification_code);
-      setStep('verify');
-    } catch {
-      setToast({ msg: 'Failed to get code', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
+      setCode(res.verification_code); setStep('verify');
+    } catch { setToast({ msg: 'Failed to get code', type: 'error' }); }
+    finally { setLoading(false); }
   }
 
   async function link() {
@@ -332,18 +360,11 @@ function LinkLeetCodePanel({ onLinked }: { onLinked: () => void }) {
       await apiPostAuth('/dev/leetcode/link', { leetcode_id: leetcodeId, code });
       setToast({ msg: 'LeetCode linked!', type: 'success' });
       setTimeout(onLinked, 1000);
-    } catch (e: any) {
-      setToast({ msg: e?.message || 'Linking failed', type: 'error' });
-    } finally {
-      setLoading(false);
-    }
+    } catch (e: any) { setToast({ msg: e?.message || 'Linking failed', type: 'error' }); }
+    finally { setLoading(false); }
   }
 
-  const inpStyle: React.CSSProperties = {
-    width: '100%', padding: '12px 16px', borderRadius: 12,
-    border: `1px solid ${C.border}`, fontFamily: 'Montserrat, sans-serif',
-    fontSize: 14, outline: 'none', background: C.surface, color: C.ink, boxSizing: 'border-box',
-  };
+  const inpStyle: React.CSSProperties = { width: '100%', padding: '12px 16px', borderRadius: 12, border: `1px solid ${C.border}`, fontFamily: "'Fira Code', monospace", fontSize: 14, outline: 'none', background: C.surface, color: C.ink, boxSizing: 'border-box' };
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 500, padding: 40 }}>
@@ -351,50 +372,40 @@ function LinkLeetCodePanel({ onLinked }: { onLinked: () => void }) {
         <div style={{ width: 72, height: 72, borderRadius: 20, background: C.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
           <Code2 size={36} color={C.accent} />
         </div>
-        <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 26, color: C.ink, margin: '0 0 8px' }}>Link LeetCode</h2>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 36px', lineHeight: 1.6 }}>
+        <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 26, color: C.ink, margin: '0 0 8px' }}>Link LeetCode</h2>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: '0 0 36px', lineHeight: 1.6 }}>
           Connect your LeetCode account to showcase your problem-solving stats and achievements.
         </p>
         {step === 'enter' ? (
           <>
             <div style={{ textAlign: 'left', marginBottom: 20 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block', marginBottom: 6 }}>
-                LeetCode Username
-              </label>
-              <input style={inpStyle} placeholder="e.g. your_username" value={leetcodeId}
-                onChange={e => setLeetcodeId(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && getCode()} />
+              <label style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block', marginBottom: 6 }}>LeetCode Username</label>
+              <input style={inpStyle} placeholder="e.g. your_username" value={leetcodeId} onChange={e => setLeetcodeId(e.target.value)} onKeyDown={e => e.key === 'Enter' && getCode()} />
             </div>
             <button onClick={getCode} disabled={loading || !leetcodeId.trim()}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !leetcodeId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              {loading ? 'Getting code…' : <><Target size={16} /> Get Verification Code</>}
+              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !leetcodeId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              {loading ? 'Getting code???' : <><Target size={16} /> Get Verification Code</>}
             </button>
           </>
         ) : (
           <>
             <div style={{ background: C.accentSoft, borderRadius: 16, padding: '20px 24px', marginBottom: 24 }}>
-              <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.accent, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Your Verification Code
-              </p>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.accent, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Verification Code</p>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                 <span style={{ fontFamily: 'monospace', fontSize: 28, fontWeight: 900, color: C.accent, letterSpacing: 4 }}>{code}</span>
-                <button onClick={() => navigator.clipboard.writeText(code)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.accent }}>
+                <button onClick={() => navigator.clipboard.writeText(code)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.accent }}>
                   <Copy size={20} />
                 </button>
               </div>
             </div>
-            <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, marginBottom: 28, lineHeight: 1.6 }}>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, marginBottom: 28, lineHeight: 1.6 }}>
               Add this code to your LeetCode bio at <strong>leetcode.com/profile</strong>, then click Verify below.
             </p>
             <button onClick={link} disabled={loading}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
-              {loading ? 'Verifying…' : <><CheckCircle2 size={16} /> Verify and Link</>}
+              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
+              {loading ? 'Verifying???' : <><CheckCircle2 size={16} /> Verify and Link</>}
             </button>
-            <button onClick={() => setStep('enter')}
-              style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 600 }}>
-              Back
-            </button>
+            <button onClick={() => setStep('enter')} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 600 }}>Back</button>
           </>
         )}
       </div>
@@ -403,7 +414,116 @@ function LinkLeetCodePanel({ onLinked }: { onLinked: () => void }) {
   );
 }
 
-/* ── MAIN PAGE ── */
+/* ?????? PROFILE SIDEBAR (inside main) ?????? */
+function ProfileSidebar({ leetcode, updating, onUpdate }: {
+  leetcode: LeetCodeData;
+  updating: boolean;
+  onUpdate: () => void;
+}) {
+  const totalSolved = (leetcode.easy_solved || 0) + (leetcode.medium_solved || 0) + (leetcode.hard_solved || 0);
+  const ratingColor = !leetcode.contest?.rating ? C.muted
+    : leetcode.contest.rating >= 2000 ? '#f97316'
+    : leetcode.contest.rating >= 1600 ? '#eab308'
+    : C.accent;
+
+  return (
+    <div style={{ width: 280, flexShrink: 0 }}>
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ width: 90, height: 90, borderRadius: '50%', overflow: 'hidden', border: `3px solid ${C.accentSoft}`, boxShadow: `0 8px 24px ${C.accent}25` }}>
+          {leetcode.avatar
+            ? <img src={leetcode.avatar} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            : <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 32 }}>
+                {(leetcode.real_name || leetcode.username)[0].toUpperCase()}
+              </div>
+          }
+        </div>
+      </div>
+
+      {leetcode.real_name && (
+        <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 22, color: C.ink, margin: '0 0 2px', letterSpacing: '-0.5px' }}>{leetcode.real_name}</h2>
+      )}
+      <a href={`https://leetcode.com/${leetcode.username}`} target="_blank" rel="noopener noreferrer"
+        style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.accent, fontWeight: 600, textDecoration: 'none', display: 'block', marginBottom: 12 }}>
+        @{leetcode.username}
+      </a>
+
+      {leetcode.about && (
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, lineHeight: 1.6, margin: '0 0 16px' }}>{leetcode.about}</p>
+      )}
+
+      {leetcode.contest?.rating && (
+        <div style={{ background: `${ratingColor}15`, border: `1.5px solid ${ratingColor}40`, borderRadius: 12, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Trophy size={16} color={ratingColor} />
+          <div>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: ratingColor, fontWeight: 700, margin: 0, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Contest Rating</p>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 18, fontWeight: 900, color: ratingColor, margin: 0 }}>{Math.round(leetcode.contest.rating)}</p>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+        {leetcode.ranking && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Award size={14} color={C.muted} />
+            <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.ink }}>
+              Ranked <strong>#{leetcode.ranking.toLocaleString()}</strong>
+            </span>
+          </div>
+        )}
+        {leetcode.country && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Globe size={14} color={C.muted} />
+            <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted }}>{leetcode.country}</span>
+          </div>
+        )}
+
+      </div>
+
+      <div style={{ background: C.paper, borderRadius: 12, padding: '12px 14px', marginBottom: 20 }}>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: C.muted, margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Community Stats</p>
+        <div style={{ display: 'flex', gap: 20 }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 20, color: C.ink, margin: 0 }}>{totalSolved}</p>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, color: C.muted, margin: '2px 0 0', textTransform: 'uppercase' }}>Solved</p>
+          </div>
+          {leetcode.reputation !== undefined && (
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 20, color: C.ink, margin: 0 }}>{leetcode.reputation}</p>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, color: C.muted, margin: '2px 0 0', textTransform: 'uppercase' }}>Rep</p>
+            </div>
+          )}
+          {leetcode.contest?.attended_count !== undefined && (
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 20, color: C.ink, margin: 0 }}>{leetcode.contest.attended_count}</p>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, color: C.muted, margin: '2px 0 0', textTransform: 'uppercase' }}>Contests</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {leetcode.skill_tags && leetcode.skill_tags.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: C.muted, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Skills</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+            {leetcode.skill_tags.slice(0, 12).map(tag => (
+              <span key={tag} style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, fontWeight: 600, color: C.accent, background: C.accentSoft, borderRadius: 6, padding: '3px 8px' }}>{tag}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <button onClick={onUpdate} disabled={updating}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
+        style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 10, padding: '9px 13px', fontSize: 13, color: C.muted, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 600, transition: 'all 0.2s', opacity: updating ? 0.6 : 1 }}>
+        <RefreshCw size={14} style={{ animation: updating ? 'spin 1s linear infinite' : 'none' }} />
+        {updating ? 'Refreshing???' : 'Refresh LeetCode'}
+      </button>
+    </div>
+  );
+}
+
+/* ?????? MAIN PAGE ?????? */
 export default function DsaPage() {
   const router = useRouter();
   const [auth, setAuth] = useState<Auth | null>(null);
@@ -411,12 +531,13 @@ export default function DsaPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
-  const [profile, setProfile] = useState<{ full_name?: string; phone?: string; location?: string } | null>(null);
+  const [profile, setProfile] = useState<{ full_name?: string } | null>(null);
+  const NAV_H = 60;
 
   const fetchData = useCallback(async (email: string) => {
     try {
       const data = await apiGet(`/form/get-profile/${encodeURIComponent(email)}`);
-      setProfile({ full_name: data.full_name, phone: data.phone, location: data.location });
+      setProfile({ full_name: data.full_name });
       if (data.leetcode) setLeetcode(data.leetcode);
     } catch { }
   }, []);
@@ -431,84 +552,46 @@ export default function DsaPage() {
   async function updateLeetCode() {
     setUpdating(true);
     try {
-      await apiPostAuth('/dev/leetcode/update', {});
+      await apiPatch('/dev/leetcode/update', {});
       if (auth?.email) await fetchData(auth.email);
       setToast({ msg: 'LeetCode data refreshed!', type: 'success' });
-    } catch {
-      setToast({ msg: 'Update failed', type: 'error' });
-    } finally {
-      setUpdating(false);
-    }
+    } catch { setToast({ msg: 'Update failed', type: 'error' }); }
+    finally { setUpdating(false); }
   }
 
-  function logout() {
-    clearAuth();
-    router.push('/login');
-  }
+  function logout() { clearAuth(); router.push('/login'); }
 
   const displayName = profile?.full_name || auth?.name || auth?.email?.split('@')[0] || 'User';
-  const initials = displayName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
-  const SIDEBAR_W = 285;
-  const NAV_H = 60;
-
   const totalSolved = (leetcode?.easy_solved || 0) + (leetcode?.medium_solved || 0) + (leetcode?.hard_solved || 0);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Fira Code', monospace" }}>
       <Navbar active="DSA" />
 
-      {/* SIDEBAR */}
-      <aside style={{ position: 'fixed', top: NAV_H, left: 0, width: SIDEBAR_W, height: `calc(100vh - ${NAV_H}px)`, overflowY: 'auto', borderRight: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', padding: '40px 28px 40px 34px', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
-        <div style={{ width: 72, height: 72, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 24, marginBottom: 16, flexShrink: 0, boxShadow: `0 12px 30px ${C.accent}45`, overflow: 'hidden' }}>
-          {leetcode?.profile_image ? <img src={leetcode.profile_image} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
+      {/* FIXED ICON SIDEBAR */}
+      <aside style={{ position: 'fixed', top: NAV_H, left: 0, width: 72, height: `calc(100vh - ${NAV_H}px)`, borderRight: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '28px 0', zIndex: 100, gap: 12 }}>
+        <div style={{ width: 40, height: 40, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 15, overflow: 'hidden', boxShadow: `0 6px 16px ${C.accent}40`, flexShrink: 0 }}>
+          {leetcode?.avatar ? <img src={leetcode.avatar} alt="av" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (displayName[0] || 'U').toUpperCase()}
         </div>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px' }}>{displayName}</p>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 8px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth?.email}</p>
-        {leetcode && (
-          <a href={`https://leetcode.com/${leetcode.username}`} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.accent, fontWeight: 700, textDecoration: 'none', marginBottom: 24 }}>
-            <Code2 size={14} /> @{leetcode.username}
-          </a>
-        )}
-        {profile?.location && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8, color: C.muted, fontSize: 13.5 }}>
-            <MapPin size={15} color={C.muted} />
-            <span style={{ fontFamily: 'Montserrat, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.location}</span>
-          </div>
-        )}
-        {profile?.phone && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 24, color: C.muted, fontSize: 13.5 }}>
-            <Phone size={15} color={C.muted} />
-            <span style={{ fontFamily: 'Montserrat, sans-serif' }}>{profile.phone}</span>
-          </div>
-        )}
-        {leetcode && (
-          <button onClick={updateLeetCode} disabled={updating}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 13px', fontSize: 13, color: C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, transition: 'all 0.2s', marginBottom: 8, opacity: updating ? 0.6 : 1 }}>
-            <TrendingUp size={14} style={{ animation: updating ? 'spin 1s linear infinite' : 'none' }} />
-            {updating ? 'Refreshing…' : 'Refresh LeetCode'}
-          </button>
-        )}
         <div style={{ flex: 1 }} />
-        <button onClick={logout}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent2; e.currentTarget.style.color = C.accent2; e.currentTarget.style.background = '#fff0f0'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; e.currentTarget.style.background = 'none'; }}
-          style={{ width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 14px', fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.muted, transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <LogOut size={14} /> Logout
+        <button onClick={logout} title="Logout"
+          onMouseEnter={e => { e.currentTarget.style.color = C.accent2; }}
+          onMouseLeave={e => { e.currentTarget.style.color = C.muted; }}
+          style={{ width: 40, height: 40, borderRadius: 10, border: `1.5px solid ${C.border}`, background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted, transition: 'all 0.2s' }}>
+          <LogOut size={16} />
         </button>
       </aside>
 
-      {/* MAIN */}
-      <main style={{ marginLeft: SIDEBAR_W, paddingTop: NAV_H, minHeight: '100vh' }}>
-        <div style={{ padding: '56px 64px 110px' }}>
-          <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
-            My <span style={{ color: C.accent }}>DSA Journey</span>
-          </h1>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: '0 0 56px', fontWeight: 500 }}>
-            Track your problem-solving progress, stats, and achievements
-          </p>
+      <main style={{ marginLeft: 72, paddingTop: NAV_H, minHeight: '100vh' }}>
+        <div style={{ padding: '48px 56px 100px' }}>
+          <div style={{ marginBottom: 40 }}>
+            <h1 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 44, color: C.ink, margin: '0 0 8px', letterSpacing: '-2px', lineHeight: 1 }}>
+              My <span style={{ color: C.accent }}>DSA Journey</span>
+            </h1>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: 0, fontWeight: 500 }}>
+              Track your problem-solving progress, stats, and achievements
+            </p>
+          </div>
 
           {loading ? (
             <div style={{ textAlign: 'center', padding: 100 }}>
@@ -517,32 +600,32 @@ export default function DsaPage() {
           ) : !leetcode ? (
             <LinkLeetCodePanel onLinked={() => { if (auth?.email) fetchData(auth.email); }} />
           ) : (
-            <>
-              <LeetCodeBanner leetcode={leetcode} />
+            <div style={{ display: 'flex', gap: 40, alignItems: 'flex-start' }}>
+              {/* Profile sidebar */}
+              <ProfileSidebar leetcode={leetcode} updating={updating} onUpdate={updateLeetCode} />
 
-              <div style={{ display: 'flex', gap: 20, marginBottom: 56, flexWrap: 'wrap' }}>
-                <StatCard icon={<Target size={22} />} label="Total Solved" value={totalSolved} color={C.accent} />
-                <StatCard icon={<CheckCircle2 size={22} />} label="Easy" value={leetcode.easy_solved || 0} color={C.success} />
-                <StatCard icon={<Zap size={22} />} label="Medium" value={leetcode.medium_solved || 0} color={C.orange} />
-                <StatCard icon={<Flame size={22} />} label="Hard" value={leetcode.hard_solved || 0} color={C.accent2} />
-              </div>
+              {/* Right content */}
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {/* Contest first */}
+                <ContestCard contest={leetcode.contest} history={leetcode.contest_history} />
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 32, marginBottom: 56 }}>
+                {/* Problems solved donut */}
                 <DonutChart
                   easy={leetcode.easy_solved || 0}
                   medium={leetcode.medium_solved || 0}
                   hard={leetcode.hard_solved || 0}
                   total={totalSolved}
+                  beatsEasy={leetcode.beats_easy}
+                  beatsMedium={leetcode.beats_medium}
+                  beatsHard={leetcode.beats_hard}
                 />
-                {leetcode.acceptance_rate !== undefined && (
-                  <AcceptanceGauge rate={leetcode.acceptance_rate} />
-                )}
-              </div>
 
-              {leetcode.badges && leetcode.badges.length > 0 && (
-                <BadgesSection badges={leetcode.badges} />
-              )}
-            </>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+                  <LanguageBars languages={leetcode.languages || []} />
+                  <TopicTags topicTags={leetcode.topic_tags} />
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </main>

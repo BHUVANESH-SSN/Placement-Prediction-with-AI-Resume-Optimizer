@@ -4,7 +4,7 @@ from app.core.config import settings
 
 SECRET_KEY = settings.JWT_SECRET_KEY 
 ALGORITHM = settings.JWT_ALGO 
-EXPIRATION_MINUTES = 60 
+EXPIRATION_MINUTES = 60 * 24  # 24 hours
 
 def create_token(data : dict):
     payload = data.copy()

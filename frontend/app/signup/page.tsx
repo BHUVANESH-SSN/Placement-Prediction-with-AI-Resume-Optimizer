@@ -137,7 +137,7 @@ function Field({
         color: '#5a576e',
         letterSpacing: 0.4,
         textTransform: 'uppercase',
-        fontFamily: 'Montserrat, sans-serif',
+        fontFamily: "'Fira Code', monospace",
       }}>
         <span style={{ color: error ? '#ef4444' : '#6c47ff', display: 'flex' }}>{icon}</span>
         {label}
@@ -151,7 +151,7 @@ function Field({
           fontSize: 11.5,
           color: '#ef4444',
           fontWeight: 600,
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: "'Fira Code', monospace",
         }}>
           <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 7.5a.6.6 0 110-1.2.6.6 0 010 1.2zm.5-2.5h-1V3.5h1V6z" /></svg>
           {error}
@@ -165,7 +165,7 @@ function Field({
           fontSize: 11.5,
           color: '#22c55e',
           fontWeight: 600,
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: "'Fira Code', monospace",
         }}>
           <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm2.47 3.53l-3 3a.75.75 0 01-1.06 0l-1-1a.75.75 0 011.06-1.06l.47.47 2.47-2.47a.75.75 0 011.06 1.06z" /></svg>
           {success}
@@ -258,7 +258,7 @@ export default function SignupPage() {
             marginBottom: 14,
           }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#6c47ff', animation: 'pulse 2s infinite' }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#6c47ff', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'Montserrat, sans-serif' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#6c47ff', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: "'Fira Code', monospace" }}>
               Career Platform
             </span>
           </div>
@@ -267,7 +267,7 @@ export default function SignupPage() {
             Build your<br />
             <span className="heading-accent">career today</span>
           </h1>
-          <p style={{ fontSize: 14.5, color: '#9896a4', lineHeight: 1.65, fontFamily: 'Montserrat, sans-serif', fontWeight: 400, margin: 0 }}>
+          <p style={{ fontSize: 14.5, color: '#9896a4', lineHeight: 1.65, fontFamily: "'Fira Code', monospace", fontWeight: 400, margin: 0 }}>
             Create your account and start connecting with top employers worldwide.
           </p>
         </div>
@@ -284,7 +284,7 @@ export default function SignupPage() {
 
         {/* ── Social Sign‑up ── */}
         <div className="fade-in-up fade-in-up-delay-1" style={{ marginBottom: 20 }}>
-          <p style={{ fontSize: 11.5, color: '#9896a4', fontWeight: 600, letterSpacing: 0.5, marginBottom: 10, fontFamily: 'Montserrat, sans-serif' }}>
+          <p style={{ fontSize: 11.5, color: '#9896a4', fontWeight: 600, letterSpacing: 0.5, marginBottom: 10, fontFamily: "'Fira Code', monospace" }}>
             Quick sign‑up with
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -302,7 +302,7 @@ export default function SignupPage() {
                 color: '#1A1624',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                fontFamily: 'Montserrat, sans-serif',
+                fontFamily: "'Fira Code', monospace",
                 boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
               }}
               onMouseEnter={e => {
@@ -339,7 +339,7 @@ export default function SignupPage() {
                 color: '#1A1624',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                fontFamily: 'Montserrat, sans-serif',
+                fontFamily: "'Fira Code', monospace",
                 boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
               }}
               onMouseEnter={e => {
@@ -367,7 +367,7 @@ export default function SignupPage() {
           <span style={{
             fontSize: 10.5, color: '#b0aec8', fontWeight: 700,
             letterSpacing: 1.5, textTransform: 'uppercase',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: "'Fira Code', monospace",
             whiteSpace: 'nowrap',
           }}>
             or sign up with email
@@ -539,7 +539,7 @@ export default function SignupPage() {
             color: '#b0aec8',
             textAlign: 'center',
             lineHeight: 1.6,
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: "'Fira Code', monospace",
           }}>
             By creating an account you agree to our{' '}
             <a href="#" style={{ color: '#6c47ff', fontWeight: 700, textDecoration: 'none' }}>Terms of Service</a>
@@ -554,7 +554,7 @@ export default function SignupPage() {
           fontSize: 13.5,
           color: '#9896a4',
           textAlign: 'center',
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: "'Fira Code', monospace",
         }}>
           Already part of the network?{' '}
           <Link href="/login" style={{ color: '#6c47ff', fontWeight: 700, textDecoration: 'none' }}>

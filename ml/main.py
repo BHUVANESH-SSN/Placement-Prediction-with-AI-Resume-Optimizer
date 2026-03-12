@@ -16,6 +16,12 @@
 #    8. Save models
 # ============================================================
 
+import sys
+import os
+_ML_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _ML_DIR)                                   # config.py lives here
+sys.path.insert(0, os.path.join(_ML_DIR, "src"))              # all other modules
+
 import warnings
 import numpy as np
 import matplotlib

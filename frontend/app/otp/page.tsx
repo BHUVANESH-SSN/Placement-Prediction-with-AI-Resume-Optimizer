@@ -27,7 +27,7 @@ const S = {
     cursor: 'pointer',
     color: '#9896a4',
     fontSize: 13,
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: "'Fira Code', monospace",
     fontWeight: 600,
     padding: '0 0 32px 0',
     transition: 'color 0.2s',
@@ -81,7 +81,7 @@ const S = {
     color: '#6c47ff',
     letterSpacing: 1.5,
     textTransform: 'uppercase' as const,
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: "'Fira Code', monospace",
   },
 
   /* icon box */
@@ -107,7 +107,7 @@ const S = {
     border: '1px solid rgba(108,71,255,0.2)',
     borderRadius: 8,
     padding: '5px 10px',
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: "'Fira Code', monospace",
     fontSize: 13,
     fontWeight: 700,
     color: '#6c47ff',
@@ -132,7 +132,7 @@ const S = {
     color: 'white',
     border: 'none',
     borderRadius: 14,
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: "'Fira Code', monospace",
     fontWeight: 800,
     fontSize: 15,
     cursor: disabled ? 'not-allowed' : 'pointer',
@@ -161,7 +161,7 @@ const S = {
     fontSize: 12.5,
     color: '#9896a4',
     lineHeight: 1.6,
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: "'Fira Code', monospace",
   },
 
   /* timer row */
@@ -170,7 +170,7 @@ const S = {
     textAlign: 'center' as const,
     fontSize: 13.5,
     color: '#9896a4',
-    fontFamily: 'Montserrat, sans-serif',
+    fontFamily: "'Fira Code', monospace",
     fontWeight: 500,
   },
 
@@ -239,7 +239,7 @@ function OTPBox({
           width: 54,
           height: 62,
           textAlign: 'center',
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: "'Fira Code', monospace",
           fontSize: 24,
           fontWeight: 800,
           border: error
@@ -318,7 +318,7 @@ function CircleTimer({ seconds, total }: { seconds: number; total: number }) {
       {/* label inside */}
       <div style={{ marginLeft: -48, width: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <span style={{
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: "'Fira Code', monospace",
           fontSize: 12,
           fontWeight: 800,
           color: seconds <= 10 ? '#ef4444' : '#6c47ff',
@@ -327,7 +327,7 @@ function CircleTimer({ seconds, total }: { seconds: number; total: number }) {
           {String(seconds).padStart(2, '0')}
         </span>
       </div>
-      <span style={{ fontSize: 13, color: '#9896a4', fontFamily: 'Montserrat, sans-serif', fontWeight: 500 }}>
+      <span style={{ fontSize: 13, color: '#9896a4', fontFamily: "'Fira Code', monospace", fontWeight: 500 }}>
         sec to resend
       </span>
     </div>
@@ -489,7 +489,7 @@ export default function OTPPage() {
             marginBottom: 16,
           }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', animation: 'pulse 2s infinite' }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#22c55e', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: 'Montserrat, sans-serif' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#22c55e', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: "'Fira Code', monospace" }}>
               Verified
             </span>
           </div>
@@ -501,7 +501,7 @@ export default function OTPPage() {
             {pending?.full_name.split(' ')[0] ?? 'Friend'}!
           </span>
         </h2>
-        <p style={{ fontSize: 15, color: '#9896a4', lineHeight: 1.65, fontFamily: 'Montserrat, sans-serif', marginBottom: 32 }}>
+        <p style={{ fontSize: 15, color: '#9896a4', lineHeight: 1.65, fontFamily: "'Fira Code', monospace", marginBottom: 32 }}>
           Your account is all set. Taking you to<br />your dashboard now…
         </p>
 
@@ -571,7 +571,7 @@ export default function OTPPage() {
           <h1 className="heading" style={{ fontSize: 'clamp(28px, 4vw, 42px)', marginBottom: 10 }}>
             Check your<br /><span className="heading-accent">Inbox</span>
           </h1>
-          <p style={{ fontSize: 14.5, color: '#9896a4', lineHeight: 1.65, fontFamily: 'Montserrat, sans-serif', marginBottom: 12 }}>
+          <p style={{ fontSize: 14.5, color: '#9896a4', lineHeight: 1.65, fontFamily: "'Fira Code', monospace", marginBottom: 12 }}>
             We sent a 6-digit verification code to
           </p>
 
@@ -618,7 +618,7 @@ export default function OTPPage() {
           </div>
 
           {/* Fill progress text */}
-          <div style={{ textAlign: 'center', marginTop: 10, fontSize: 11.5, color: '#b0aec8', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, letterSpacing: 0.5 }}>
+          <div style={{ textAlign: 'center', marginTop: 10, fontSize: 11.5, color: '#b0aec8', fontFamily: "'Fira Code', monospace", fontWeight: 600, letterSpacing: 0.5 }}>
             {filledCount === 0
               ? 'Enter your code above'
               : filledCount < OTP_LEN
@@ -641,7 +641,7 @@ export default function OTPPage() {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="#ef4444">
                 <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 3.5a.5.5 0 01.5.5v3a.5.5 0 01-1 0V5a.5.5 0 01.5-.5zm0 7a.75.75 0 110-1.5.75.75 0 010 1.5z" />
               </svg>
-              <span style={{ fontSize: 13, color: '#ef4444', fontFamily: 'Montserrat, sans-serif', fontWeight: 600 }}>
+              <span style={{ fontSize: 13, color: '#ef4444', fontFamily: "'Fira Code', monospace", fontWeight: 600 }}>
                 {error}
               </span>
             </div>
@@ -681,13 +681,13 @@ export default function OTPPage() {
             {timer > 0 ? (
               <div style={S.circleTimerWrap}>
                 <CircleTimer seconds={timer} total={RESEND_SEC} />
-                <p style={{ fontSize: 12.5, color: '#b0aec8', fontFamily: 'Montserrat, sans-serif' }}>
+                <p style={{ fontSize: 12.5, color: '#b0aec8', fontFamily: "'Fira Code', monospace" }}>
                   Didn&apos;t get the code? Wait to resend.
                 </p>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                <p style={{ fontSize: 13, color: '#9896a4', fontFamily: 'Montserrat, sans-serif' }}>
+                <p style={{ fontSize: 13, color: '#9896a4', fontFamily: "'Fira Code', monospace" }}>
                   Didn&apos;t receive it?
                 </p>
                 <button
@@ -699,7 +699,7 @@ export default function OTPPage() {
                     borderRadius: 10,
                     padding: '8px 20px',
                     color: '#6c47ff',
-                    fontFamily: 'Montserrat, sans-serif',
+                    fontFamily: "'Fira Code', monospace",
                     fontSize: 13.5,
                     fontWeight: 700,
                     cursor: resending ? 'not-allowed' : 'pointer',

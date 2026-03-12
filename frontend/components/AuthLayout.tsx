@@ -82,7 +82,7 @@ export function AiroLogo() {
         <polyline points="16 7 22 12 16 17" />
       </svg>
       <span style={{
-        fontFamily: 'Montserrat, sans-serif',
+        fontFamily: "'Fira Code', monospace",
         fontWeight: 900,
         fontSize: '28px',
         letterSpacing: '-0.5px',

@@ -51,7 +51,10 @@ async function request(path: string, method: string, body?: Record<string, unkno
     if (!res.ok) {
       const detail = data.detail || data.message || `Error ${res.status}`;
       const msg = typeof detail === 'object' ? JSON.stringify(detail) : detail;
-      throw new Error(msg);
+      // Attach status so callers can detect 401 and redirect if needed
+      const err = new Error(msg) as Error & { status?: number };
+      err.status = res.status;
+      throw err;
     }
     return data;
 

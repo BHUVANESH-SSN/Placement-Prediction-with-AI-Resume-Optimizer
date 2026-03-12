@@ -54,7 +54,7 @@ const C = {
 /* ── INPUT STYLES ── */
 const inp: React.CSSProperties = {
   width: '100%', padding: '11px 15px', borderRadius: 12,
-  border: `1px solid ${C.border}`, fontFamily: 'Montserrat, sans-serif', fontSize: 14,
+  border: `1px solid ${C.border}`, fontFamily: "'Fira Code', monospace", fontSize: 14,
   outline: 'none', background: C.surface, color: C.ink, boxSizing: 'border-box', transition: 'all 0.2s',
 };
 const mlbl: React.CSSProperties = {
@@ -78,7 +78,7 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
   return (
     <nav style={{
       display: 'flex',
@@ -101,7 +101,7 @@ export function Navbar({ active }: { active?: string }) {
           <polyline points="16 7 22 12 16 17" />
         </svg>
         <span style={{
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: "'Fira Code', monospace",
           fontWeight: 900,
           fontSize: '18px',
           letterSpacing: '-0.5px',
@@ -134,7 +134,9 @@ export function Navbar({ active }: { active?: string }) {
             if (label === 'Development') router.push('/development');
             if (label === 'Resume builder') router.push('/resume');
             if (label === 'DSA') router.push('/dsa');
-          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            if (label === 'Predict') router.push('/predict');
+            if (label === 'resuMate') router.push('/career-coach');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
             {label}
           </button>
         ))}
@@ -147,7 +149,7 @@ export function Navbar({ active }: { active?: string }) {
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)', animation: 'slideUp 0.3s cubic-bezier(.4,0,.2,1)' }}>
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: "'Fira Code', monospace", fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)', animation: 'slideUp 0.3s cubic-bezier(.4,0,.2,1)' }}>
       {type === 'success' ? <CheckCircle2 size={16} /> : '✕'} {msg}
     </div>
   );
@@ -159,7 +161,7 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(15,23,42,0.45)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ background: C.surface, borderRadius: 24, padding: '30px 34px', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 32px 80px rgba(15,23,42,0.2)', border: `1px solid ${C.border}` }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 20, color: C.ink, margin: 0 }}>{title}</h2>
+          <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 20, color: C.ink, margin: 0 }}>{title}</h2>
           <button onClick={onClose} style={{ background: C.paper, border: 'none', borderRadius: 10, width: 34, height: 34, cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>×</button>
         </div>
         {children}
@@ -190,8 +192,8 @@ function ProfileModal({ data, onSave, onClose }: { data: Partial<Profile>; onSav
       <div style={fg}><label style={mlbl}>Educational Institute</label><input style={inp} placeholder="Stanford University" value={i} onChange={ev => setI(ev.target.value)} /></div>
 
       <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 600 }}>Cancel</button>
-        <button onClick={async () => { setSaving(true); await onSave({ full_name: f, email: e, phone: p, location: l, institute: i }); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
+        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: "'Fira Code', monospace", fontSize: 14, fontWeight: 600 }}>Cancel</button>
+        <button onClick={async () => { setSaving(true); await onSave({ full_name: f, email: e, phone: p, location: l, institute: i }); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
           {saving ? 'Saving…' : 'Save Changes'}
         </button>
       </div>
@@ -214,8 +216,8 @@ function SkillsModal({ existing, onSave, onClose }: { existing: Skill[]; onSave:
       {skills.map((s, i) => (
         <div key={i} style={{ border: `1px solid ${C.border}`, borderRadius: 14, padding: '14px 18px', marginBottom: 12, background: C.paper }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 13, color: C.ink }}>{s.name || `Skill #${i + 1}`}</span>
-            <button onClick={() => remove(i)} style={{ background: '#fee2e2', border: 'none', borderRadius: 8, padding: '4px 12px', fontSize: 12, color: C.accent2, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 600 }}>Remove</button>
+            <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13, color: C.ink }}>{s.name || `Skill #${i + 1}`}</span>
+            <button onClick={() => remove(i)} style={{ background: '#fee2e2', border: 'none', borderRadius: 8, padding: '4px 12px', fontSize: 12, color: C.accent2, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 600 }}>Remove</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 0.8fr', gap: 10 }}>
             <div style={fg}><label style={mlbl}>Name *</label><input style={inp} placeholder="e.g. React" value={s.name} onChange={e => change(i, 'name', e.target.value)} /></div>
@@ -224,12 +226,12 @@ function SkillsModal({ existing, onSave, onClose }: { existing: Skill[]; onSave:
           </div>
         </div>
       ))}
-      <button onClick={add} style={{ width: '100%', padding: 13, border: `2px dashed ${C.border}`, borderRadius: 12, background: 'transparent', cursor: 'pointer', color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+      <button onClick={add} style={{ width: '100%', padding: 13, border: `2px dashed ${C.border}`, borderRadius: 12, background: 'transparent', cursor: 'pointer', color: C.accent, fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
         <Plus size={16} /> Add Skill
       </button>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 600 }}>Cancel</button>
-        <button onClick={save} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
+        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: "'Fira Code', monospace", fontSize: 14, fontWeight: 600 }}>Cancel</button>
+        <button onClick={save} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
           {saving ? 'Saving…' : 'Save Skills'}
         </button>
       </div>
@@ -244,15 +246,15 @@ function SectionHead({ title, count, subtitle, onAdd, addLabel = '+ Add' }: { ti
     <div ref={reveal.ref} style={{ ...reveal.style, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 24 }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>{title}</h2>
-          <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{count}</span>
+          <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>{title}</h2>
+          <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{count}</span>
         </div>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: 0 }}>{subtitle}</p>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: 0 }}>{subtitle}</p>
       </div>
       <button onClick={onAdd}
         onMouseEnter={e => { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 10px 28px ${C.accent}50`; }}
         onMouseLeave={e => { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.accent}40`; }}
-        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 24px', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 6px 20px ${C.accent}40`, whiteSpace: 'nowrap' }}>
+        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 24px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 6px 20px ${C.accent}40`, whiteSpace: 'nowrap' }}>
         {addLabel}
       </button>
     </div>
@@ -282,18 +284,18 @@ function InfoCard({ accentColor, typeBadge, yearBadge, title, subtitle, stats, f
       {/* Badge + actions row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '18px 22px 0', flexWrap: 'wrap' }}>
         {typeBadge && (
-          <span style={{ background: `${accentColor}15`, border: `1.5px solid ${accentColor}40`, borderRadius: 999, padding: '5px 16px', fontSize: 12.5, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, color: accentColor, whiteSpace: 'nowrap' }}>{typeBadge}</span>
+          <span style={{ background: `${accentColor}15`, border: `1.5px solid ${accentColor}40`, borderRadius: 999, padding: '5px 16px', fontSize: 12.5, fontFamily: "'Fira Code', monospace", fontWeight: 700, color: accentColor, whiteSpace: 'nowrap' }}>{typeBadge}</span>
         )}
         {yearBadge && (
-          <span style={{ background: C.paper, border: `1px solid ${C.border}`, borderRadius: 999, padding: '5px 13px', fontSize: 12, fontFamily: 'Montserrat, sans-serif', fontWeight: 600, color: C.muted, display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}>
+          <span style={{ background: C.paper, border: `1px solid ${C.border}`, borderRadius: 999, padding: '5px 13px', fontSize: 12, fontFamily: "'Fira Code', monospace", fontWeight: 600, color: C.muted, display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}>
             <Clock size={12} color={C.muted} /> {yearBadge}
           </span>
         )}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, opacity: hov ? 1 : 0, transition: 'opacity 0.2s' }}>
-          <button onClick={onEdit} style={{ background: C.accentSoft, border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <button onClick={onEdit} style={{ background: C.accentSoft, border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
             <Pencil size={12} /> Edit
           </button>
-          <button onClick={onDelete} style={{ background: '#fee2e2', border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent2, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <button onClick={onDelete} style={{ background: '#fee2e2', border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent2, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
             <Trash2 size={12} /> Delete
           </button>
         </div>
@@ -301,8 +303,8 @@ function InfoCard({ accentColor, typeBadge, yearBadge, title, subtitle, stats, f
 
       {/* Body */}
       <div style={{ padding: '14px 22px 24px' }}>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 20, color: C.ink, lineHeight: 1.3, margin: '0 0 6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{title}</p>
-        {subtitle && <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 18px', lineHeight: 1.65, wordBreak: 'break-word' }}>{subtitle}</p>}
+        <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 20, color: C.ink, lineHeight: 1.3, margin: '0 0 6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{title}</p>
+        {subtitle && <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: '0 0 18px', lineHeight: 1.65, wordBreak: 'break-word' }}>{subtitle}</p>}
 
         {stats && stats.length > 0 && (
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 16, overflow: 'hidden', marginTop: subtitle ? 0 : 14, background: C.paper }}>
@@ -312,9 +314,9 @@ function InfoCard({ accentColor, typeBadge, yearBadge, title, subtitle, stats, f
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   {s.icon && <span style={{ color: C.muted, display: 'flex', alignItems: 'center' }}>{s.icon}</span>}
-                  <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 11, color: C.muted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</span>
+                  <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: C.muted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</span>
                 </div>
-                <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: C.ink, margin: 0, textAlign: 'right', wordBreak: 'break-word', maxWidth: '60%' }}>{s.value}</p>
+                <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, color: C.ink, margin: 0, textAlign: 'right', wordBreak: 'break-word', maxWidth: '60%' }}>{s.value}</p>
               </div>
             ))}
           </div>
@@ -334,11 +336,11 @@ function Empty({ icon, text, onAdd, label }: { icon: React.ReactNode; text: stri
       <div style={{ width: 60, height: 60, borderRadius: 18, background: C.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: C.accent }}>
         {icon}
       </div>
-      <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: '0 0 22px', fontWeight: 500 }}>{text}</p>
+      <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, color: C.muted, margin: '0 0 22px', fontWeight: 500 }}>{text}</p>
       <button onClick={onAdd}
         onMouseEnter={e => { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; }}
-        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 28px', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}40`, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 28px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}40`, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 7 }}>
         <Plus size={16} /> {label}
       </button>
     </div>
@@ -409,7 +411,7 @@ export default function HomePage() {
   const fmtDate = (d?: string) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present';
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Fira Code', monospace" }}>
       <Navbar active="Dashboard" />
 
       {/* SIDEBAR */}
@@ -454,8 +456,8 @@ export default function HomePage() {
         }}>{initials}</div>
 
         <div style={{ opacity: sbHover ? 1 : 0, height: sbHover ? 'auto' : 0, transition: 'all 0.3s', visibility: sbHover ? 'visible' : 'hidden', width: '100%' }}>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
         </div>
 
         {/* Institute */}
@@ -470,7 +472,7 @@ export default function HomePage() {
             justifyContent: sbHover ? 'flex-start' : 'center',
             fontSize: 13.5,
             color: C.ink,
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: "'Fira Code', monospace",
             marginBottom: sbHover ? 24 : 12,
             background: 'rgba(124, 58, 237, 0.05)',
             borderRadius: 12,
@@ -499,7 +501,7 @@ export default function HomePage() {
             fontSize: 13,
             color: C.muted,
             cursor: 'pointer',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: "'Fira Code', monospace",
             fontWeight: 600,
             transition: 'all 0.2s',
             marginBottom: 8,
@@ -522,7 +524,7 @@ export default function HomePage() {
             border: `1.5px solid ${C.border}`,
             borderRadius: 12,
             padding: sbHover ? '10px 14px' : '0',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: "'Fira Code', monospace",
             fontSize: 13.5,
             fontWeight: 600,
             cursor: 'pointer',
@@ -549,10 +551,10 @@ export default function HomePage() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 48 }}>
             <div>
-              <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
+              <h1 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
                 Welcome, <span style={{ color: C.accent }}>{displayName.split(' ')[0]}</span>
               </h1>
-              <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: 0, fontWeight: 500 }}>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, color: C.muted, margin: 0, fontWeight: 500 }}>
                 {new Date().getHours() < 12 ? 'Good morning! ' : new Date().getHours() < 18 ? 'Good afternoon! ' : 'Good evening! '}
                 Ready to land your next big role?
               </p>
@@ -584,8 +586,8 @@ export default function HomePage() {
                 style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '24px', textAlign: 'left', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(.4,0,.2,1)', boxShadow: '0 4px 18px rgba(15,23,42,0.06)', display: 'flex', gap: 16, alignItems: 'center' }}>
                 <div style={{ width: 54, height: 54, borderRadius: 16, background: `${act.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: act.color, flexShrink: 0 }}>{act.icon}</div>
                 <div>
-                  <h3 style={{ margin: '0 0 4px', fontSize: 16, fontWeight: 800, color: C.ink, fontFamily: 'Montserrat, sans-serif' }}>{act.title}</h3>
-                  <p style={{ margin: 0, fontSize: 12, color: C.muted, fontWeight: 500, fontFamily: 'Montserrat, sans-serif' }}>{act.desc}</p>
+                  <h3 style={{ margin: '0 0 4px', fontSize: 16, fontWeight: 800, color: C.ink, fontFamily: "'Fira Code', monospace" }}>{act.title}</h3>
+                  <p style={{ margin: 0, fontSize: 12, color: C.muted, fontWeight: 500, fontFamily: "'Fira Code', monospace" }}>{act.desc}</p>
                 </div>
               </button>
             ))}
@@ -640,8 +642,8 @@ export default function HomePage() {
                       footer={
                         (p.github_link || p.live_link) ? (
                           <div style={{ display: 'flex', gap: 16 }}>
-                            {p.github_link && <a href={p.github_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Github size={13} /> GitHub</a>}
-                            {p.live_link && <a href={p.live_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
+                            {p.github_link && <a href={p.github_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: "'Fira Code', monospace", fontWeight: 700, textDecoration: 'none' }}><Github size={13} /> GitHub</a>}
+                            {p.live_link && <a href={p.live_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: "'Fira Code', monospace", fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
                           </div>
                         ) : undefined
                       }
@@ -663,7 +665,7 @@ export default function HomePage() {
                     <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: '10px 16px', boxShadow: '0 2px 8px rgba(15,23,42,0.06)', transition: 'all 0.2s' }}
                       onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'none'; }}>
-                      <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: C.ink }}>{s.name}</span>
+                      <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, color: C.ink }}>{s.name}</span>
                       {s.category && <span style={{ fontSize: 11.5, color: C.accent, background: C.accentSoft, borderRadius: 6, padding: '2px 9px', fontWeight: 700 }}>{s.category}</span>}
                       {s.level !== undefined && <span style={{ fontSize: 11.5, color: C.muted, fontWeight: 600 }}>Lv{s.level}</span>}
                       <button onClick={() => del.skill(i)} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', padding: 0, lineHeight: 1, display: 'flex' }}>
@@ -674,7 +676,7 @@ export default function HomePage() {
                   <button onClick={() => setModal('skills')}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.surface, border: `2px dashed ${C.border}`, borderRadius: 12, padding: '10px 18px', color: C.muted, fontSize: 13.5, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, transition: 'all 0.2s' }}>
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.surface, border: `2px dashed ${C.border}`, borderRadius: 12, padding: '10px 18px', color: C.muted, fontSize: 13.5, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, transition: 'all 0.2s' }}>
                     <PencilLine size={14} /> Edit all
                   </button>
                 </SkillsReveal>
@@ -698,7 +700,7 @@ export default function HomePage() {
                         { icon: <Calendar size={14} />, label: 'Period', value: `${fmtDate(e.start_date)} – ${fmtDate(e.end_date)}` },
                       ]}
                       footer={e.description ? (
-                        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, lineHeight: 1.65, margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.description}</p>
+                        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, lineHeight: 1.65, margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.description}</p>
                       ) : undefined}
                       onEdit={() => router.push(`/profile/experience?edit=${i}`)}
                       onDelete={() => del.exp(i)} />
@@ -745,7 +747,7 @@ export default function HomePage() {
                         { icon: <Calendar size={14} />, label: 'Issued', value: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' },
                       ]}
                       footer={c.link ? (
-                        <a href={c.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}>
+                        <a href={c.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: "'Fira Code', monospace", fontWeight: 700, textDecoration: 'none' }}>
                           <Award size={13} /> View Certificate
                         </a>
                       ) : undefined}

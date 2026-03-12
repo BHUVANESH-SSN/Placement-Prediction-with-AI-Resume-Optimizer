@@ -9,12 +9,17 @@
 
 import json
 import os
-from resume_generator import generate_tailored_resume
-from resume_generator.tailoring.gap_analyzer import (
+import sys
+
+# Ensure the backend root is on the path when running this fixture directly
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+from app.services.ai.generator import generate_tailored_resume
+from app.services.ai.tailoring.gap_analyzer import (
     analyze_gap, compare_jds,
     print_gap_report, print_comparison_matrix,
 )
-from resume_generator.tailoring.skill_scorer import cluster_skills
+from app.services.ai.tailoring.skill_scorer import cluster_skills
 
 
 sample_resume = {
@@ -198,7 +203,7 @@ if __name__ == "__main__":
 
         output_path = os.path.join(
             os.path.dirname(__file__),
-            "resume_generator", "output", "tailored_profile.json",
+            "..", "..", "app", "services", "ai", "output", "tailored_profile.json",
         )
         with open(output_path, "w") as f:
             json.dump(tailored, f, indent=2)
@@ -219,7 +224,7 @@ if __name__ == "__main__":
 
         gap_path = os.path.join(
             os.path.dirname(__file__),
-            "resume_generator", "output", "gap_analysis.json",
+            "..", "..", "app", "services", "ai", "output", "gap_analysis.json",
         )
         with open(gap_path, "w") as f:
             json.dump(gap_result, f, indent=2)
@@ -244,7 +249,7 @@ if __name__ == "__main__":
 
         comp_path = os.path.join(
             os.path.dirname(__file__),
-            "resume_generator", "output", "comparison.json",
+            "..", "..", "app", "services", "ai", "output", "comparison.json",
         )
         with open(comp_path, "w") as f:
             json.dump(comparison, f, indent=2, default=str)

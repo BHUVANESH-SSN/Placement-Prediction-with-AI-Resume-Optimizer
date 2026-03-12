@@ -217,7 +217,7 @@ def _resolve_theme(theme: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
       - theme_accent_color: hex color for accents
       - theme_font: main document font
     """
-    from resume_generator.tailoring.config import THEME_COLORS, THEME_FONT
+    from app.services.ai.tailoring.config import THEME_COLORS, THEME_FONT
 
     resolved = {
         "theme_primary_color": THEME_COLORS.get("primary", "2D3748"),

@@ -60,7 +60,7 @@ def _get_models_dir() -> str:
     """
     default = os.path.join(
         os.path.dirname(__file__),   # backend/app/services/
-        '..', '..', '..', '..',       # → repo root
+        '..', '..', '..',             # → repo root  (3 levels: services→app→backend→root)
         'ml', 'models'
     )
     return os.getenv('ML_MODELS_DIR', os.path.normpath(default))

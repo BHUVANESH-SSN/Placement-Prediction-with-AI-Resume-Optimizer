@@ -59,7 +59,7 @@ const AtsScoreCard = ({ label, score, delay = 0 }: AtsScoreCardProps) => {
       onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(15,23,42,0.08)'; }}
       onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 18px rgba(15,23,42,0.06)'; }}
     >
-      <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>{label}</p>
+      <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>{label}</p>
 
       <div style={{ position: 'relative', width: 100, height: 100 }}>
         <svg style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} viewBox="0 0 100 100">
@@ -86,7 +86,7 @@ const AtsScoreCard = ({ label, score, delay = 0 }: AtsScoreCardProps) => {
             }}
           />
         </svg>
-        <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 26, color: getColor(current) }}>
+        <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 26, color: getColor(current) }}>
           {current}
         </span>
       </div>

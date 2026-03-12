@@ -83,7 +83,7 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Roadmap'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
   return (
     <nav style={{
       display: 'flex',
@@ -106,7 +106,7 @@ export function Navbar({ active }: { active?: string }) {
           <polyline points="16 7 22 12 16 17" />
         </svg>
         <span style={{
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: "'Fira Code', monospace",
           fontWeight: 900,
           fontSize: '18px',
           letterSpacing: '-0.5px',
@@ -139,7 +139,9 @@ export function Navbar({ active }: { active?: string }) {
             if (label === 'Development') router.push('/development');
             if (label === 'Resume builder') router.push('/resume');
             if (label === 'DSA') router.push('/dsa');
-          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            if (label === 'Predict') router.push('/predict');
+            if (label === 'resuMate') router.push('/career-coach');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
             {label}
           </button>
         ))}
@@ -152,7 +154,7 @@ export function Navbar({ active }: { active?: string }) {
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)' }}>
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: "'Fira Code', monospace", fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)' }}>
       {type === 'success' ? <CheckCircle2 size={16} /> : 'x'} {msg}
     </div>
   );
@@ -165,8 +167,8 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label:
     <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '22px 26px', display: 'flex', alignItems: 'center', gap: 18, boxShadow: '0 4px 18px rgba(15,23,42,0.06)', flex: 1, minWidth: 160 }}>
       <div style={{ width: 48, height: 48, borderRadius: 14, background: color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>{icon}</div>
       <div>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 26, color: C.ink, margin: 0, lineHeight: 1 }}>{value}</p>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '4px 0 0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</p>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 26, color: C.ink, margin: 0, lineHeight: 1 }}>{value}</p>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.muted, margin: '4px 0 0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</p>
       </div>
     </div>
   );
@@ -201,20 +203,20 @@ function RepoCard({ repo }: { repo: RepoDetail }) {
           </div>
         </div>
 
-        <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 10px', lineHeight: 1.4 }}>{repo.name}</h3>
+        <h3 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 10px', lineHeight: 1.4 }}>{repo.name}</h3>
 
         {repo.description && (
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, color: C.muted, lineHeight: 1.6, margin: '0 0 24px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{repo.description}</p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13.5, color: C.muted, lineHeight: 1.6, margin: '0 0 24px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{repo.description}</p>
         )}
 
         <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {repo.language && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 12, fontWeight: 700, color: C.ink }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Fira Code', monospace", fontSize: 12, fontWeight: 700, color: C.ink }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: langColor }} />{repo.language}
             </span>
           )}
           <a href={repo.url} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, background: hov ? C.accent : 'transparent', color: hov ? '#fff' : C.accent, border: `1.5px solid ${C.accent}`, padding: '8px 16px', borderRadius: 10, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, background: hov ? C.accent : 'transparent', color: hov ? '#fff' : C.accent, border: `1.5px solid ${C.accent}`, padding: '8px 16px', borderRadius: 10, fontFamily: "'Fira Code', monospace", fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s' }}>
             <Github size={14} /> Visit
           </a>
         </div>
@@ -240,24 +242,24 @@ function ContributionGraph({ data }: { data: ContributionData }) {
     <div ref={reveal.ref} style={{ ...reveal.style, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '28px 32px', boxShadow: '0 4px 18px rgba(15,23,42,0.06)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
-          <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 18, color: C.ink, margin: '0 0 4px' }}>Activity Heatmap</h3>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, margin: 0 }}>
+          <h3 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 18, color: C.ink, margin: '0 0 4px' }}>Activity Heatmap</h3>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, margin: 0 }}>
             <strong style={{ color: C.accent }}>{data.total_contributions.toLocaleString()}</strong> contributions in the last year
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 11, color: C.muted }}>Less</span>
+          <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: C.muted }}>Less</span>
           {LEVELS.map((c, i) => <span key={i} style={{ width: 12, height: 12, borderRadius: 3, background: c, display: 'inline-block' }} />)}
-          <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 11, color: C.muted }}>More</span>
+          <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: C.muted }}>More</span>
         </div>
       </div>
       <div style={{ display: 'flex', gap: 2, marginBottom: 4, paddingLeft: 28 }}>
-        {months.map((m, i) => <span key={i} style={{ fontSize: 10, color: C.muted, fontFamily: 'Montserrat, sans-serif', width: 13, textAlign: 'center', flexShrink: 0 }}>{m}</span>)}
+        {months.map((m, i) => <span key={i} style={{ fontSize: 10, color: C.muted, fontFamily: "'Fira Code', monospace", width: 13, textAlign: 'center', flexShrink: 0 }}>{m}</span>)}
       </div>
       <div style={{ display: 'flex', gap: 2 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginRight: 4 }}>
           {['', 'Mon', '', 'Wed', '', 'Fri', ''].map((d, i) => (
-            <span key={i} style={{ fontSize: 9, color: C.muted, fontFamily: 'Montserrat, sans-serif', height: 13, lineHeight: '13px' }}>{d}</span>
+            <span key={i} style={{ fontSize: 9, color: C.muted, fontFamily: "'Fira Code', monospace", height: 13, lineHeight: '13px' }}>{d}</span>
           ))}
         </div>
         <div style={{ display: 'flex', gap: 2, overflowX: 'auto', scrollbarWidth: 'none' }}>
@@ -286,20 +288,20 @@ function GithubBanner({ github }: { github: GithubData }) {
       {github.profile_image && <img src={github.profile_image} alt="GitHub avatar" style={{ width: 100, height: 100, borderRadius: '50%', border: `3px solid ${C.accentSoft}`, boxShadow: `0 8px 24px ${C.accent}30`, flexShrink: 0 }} />}
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8, flexWrap: 'wrap' }}>
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: 0 }}>{github.username}</h2>
+          <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 28, color: C.ink, margin: 0 }}>{github.username}</h2>
           <a href={`https://github.com/${github.username}`} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 5, background: C.accentSoft, color: C.accent, borderRadius: 10, padding: '6px 14px', fontFamily: 'Montserrat, sans-serif', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 5, background: C.accentSoft, color: C.accent, borderRadius: 10, padding: '6px 14px', fontFamily: "'Fira Code', monospace", fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
             <Github size={13} /> Open GitHub
           </a>
         </div>
-        {github.bio && <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 16px', lineHeight: 1.6 }}>{github.bio}</p>}
+        {github.bio && <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: '0 0 16px', lineHeight: 1.6 }}>{github.bio}</p>}
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
           {[
             { icon: <Users size={14} />, label: `${github.followers} followers` },
             { icon: <UserCheck size={14} />, label: `${github.following} following` },
             { icon: <BookOpen size={14} />, label: `${github.public_repos} repos` },
           ].map(({ icon, label }, i) => (
-            <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, fontWeight: 600 }}>{icon} {label}</span>
+            <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, fontWeight: 600 }}>{icon} {label}</span>
           ))}
         </div>
       </div>
@@ -314,10 +316,10 @@ function TopLanguages({ languages }: { languages: string[] }) {
     <div ref={reveal.ref} style={reveal.style}>
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>Top Languages</h2>
-          <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{languages.length}</span>
+          <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>Top Languages</h2>
+          <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{languages.length}</span>
         </div>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: 0 }}>Languages used across your repositories</p>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: 0 }}>Languages used across your repositories</p>
       </div>
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
         {languages.map((lang, i) => {
@@ -328,8 +330,8 @@ function TopLanguages({ languages }: { languages: string[] }) {
               onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 24px ${color}30`; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(15,23,42,0.06)'; }}>
               <span style={{ width: 12, height: 12, borderRadius: '50%', background: color, flexShrink: 0 }} />
-              <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: C.ink }}>{lang}</span>
-              {i === 0 && <span style={{ fontSize: 10, background: color + '20', color, borderRadius: 6, padding: '2px 8px', fontFamily: 'Montserrat, sans-serif', fontWeight: 700 }}>Primary</span>}
+              <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, color: C.ink }}>{lang}</span>
+              {i === 0 && <span style={{ fontSize: 10, background: color + '20', color, borderRadius: 6, padding: '2px 8px', fontFamily: "'Fira Code', monospace", fontWeight: 700 }}>Primary</span>}
             </div>
           );
         })}
@@ -362,16 +364,16 @@ function ReposSection({ github }: { github: GithubData }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: 24, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-            <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>Repositories</h2>
-            <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{repos.length}</span>
+            <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>Repositories</h2>
+            <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{repos.length}</span>
           </div>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: 0 }}>Discover your public work and contributions</p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: 0 }}>Discover your public work and contributions</p>
         </div>
 
         <div style={{ display: 'flex', gap: 12, flex: 1, maxWidth: 500 }}>
           <div style={{ position: 'relative', flex: 1 }}>
             <input
-              style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 12, border: `1px solid ${C.border}`, fontFamily: 'Montserrat, sans-serif', fontSize: 14 }}
+              style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 12, border: `1px solid ${C.border}`, fontFamily: "'Fira Code', monospace", fontSize: 14 }}
               placeholder="Search repositories..."
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -379,7 +381,7 @@ function ReposSection({ github }: { github: GithubData }) {
             <Globe size={18} color={C.muted} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }} />
           </div>
           <select
-            style={{ padding: '0 12px', borderRadius: 12, border: `1px solid ${C.border}`, background: C.surface, fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 600, color: C.ink, cursor: 'pointer', outline: 'none' }}
+            style={{ padding: '0 12px', borderRadius: 12, border: `1px solid ${C.border}`, background: C.surface, fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 600, color: C.ink, cursor: 'pointer', outline: 'none' }}
             value={filterLang}
             onChange={e => setFilterLang(e.target.value)}
           >
@@ -394,7 +396,7 @@ function ReposSection({ github }: { github: GithubData }) {
         </div>
       ) : (
         <div style={{ padding: '60px 0', textAlign: 'center', background: C.paper, borderRadius: 24, border: `2px dashed ${C.border}` }}>
-          <p style={{ fontSize: 16, color: C.muted, fontWeight: 600, fontFamily: 'Montserrat, sans-serif' }}>No repositories found matching your current filters.</p>
+          <p style={{ fontSize: 16, color: C.muted, fontWeight: 600, fontFamily: "'Fira Code', monospace" }}>No repositories found matching your current filters.</p>
         </div>
       )}
     </div>
@@ -430,7 +432,7 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
     finally { setLoading(false); }
   }
 
-  const inpStyle: React.CSSProperties = { width: '100%', padding: '12px 16px', borderRadius: 12, border: `1px solid ${C.border}`, fontFamily: 'Montserrat, sans-serif', fontSize: 14, outline: 'none', background: C.surface, color: C.ink, boxSizing: 'border-box' };
+  const inpStyle: React.CSSProperties = { width: '100%', padding: '12px 16px', borderRadius: 12, border: `1px solid ${C.border}`, fontFamily: "'Fira Code', monospace", fontSize: 14, outline: 'none', background: C.surface, color: C.ink, boxSizing: 'border-box' };
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 500, padding: 40 }}>
@@ -438,8 +440,8 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
         <div style={{ width: 72, height: 72, borderRadius: 20, background: C.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
           <Github size={36} color={C.accent} />
         </div>
-        <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 26, color: C.ink, margin: '0 0 8px' }}>Link GitHub</h2>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 36px', lineHeight: 1.6 }}>
+        <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 26, color: C.ink, margin: '0 0 8px' }}>Link GitHub</h2>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: '0 0 36px', lineHeight: 1.6 }}>
           Connect your GitHub account to showcase your repositories, languages, and contributions.
         </p>
         {step === 'enter' ? (
@@ -449,14 +451,14 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
               <input style={inpStyle} placeholder="e.g. torvalds" value={githubId} onChange={e => setGithubId(e.target.value)} onKeyDown={e => e.key === 'Enter' && getCode()} />
             </div>
             <button onClick={getCode} disabled={loading || !githubId.trim()}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !githubId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !githubId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               {loading ? 'Getting code…' : <><Code2 size={16} /> Get Verification Code</>}
             </button>
           </>
         ) : (
           <>
             <div style={{ background: C.accentSoft, borderRadius: 16, padding: '20px 24px', marginBottom: 24 }}>
-              <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.accent, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Verification Code</p>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.accent, fontWeight: 700, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Verification Code</p>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                 <span style={{ fontFamily: 'monospace', fontSize: 28, fontWeight: 900, color: C.accent, letterSpacing: 4 }}>{code}</span>
                 <button onClick={() => { navigator.clipboard.writeText(code); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.accent }}>
@@ -464,14 +466,14 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
                 </button>
               </div>
             </div>
-            <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, marginBottom: 28, lineHeight: 1.6 }}>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, marginBottom: 28, lineHeight: 1.6 }}>
               Add this code to your GitHub bio at <strong>github.com/settings/profile</strong>, then click Verify below.
             </p>
             <button onClick={link} disabled={loading}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
+              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
               {loading ? 'Verifying…' : <><CheckCircle2 size={16} /> Verify and Link</>}
             </button>
-            <button onClick={() => setStep('enter')} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 600 }}>
+            <button onClick={() => setStep('enter')} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 600 }}>
               Back
             </button>
           </>
@@ -540,7 +542,7 @@ export default function DevelopmentPage() {
   const NAV_H = 60;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Fira Code', monospace" }}>
       <Navbar active="Development" />
 
       <aside
@@ -586,11 +588,11 @@ export default function DevelopmentPage() {
         </div>
 
         <div style={{ opacity: sbHover ? 1 : 0, height: sbHover ? 'auto' : 0, transition: 'all 0.3s', visibility: sbHover ? 'visible' : 'hidden', width: '100%' }}>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 8px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth?.email}</p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.muted, margin: '0 0 8px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth?.email}</p>
           {github && (
             <a href={`https://github.com/${github.username}`} target="_blank" rel="noopener noreferrer"
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.accent, fontWeight: 700, textDecoration: 'none', marginBottom: 24 }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.accent, fontWeight: 700, textDecoration: 'none', marginBottom: 24 }}>
               <Github size={14} /> @{github.username}
             </a>
           )}
@@ -607,7 +609,7 @@ export default function DevelopmentPage() {
             justifyContent: sbHover ? 'flex-start' : 'center',
             fontSize: 13,
             color: C.ink,
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: "'Fira Code', monospace",
             marginBottom: sbHover ? 24 : 12,
             background: 'rgba(124, 58, 237, 0.05)',
             borderRadius: 12,
@@ -637,7 +639,7 @@ export default function DevelopmentPage() {
               fontSize: 13,
               color: C.muted,
               cursor: 'pointer',
-              fontFamily: 'Montserrat, sans-serif',
+              fontFamily: "'Fira Code', monospace",
               fontWeight: 600,
               transition: 'all 0.2s',
               marginBottom: 8,
@@ -662,7 +664,7 @@ export default function DevelopmentPage() {
             border: `1.5px solid ${C.border}`,
             borderRadius: 12,
             padding: sbHover ? '10px 14px' : '0',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: "'Fira Code', monospace",
             fontSize: 13.5,
             fontWeight: 600,
             cursor: 'pointer',
@@ -685,10 +687,10 @@ export default function DevelopmentPage() {
         transition: 'margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
       }}>
         <div style={{ padding: '56px 64px 110px' }}>
-          <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
+          <h1 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
             My <span style={{ color: C.accent }}>Development</span>
           </h1>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: '0 0 56px', fontWeight: 500 }}>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, color: C.muted, margin: '0 0 56px', fontWeight: 500 }}>
             GitHub activity, repositories, contributions, and coding languages
           </p>
 
@@ -715,8 +717,8 @@ export default function DevelopmentPage() {
 
               {contributions && (
                 <div style={{ marginBottom: 56 }}>
-                  <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: '0 0 6px', letterSpacing: '-0.5px' }}>Contributions</h2>
-                  <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 24px' }}>Your coding activity over the last year</p>
+                  <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 28, color: C.ink, margin: '0 0 6px', letterSpacing: '-0.5px' }}>Contributions</h2>
+                  <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: '0 0 24px' }}>Your coding activity over the last year</p>
                   <ContributionGraph data={contributions} />
                 </div>
               )}

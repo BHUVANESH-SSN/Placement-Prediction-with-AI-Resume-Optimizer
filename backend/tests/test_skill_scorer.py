@@ -1,8 +1,8 @@
 """Tests for skill_scorer module."""
 
 import pytest
-from resume_generator.tailoring.jd_parser import JDProfile
-from resume_generator.tailoring.skill_scorer import (
+from app.services.ai.tailoring.jd_parser import JDProfile
+from app.services.ai.tailoring.skill_scorer import (
     score_skills,
     prune_skills,
     expand_skills,

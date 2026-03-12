@@ -4,7 +4,7 @@ import json
 import pytest
 from unittest.mock import patch, MagicMock
 
-from resume_generator.tailoring.tailor_engine import (
+from app.services.ai.tailoring.tailor_engine import (
     tailor_resume,
     _parse_json_response,
     _merge_tailored,
@@ -137,7 +137,7 @@ class TestMergeTailored:
 class TestTailorResume:
     """Test tailor_resume with mocked Groq API."""
 
-    @patch("resume_generator.tailoring.tailor_engine._call_groq")
+    @patch("app.services.ai.tailoring.tailor_engine._call_groq")
     def test_successful_tailoring(
         self, mock_groq, sample_resume, sample_jd, mock_llm_response
     ):
@@ -153,7 +153,7 @@ class TestTailorResume:
         assert result["name"] == "Test User"  # preserved
         mock_groq.assert_called_once()
 
-    @patch("resume_generator.tailoring.tailor_engine._call_groq")
+    @patch("app.services.ai.tailoring.tailor_engine._call_groq")
     def test_fallback_on_llm_error(self, mock_groq, sample_resume, sample_jd):
         mock_groq.side_effect = RuntimeError("API error")
 
@@ -166,7 +166,7 @@ class TestTailorResume:
         assert result["name"] == "Test User"
         assert "skills" in result
 
-    @patch("resume_generator.tailoring.tailor_engine._call_groq")
+    @patch("app.services.ai.tailoring.tailor_engine._call_groq")
     def test_fallback_on_validation_failure(
         self, mock_groq, sample_resume, sample_jd
     ):
@@ -196,6 +196,6 @@ class TestTailorResume:
         assert "FakeCompany" not in companies
 
     def test_missing_api_key_raises(self, sample_resume, sample_jd):
-        with patch("resume_generator.tailoring.tailor_engine.GROQ_API_KEY", ""):
+        with patch("app.services.ai.tailoring.tailor_engine.GROQ_API_KEY", ""):
             with pytest.raises(ValueError, match="API key"):
                 tailor_resume(sample_resume, sample_jd, api_key="", verbose=False)

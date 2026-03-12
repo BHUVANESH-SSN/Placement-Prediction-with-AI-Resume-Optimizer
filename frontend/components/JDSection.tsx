@@ -28,25 +28,27 @@ const C = {
 
 const inp: React.CSSProperties = {
   width: '100%', padding: '14px 18px', borderRadius: 14,
-  border: `1.5px solid ${C.border}`, fontFamily: 'Montserrat, sans-serif', fontSize: 14.5,
+  border: `1.5px solid ${C.border}`, fontFamily: "'Fira Code', monospace", fontSize: 14.5,
   outline: 'none', background: C.surface, color: C.ink, boxSizing: 'border-box', transition: 'all 0.2s',
   resize: 'none',
 };
 
 const mlbl: React.CSSProperties = {
   fontSize: 12.5, fontWeight: 700, color: C.ink, marginBottom: 8,
-  letterSpacing: '0.3px', display: 'block', fontFamily: 'Montserrat, sans-serif'
+  letterSpacing: '0.3px', display: 'block', fontFamily: "'Fira Code', monospace"
 };
 
 const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps) => {
   const [activeTab, setActiveTab] = useState<TabType>("Text");
   const [jdText, setJdText] = useState("");
-  const [resumeText, setResumeText] = useState("");
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [resumeDragOver, setResumeDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resumeFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (selectedFile: File | null) => {
     if (!selectedFile) return;
@@ -74,8 +76,8 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
         formData.append("file", file);
       }
 
-      if (resumeText.trim()) {
-        formData.append("resume_json", resumeText);
+      if (resumeFile) {
+        formData.append("resume_file", resumeFile);
       }
 
       const backendUrl = process.env.NEXT_PUBLIC_JD_BACKEND_URL || "http://localhost:8000";
@@ -107,7 +109,7 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
 
   return (
     <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '36px 40px', boxShadow: '0 4px 28px rgba(15,23,42,0.05)', display: 'flex', flexDirection: 'column', gap: 24, height: '100%' }}>
-      <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 24, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>Upload Job Description</h2>
+      <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 24, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>Upload Job Description</h2>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -120,7 +122,7 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
               setError(null);
             }}
             style={{
-              padding: '8px 20px', borderRadius: 12, fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
+              padding: '8px 20px', borderRadius: 12, fontFamily: "'Fira Code', monospace", fontSize: 13.5, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
               background: activeTab === tab ? C.accentSoft : 'transparent',
               color: activeTab === tab ? C.accent : C.muted,
               border: `1.5px solid ${activeTab === tab ? C.accentSoft : C.border}`
@@ -191,13 +193,13 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
                 <Upload size={28} />
               </div>
               {file ? (
-                <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, fontWeight: 700, color: C.ink, margin: 0 }}>{file.name}</p>
+                <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, fontWeight: 700, color: C.ink, margin: 0 }}>{file.name}</p>
               ) : (
                 <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: '0 0 6px' }}>
+                  <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, color: C.muted, margin: '0 0 6px' }}>
                     Drop your <strong style={{ color: C.ink }}>.{activeTab.toLowerCase()}</strong> file here
                   </p>
-                  <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, margin: 0 }}>or click to browse</p>
+                  <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, margin: 0 }}>or click to browse</p>
                 </div>
               )}
             </div>
@@ -205,22 +207,61 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
         )}
       </div>
 
-      {/* Resume Input Area */}
+      {/* Resume Upload Area */}
       <div style={{ width: '100%', marginTop: 8 }}>
-        <label style={mlbl}>Upload Resume (JSON)</label>
-        <textarea
-          value={resumeText}
-          onChange={(e) => setResumeText(e.target.value)}
-          placeholder='Paste your resume in JSON format here... e.g. {"name": "Arun Kumar", "skills": ["Python"]}'
-          style={{ ...inp, height: 140 }}
-          onFocus={(e) => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.boxShadow = `0 0 0 3px ${C.accent}15`; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = 'none'; }}
+        <label style={mlbl}>Upload Your Resume (PDF or DOCX)</label>
+        <input
+          ref={resumeFileInputRef}
+          type="file"
+          accept=".pdf,.docx"
+          style={{ display: 'none' }}
+          onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
         />
+        <div
+          onClick={() => resumeFileInputRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); setResumeDragOver(true); }}
+          onDragLeave={() => setResumeDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setResumeDragOver(false);
+            const dropped = e.dataTransfer.files?.[0];
+            if (dropped && (dropped.name.endsWith('.pdf') || dropped.name.endsWith('.docx'))) {
+              setResumeFile(dropped);
+            }
+          }}
+          style={{
+            border: `2px dashed ${resumeDragOver ? C.accent : C.border}`,
+            borderRadius: 14, padding: '24px 20px', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', gap: 14, cursor: 'pointer', transition: 'all 0.2s',
+            background: resumeDragOver ? C.accentSoft : 'transparent',
+          }}
+          onMouseEnter={(e) => { if (!resumeDragOver) { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.background = `${C.accentSoft}40`; } }}
+          onMouseLeave={(e) => { if (!resumeDragOver) { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.background = 'transparent'; } }}
+        >
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: C.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.accent, flexShrink: 0 }}>
+            <Upload size={20} />
+          </div>
+          {resumeFile ? (
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, fontWeight: 700, color: C.ink, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {resumeFile.name}
+              </p>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.success, margin: '3px 0 0', fontWeight: 600 }}>Ready to parse</p>
+            </div>
+          ) : (
+            <div>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: 0 }}>
+                Drop your <strong style={{ color: C.ink }}>.pdf</strong> or <strong style={{ color: C.ink }}>.docx</strong> resume here
+              </p>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.muted, margin: '3px 0 0' }}>or click to browse &mdash; we&apos;ll convert it automatically</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Error message */}
       {error && (
-        <div style={{ background: '#fff0f0', border: `1px solid ${C.accent2}40`, borderRadius: 12, padding: '12px 16px', color: C.accent2, fontSize: 13.5, fontFamily: 'Montserrat, sans-serif', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ background: '#fff0f0', border: `1px solid ${C.accent2}40`, borderRadius: 12, padding: '12px 16px', color: C.accent2, fontSize: 13.5, fontFamily: "'Fira Code', monospace", fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
           <span>⚠️</span> {error}
         </div>
       )}
@@ -232,7 +273,7 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
         onMouseEnter={e => { if (!isGenerating) { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 28px ${C.accent}45`; } }}
         onMouseLeave={e => { if (!isGenerating) { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 4px 20px ${C.accent}35`; } }}
         style={{
-          width: '100%', padding: 16, background: C.accent, color: '#fff', border: 'none', borderRadius: 14, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 15, cursor: isGenerating ? 'not-allowed' : 'pointer', transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 4px 20px ${C.accent}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, letterSpacing: '0.2px', opacity: isGenerating ? 0.7 : 1
+          width: '100%', padding: 16, background: C.accent, color: '#fff', border: 'none', borderRadius: 14, fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: isGenerating ? 'not-allowed' : 'pointer', transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 4px 20px ${C.accent}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, letterSpacing: '0.2px', opacity: isGenerating ? 0.7 : 1
         }}
       >
         {isGenerating ? (

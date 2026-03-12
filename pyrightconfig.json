@@ -1,9 +1,9 @@
 {
   "pythonVersion": "3.13",
   "pythonPlatform": "Linux",
-  "venvPath": ".",
-  "venv": ".venv",
+  "venvPath": "backend",
+  "venv": "venv",
   "executionEnvironments": [
-    {"root": "."}
+    {"root": "backend"}
   ]
 }

@@ -1,7 +1,7 @@
 """Tests for validators module."""
 
 import pytest
-from resume_generator.tailoring.validators import validate_tailored_resume
+from app.services.ai.tailoring.validators import validate_tailored_resume
 
 
 @pytest.fixture

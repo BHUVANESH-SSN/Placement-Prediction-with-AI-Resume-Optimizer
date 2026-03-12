@@ -1,11 +1,19 @@
 import asyncio
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
 from motor.motor_asyncio import AsyncIOMotorClient
-from backend.app.utils.hash import hash_password
+from app.utils.hash import hash_password
 from datetime import datetime
 
 async def main():
-    client = AsyncIOMotorClient("mongodb://localhost:27017")
-    db = client.airo
+    uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+    db_name = os.getenv("DB_NAME", "airo_db")
+    client = AsyncIOMotorClient(uri)
+    db = client[db_name]
     
     # Check if user exists
     user = await db.users.find_one({"email": "test@example.com"})

@@ -33,11 +33,11 @@ const SkillGap = ({ gapData }: SkillGapProps) => {
   ];
   return (
     <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '36px 40px', boxShadow: '0 4px 28px rgba(15,23,42,0.05)' }} className="animate-fade-slide-up">
-      <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 24, color: C.ink, margin: '0 0 24px', letterSpacing: '-0.5px' }}>Skill Gap Analysis</h2>
+      <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 24, color: C.ink, margin: '0 0 24px', letterSpacing: '-0.5px' }}>Skill Gap Analysis</h2>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div>
-          <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 800, color: C.success, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 16 }}>
+          <h3 style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 800, color: C.success, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 16 }}>
             Matched Skills
           </h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
@@ -46,7 +46,7 @@ const SkillGap = ({ gapData }: SkillGapProps) => {
                 key={skill}
                 style={{
                   background: `${C.success}15`, color: C.success, borderRadius: 8, padding: '6px 14px',
-                  fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 700, cursor: 'default', border: `1px solid ${C.success}40`
+                  fontFamily: "'Fira Code', monospace", fontSize: 13.5, fontWeight: 700, cursor: 'default', border: `1px solid ${C.success}40`
                 }}
               >
                 {skill}
@@ -56,7 +56,7 @@ const SkillGap = ({ gapData }: SkillGapProps) => {
         </div>
 
         <div>
-          <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, fontWeight: 800, color: C.accent2, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 16 }}>
+          <h3 style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 800, color: C.accent2, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 16 }}>
             Missing Skills
           </h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
@@ -65,7 +65,7 @@ const SkillGap = ({ gapData }: SkillGapProps) => {
                 key={skill}
                 style={{
                   background: `${C.accent2}10`, color: C.accent2, borderRadius: 8, padding: '6px 14px',
-                  fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 700, cursor: 'default', border: `1px solid ${C.accent2}40`
+                  fontFamily: "'Fira Code', monospace", fontSize: 13.5, fontWeight: 700, cursor: 'default', border: `1px solid ${C.accent2}40`
                 }}
               >
                 {skill}

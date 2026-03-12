@@ -8,7 +8,7 @@ from typing import Optional
 
 from fastapi import HTTPException, UploadFile
 
-from app.services.ai.generator import generate_tailored_resume
+from app.services.ai.generator import generate_resume, generate_tailored_resume
 from app.services.ai.tailoring.gap_analyzer import analyze_gap
 from app.services.ai.tailoring.ats_scorer import ats_with_jd, ats_without_jd, extract_noun_keywords
 from app.services.ai.tailoring.jd_parser import parse_jd
@@ -98,9 +98,37 @@ async def run_resume_pipeline(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"ATS Analysis without JD failed: {exc}")
 
+    missing_kws = ats_with_res.get("missing_keywords", [])
+    all_kws = list(jd_keywords.keys())
+    matched_kws = [kw for kw in all_kws if kw not in set(missing_kws)]
+
     return {
         "tailored_resume": tailored,
         "gap_analysis": gap_result,
         "ats_score": {"with_jd": ats_score_with, "without_jd": ats_score_without},
+        "ats_keywords": {
+            "matched": matched_kws,
+            "missing": missing_kws,
+            "section_heatmap": ats_with_res.get("heatmap", {}),
+        },
+        "pdf_path": pdf_path,
+    }
+
+
+async def create_plain_resume(user_resume: dict) -> dict:
+    """
+    Generate an ATS-friendly resume PDF directly from the user's profile
+    without any JD tailoring. Uses the same LaTeX pipeline.
+
+    Returns:
+        { resume_data: dict, pdf_path: str }
+    """
+    try:
+        pdf_path, template = generate_resume(user_resume, verbose=False)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Resume generation failed: {exc}")
+
+    return {
+        "resume_data": user_resume,
         "pdf_path": pdf_path,
     }
