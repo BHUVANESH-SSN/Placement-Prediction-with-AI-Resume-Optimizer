@@ -21,7 +21,8 @@ from app.middlewares.rate_limit import RateLimitMiddleware
 from app.routes.auth_routes import auth_router
 from app.routes.form_routes import form_router
 from app.routes.dev_routes import dev_router        # NEW: developer integrations
-from app.routes.resume_routes import resume_router  # FIX: was never registered
+from app.routes.resume_routes import resume_router
+from app.routes.roadmap_routes import roadmap_router  # FIX: was never registered
 
 app = FastAPI(
     title="AIRO — AI Resume Optimizer API",
@@ -44,7 +45,8 @@ app.add_middleware(CORSMiddleware,
 app.include_router(auth_router)    # /auth/*
 app.include_router(form_router)    # /form/*
 app.include_router(dev_router)     # /dev/*
-app.include_router(resume_router)  # /api/extract, /api/download, /resume/*
+app.include_router(resume_router)
+app.include_router(roadmap_router)  # /api/extract, /api/download, /resume/*
 
 
 # ── Health Check ─────────────────────────────────────────────────────────────
