@@ -74,22 +74,6 @@ const S = {
         marginBottom: 24,
         animation: 'fadeSlideUp 0.5s ease-out forwards',
     },
-    certBadge: {
-        position: 'absolute' as const,
-        top: 100,
-        right: '8vw',
-        background: 'white',
-        border: '2px solid #3B82F6',
-        borderRadius: 40,
-        padding: '14px 24px',
-        fontWeight: 600,
-        fontSize: 14,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        cursor: 'pointer',
-        color: '#1e2a78',
-    },
     heroTitle: {
         fontFamily: '"Inter", "Helvetica Neue", Arial, sans-serif',
         fontSize: '80px',
@@ -144,12 +128,7 @@ const S = {
     },
     sectionHeader: {
         textAlign: 'center' as const,
-        marginBottom: 64,
-    },
-    grid3: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: 32,
+        marginBottom: 48,
     },
     card: {
         background: 'white',
@@ -213,18 +192,128 @@ const S = {
 };
 
 const FeatureCard = ({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) => (
-    <div style={S.card} className="hover:-translate-y-2 hover:shadow-xl group transition-all duration-300">
-        <div style={S.iconBox} className="group-hover:scale-110 transition-transform duration-300">
-            {icon}
-        </div>
-        <h3 style={S.cardTitle}>{title}</h3>
-        <p style={S.cardText}>{desc}</p>
+    <div
+        style={{
+            minWidth: 'calc(33.333% - 14px)',
+            flex: '0 0 calc(33.333% - 14px)',
+            height: '380px',
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            padding: '36px 32px',
+            background: 'rgba(255,255,255,0.45)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.6)',
+            borderRadius: '20px',
+            boxShadow: '0 4px 24px rgba(108,71,255,0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+        }}
+        className="hover:-translate-y-1 hover:shadow-xl group transition-all duration-300"
+    >
+        <h3 style={{ ...S.cardTitle, fontSize: 22, marginBottom: 14 }}>{title}</h3>
+        <p style={{ ...S.cardText, fontSize: 15, lineHeight: 1.7 }}>{desc}</p>
     </div>
 );
 
 export default function LandingPage() {
     return (
         <div style={S.page}>
+            {/* Carousel scroll styles injected globally */}
+            <style>{`
+                .carousel-track {
+                    display: flex;
+                    gap: 20px;
+                    overflow-x: auto;
+                    scroll-snap-type: x mandatory;
+                    -webkit-overflow-scrolling: touch;
+                    padding: 8px 0 24px 0;
+                    cursor: grab;
+                }
+                .carousel-track:active { cursor: grabbing; }
+                .carousel-track::-webkit-scrollbar {
+                    height: 3px;
+                }
+                .carousel-track::-webkit-scrollbar-track {
+                    background: rgba(108,71,255,0.06);
+                    border-radius: 999px;
+                }
+                .carousel-track::-webkit-scrollbar-thumb {
+                    background: rgba(108,71,255,0.3);
+                    border-radius: 999px;
+                }
+                .carousel-track > * {
+                    scroll-snap-align: start;
+                }
+                .carousel-wrapper {
+                    position: relative;
+                }
+                .carousel-footer {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-top: 16px;
+                    padding-right: 4px;
+                }
+                .carousel-nav-btn {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: white;
+                    border: 1.5px solid rgba(108,71,255,0.18);
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    color: #6c47ff;
+                    transition: box-shadow 0.2s, background 0.2s;
+                    position: static;
+                    transform: none;
+                }
+                .carousel-nav-btn:hover {
+                    background: #f3f0ff;
+                    box-shadow: 0 4px 16px rgba(108,71,255,0.15);
+                }
+                .vision-card {
+                    min-width: calc(33.333% - 14px);
+                    flex: 0 0 calc(33.333% - 14px);
+                    height: 380px;
+                    background: rgba(255,255,255,0.45);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255,255,255,0.6);
+                    border-radius: 20px;
+                    padding: 36px 32px;
+                    box-shadow: 0 4px 24px rgba(108,71,255,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    gap: 14px;
+                    transition: transform 0.3s, box-shadow 0.3s;
+                    scroll-snap-align: start;
+                }
+                .vision-card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 12px 36px rgba(108,71,255,0.1);
+                }
+                .vision-card .vision-label {
+                    font-size: 17px;
+                    font-weight: 800;
+                    color: var(--ink);
+                    letter-spacing: -0.3px;
+                }
+                .vision-card .vision-desc {
+                    font-size: 15px;
+                    color: #6b6976;
+                    line-height: 1.7;
+                }
+                @media (max-width: 900px) {
+                    .vision-card { min-width: 80vw; flex: 0 0 80vw; }
+                }
+            `}</style>
+
             {/* ── Navbar ── */}
             <nav style={S.nav}>
                 <div style={S.logo}>
@@ -275,33 +364,59 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ── Project Motto / Vision ── */}
-            <section style={{ ...S.section, background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E") repeat, rgba(108,71,255,0.03)`, borderTop: '1px solid rgba(108,71,255,0.1)', borderBottom: '1px solid rgba(108,71,255,0.1)', textAlign: 'center' }}>
-                <h2 style={{ fontSize: 14, fontWeight: 700, color: '#6c47ff', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}>
-                    Our Vision
-                </h2>
-                <h3 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 900, letterSpacing: '-1px', maxWidth: 900, margin: '0 auto 32px', lineHeight: 1.3 }}>
-                    “Transforming job applications through intelligent resume tailoring and career insights.”
-                </h3>
-                <p style={{ fontSize: 18, color: 'var(--muted)', maxWidth: 800, margin: '0 auto 48px', lineHeight: 1.6 }}>
-                    Our system aims to revolutionize the job application process by automatically tailoring resumes to specific job descriptions using intelligent algorithms.
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 24 }}>
-                    {[
-                        'Automated Resume Tailoring',
-                        'Higher ATS Compatibility',
-                        'Faster Job Application Workflow',
-                        'Personalized Career Insights'
-                    ].map((outcome, i) => (
-                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'white', padding: '12px 24px', borderRadius: 30, border: '1px solid rgba(108,71,255,0.1)', boxShadow: '0 4px 12px rgba(108,71,255,0.03)', fontWeight: 700, fontSize: 14.5, color: 'var(--ink)' }}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                            {outcome}
-                        </div>
-                    ))}
+            {/* ── Project Motto / Vision — SCROLLABLE CAROUSEL ── */}
+            <section style={{ ...S.section, background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E") repeat, rgba(108,71,255,0.03)`, borderTop: '1px solid rgba(108,71,255,0.1)', borderBottom: '1px solid rgba(108,71,255,0.1)' }}>
+                {/* Section header — kept centered */}
+                <div style={{ textAlign: 'center', marginBottom: 48 }}>
+                    <h2 style={{ fontSize: 14, fontWeight: 700, color: '#6c47ff', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}>
+                        Our Vision
+                    </h2>
+                    <h3 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 900, letterSpacing: '-1px', maxWidth: 900, margin: '0 auto 32px', lineHeight: 1.3 }}>
+                        "Transforming job applications through intelligent resume tailoring and career insights."
+                    </h3>
+                    <p style={{ fontSize: 18, color: 'var(--muted)', maxWidth: 800, margin: '0 auto', lineHeight: 1.6 }}>
+                        Our system aims to revolutionize the job application process by automatically tailoring resumes to specific job descriptions using intelligent algorithms.
+                    </p>
+                </div>
+
+                {/* Scrollable outcome cards */}
+                <div className="carousel-wrapper">
+                    <div id="vision-track" className="carousel-track">
+                        {[
+                            {
+                                icon: '🎯',
+                                label: 'Automated Resume Tailoring',
+                                desc: 'Resumes tailored to exact job descriptions using intelligent NLP, automatically and at scale.',
+                            },
+                            {
+                                icon: '🤖',
+                                label: 'Higher ATS Compatibility',
+                                desc: 'Semantic keyword matching and formatting rules that maximize ATS pass-through rates.',
+                            },
+                            {
+                                icon: '⚡',
+                                label: 'Faster Job Application Workflow',
+                                desc: 'Cut application time from hours to seconds with intelligent automation pipelines.',
+                            },
+                            {
+                                icon: '📊',
+                                label: 'Personalized Career Insights',
+                                desc: 'Data-driven skill gap analysis and roadmap generation tailored to your unique profile.',
+                            },
+                        ].map((item, i) => (
+                            <div key={i} className="vision-card">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                                    <span className="vision-label">{item.label}</span>
+                                </div>
+                                <p className="vision-desc">{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            {/* ── Features Config ── */}
+            {/* ── Features — SCROLLABLE CAROUSEL ── */}
             <section id="features" style={S.section}>
                 <div style={S.sectionHeader}>
                     <h2 style={{ fontSize: 42, fontWeight: 900, letterSpacing: '-1.5px', marginBottom: 16 }}>
@@ -312,37 +427,39 @@ export default function LandingPage() {
                     </p>
                 </div>
 
-                <div style={S.grid3}>
-                    <FeatureCard
-                        icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v18M3 12h18" /><circle cx="12" cy="12" r="4" /></svg>}
-                        title={"1. Resume Versioning System"}
-                        desc={"Every time you tailor a resume to a JD, our system saves a frozen snapshot. Treat your job applications like Git commits. View history, compare changes, and jump back to \"Resume_v4\" anytime."}
-                    />
-                    <FeatureCard
-                        icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12h4l3-9 5 18 3-9h5" /></svg>}
-                        title={"2. Semantic Skill Gap Analysis"}
-                        desc={"Traditional ATS parsers use basic regex. Our Gap Analyzer uses vector embeddings to map 'CNN' to 'Deep Learning.' It scores exactly what you have, what you partially match, and outputs a concrete Learning Roadmap."}
-                    />
-                    <FeatureCard
-                        icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>}
-                        title={"3. Anti-Hallucination Constraints"}
-                        desc={"A smart 'Truth Constraint' engine. If the AI LLM attempts to add 'Kubernetes' to a bullet point when it isn't supported by your base profile, our validation layer catches it, discards it, and safely falls back to a rule-based engine."}
-                    />
-                    <FeatureCard
-                        icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg>}
-                        title={"4. Auto Template Selection"}
-                        desc={"The system automatically classifies your profile metadata using JD keyword scoring (Data Science vs. Software vs. Academic) and renders the best LaTeX template dynamically on the fly."}
-                    />
-                    <FeatureCard
-                        icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>}
-                        title={"5. Personalized Impact Scoring"}
-                        desc={"Every single generated bullet point is scored for impact inside our QualityScorer. Vague language ('helped with') is detected and penalized, while strong action verbs ('architected', 'spearheaded') are required for passing."}
-                    />
-                    <FeatureCard
-                        icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>}
-                        title={"6. Multi-Model Scalable Engine"}
-                        desc={"Powered by Groq with ultra-fast LLM routing. The Tailor Engine employs a deterministic multi-model fallback chain to guarantee high availability—ensuring zero latency interruptions during critical application rushes."}
-                    />
+                <div className="carousel-wrapper">
+                    <div id="features-track" className="carousel-track">
+                        <FeatureCard
+                            icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v18M3 12h18" /><circle cx="12" cy="12" r="4" /></svg>}
+                            title={"1. Resume Versioning System"}
+                            desc={"Every time you tailor a resume to a JD, our system saves a frozen snapshot. Treat your job applications like Git commits. View history, compare changes, and jump back to \"Resume_v4\" anytime."}
+                        />
+                        <FeatureCard
+                            icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12h4l3-9 5 18 3-9h5" /></svg>}
+                            title={"2. Semantic Skill Gap Analysis"}
+                            desc={"Traditional ATS parsers use basic regex. Our Gap Analyzer uses vector embeddings to map 'CNN' to 'Deep Learning.' It scores exactly what you have, what you partially match, and outputs a concrete Learning Roadmap."}
+                        />
+                        <FeatureCard
+                            icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>}
+                            title={"3. Anti-Hallucination Constraints"}
+                            desc={"A smart 'Truth Constraint' engine. If the AI LLM attempts to add 'Kubernetes' to a bullet point when it isn't supported by your base profile, our validation layer catches it, discards it, and safely falls back to a rule-based engine."}
+                        />
+                        <FeatureCard
+                            icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg>}
+                            title={"4. Auto Template Selection"}
+                            desc={"The system automatically classifies your profile metadata using JD keyword scoring (Data Science vs. Software vs. Academic) and renders the best LaTeX template dynamically on the fly."}
+                        />
+                        <FeatureCard
+                            icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>}
+                            title={"5. Personalized Impact Scoring"}
+                            desc={"Every single generated bullet point is scored for impact inside our QualityScorer. Vague language ('helped with') is detected and penalized, while strong action verbs ('architected', 'spearheaded') are required for passing."}
+                        />
+                        <FeatureCard
+                            icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="7.5 4.21 12 6.81 16.5 4.21" /><polyline points="7.5 19.79 7.5 14.6 3 12" /><polyline points="21 12 16.5 14.6 16.5 19.79" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>}
+                            title={"6. Multi-Model Scalable Engine"}
+                            desc={"Powered by Groq with ultra-fast LLM routing. The Tailor Engine employs a deterministic multi-model fallback chain to guarantee high availability—ensuring zero latency interruptions during critical application rushes."}
+                        />
+                    </div>
                 </div>
             </section>
 
