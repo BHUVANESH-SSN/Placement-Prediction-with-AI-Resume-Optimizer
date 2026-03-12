@@ -41,6 +41,7 @@ interface PrefillData {
     github_contributions: number | null;
     leetcode_problems_solved: number | null;
     leetcode_ranking: number | null;
+    leetcode_contest_rating: number | null;
   };
   github_username: string | null;
   leetcode_username: string | null;
@@ -83,7 +84,7 @@ const C = {
 /* ── NAVBAR ── */
 function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
   return (
     <nav style={{
       display: 'flex', alignItems: 'center', height: 60, padding: '0 34px',
@@ -104,7 +105,7 @@ function Navbar({ active }: { active?: string }) {
           <button key={label} onClick={() => {
             const paths: Record<string, string> = {
               'Dashboard': '/home', 'Development': '/development',
-              'Resume Builder': '/resume', 'DSA': '/dsa', 'Predict': '/predict', 'resuMate': '/career-coach',
+              'Resume Builder': '/resume', 'DSA': '/dsa', 'Predict': '/predict', 'Nova AI': '/career-coach',
             };
             router.push(paths[label] || '/home');
           }} style={{
@@ -344,6 +345,7 @@ export default function PredictPage() {
       if (p.github_repo_count != null)          { setGhRepos(String(p.github_repo_count));                     filled.add('github_repo_count'); }
       if (p.github_contributions != null)       { setGhContributions(String(p.github_contributions));          filled.add('github_contributions'); }
       if (p.leetcode_problems_solved != null)   { setLcSolved(String(p.leetcode_problems_solved));             filled.add('leetcode_problems_solved'); }
+      if (p.leetcode_contest_rating != null)    { setLcRating(String(Math.round(p.leetcode_contest_rating))); filled.add('leetcode_contest_rating'); }
 
       setAutoFilled(filled);
     } catch {/* silently ignore — user can fill manually */}
@@ -439,7 +441,7 @@ export default function PredictPage() {
             </div>
             {(!prefill.github_linked || !prefill.leetcode_linked) && (
               <button onClick={() => router.push('/development')}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 12, background: C.accentSoft, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 700, color: C.accent }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 12, background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 700, color: '#fff' }}>
                 <Zap size={13} /> Link accounts to auto-fill
               </button>
             )}
@@ -541,7 +543,7 @@ export default function PredictPage() {
               <button onClick={handleSubmit} disabled={loading}
                 style={{
                   padding: '14px 24px', borderRadius: 12, border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-                  background: loading ? C.muted : `linear-gradient(135deg, ${C.accent} 0%, #a855f7 100%)`,
+                  background: loading ? C.muted : 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)',
                   color: 'white', fontFamily: "'Fira Code', monospace", fontSize: 15, fontWeight: 800,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   boxShadow: loading ? 'none' : '0 4px 14px rgba(124,58,237,0.35)',

@@ -67,10 +67,10 @@ const GeneratedResume = ({ resumeData, pdfPath, onRegenerate }: GeneratedResumeP
           </button>
           <button
             onClick={onRegenerate}
-            onMouseEnter={e => { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.accent}40`; }}
-            onMouseLeave={e => { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 4px 14px ${C.accent}30`; }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #c4b5fd 0%, #7c3aed 50%, #0d0d14 100%)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.accent}40`; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 4px 14px ${C.accent}30`; }}
             style={{
-              display: 'flex', alignItems: 'center', gap: 8, background: C.accent, color: '#fff',
+              display: 'flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', color: '#fff',
               border: 'none', borderRadius: 12, padding: '10px 18px', fontFamily: "'Fira Code', monospace",
               fontWeight: 700, fontSize: 13.5, cursor: 'pointer', transition: 'all 0.2s cubic-bezier(.4,0,.2,1)',
               boxShadow: `0 4px 14px ${C.accent}30`

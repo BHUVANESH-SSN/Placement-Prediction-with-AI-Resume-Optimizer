@@ -1,6 +1,6 @@
 'use client';
 
-import { apiGet, apiPostAuth, clearAuth, getAuth } from '@/lib/api';
+import { apiGet, apiPatch, apiPostAuth, clearAuth, getAuth } from '@/lib/api';
 import {
   BookOpen,
   CheckCircle2,
@@ -83,7 +83,7 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
   return (
     <nav style={{
       display: 'flex',
@@ -140,7 +140,7 @@ export function Navbar({ active }: { active?: string }) {
             if (label === 'Resume builder') router.push('/resume');
             if (label === 'DSA') router.push('/dsa');
             if (label === 'Predict') router.push('/predict');
-            if (label === 'resuMate') router.push('/career-coach');
+            if (label === 'Nova AI') router.push('/career-coach');
           }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
             {label}
           </button>
@@ -451,7 +451,7 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
               <input style={inpStyle} placeholder="e.g. torvalds" value={githubId} onChange={e => setGithubId(e.target.value)} onKeyDown={e => e.key === 'Enter' && getCode()} />
             </div>
             <button onClick={getCode} disabled={loading || !githubId.trim()}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !githubId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !githubId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               {loading ? 'Getting code…' : <><Code2 size={16} /> Get Verification Code</>}
             </button>
           </>
@@ -470,7 +470,7 @@ function LinkGithubPanel({ onLinked }: { onLinked: () => void }) {
               Add this code to your GitHub bio at <strong>github.com/settings/profile</strong>, then click Verify below.
             </p>
             <button onClick={link} disabled={loading}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
+              style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
               {loading ? 'Verifying…' : <><CheckCircle2 size={16} /> Verify and Link</>}
             </button>
             <button onClick={() => setStep('enter')} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 600 }}>
@@ -524,7 +524,7 @@ export default function DevelopmentPage() {
   async function updateGithub() {
     setUpdating(true);
     try {
-      await apiPostAuth('/dev/github/update', {});
+      await apiPatch('/dev/github/update', {});
       if (auth?.email) await fetchData(auth.email);
       if (github?.username) await fetchContributions(github.username);
       setToast({ msg: 'GitHub data refreshed!', type: 'success' });

@@ -97,7 +97,7 @@ function useScrollReveal(delay = 0) {
 /* ?????? NAVBAR ?????? */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
   return (
     <nav style={{ display: 'flex', alignItems: 'center', height: 60, padding: '0 34px', background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/home')}>
@@ -116,7 +116,7 @@ export function Navbar({ active }: { active?: string }) {
             if (label === 'Resume Builder') router.push('/resume');
             if (label === 'DSA') router.push('/dsa');
             if (label === 'Predict') router.push('/predict');
-            if (label === 'resuMate') router.push('/career-coach');
+            if (label === 'Nova AI') router.push('/career-coach');
           }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
             {label}
           </button>
@@ -324,7 +324,7 @@ function TopicTags({ topicTags }: { topicTags: LeetCodeData['topic_tags'] }) {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {tags.slice(0, 8).map(tag => (
                   <span key={tag.name} style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, fontWeight: 700, color: s.color, background: s.color + '15', border: `1px solid ${s.color}30`, borderRadius: 99, padding: '3px 10px', whiteSpace: 'nowrap' }}>
-                    {tag.name} ?? {tag.count}
+                    {tag.name} · {tag.count}
                   </span>
                 ))}
               </div>
@@ -383,7 +383,7 @@ function LinkLeetCodePanel({ onLinked }: { onLinked: () => void }) {
               <input style={inpStyle} placeholder="e.g. your_username" value={leetcodeId} onChange={e => setLeetcodeId(e.target.value)} onKeyDown={e => e.key === 'Enter' && getCode()} />
             </div>
             <button onClick={getCode} disabled={loading || !leetcodeId.trim()}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !leetcodeId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading || !leetcodeId.trim() ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               {loading ? 'Getting code???' : <><Target size={16} /> Get Verification Code</>}
             </button>
           </>
@@ -402,7 +402,7 @@ function LinkLeetCodePanel({ onLinked }: { onLinked: () => void }) {
               Add this code to your LeetCode bio at <strong>leetcode.com/profile</strong>, then click Verify below.
             </p>
             <button onClick={link} disabled={loading}
-              style={{ width: '100%', padding: '13px', background: C.accent, border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
+              style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 14, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
               {loading ? 'Verifying???' : <><CheckCircle2 size={16} /> Verify and Link</>}
             </button>
             <button onClick={() => setStep('enter')} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 600 }}>Back</button>

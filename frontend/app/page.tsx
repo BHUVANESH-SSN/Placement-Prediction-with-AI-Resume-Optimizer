@@ -43,7 +43,7 @@ const S = {
         transition: 'color 0.2s',
     },
     btnMain: {
-        background: 'linear-gradient(135deg, #6c47ff 0%, #8b6bff 100%)',
+        background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)',
         color: 'white',
         padding: '10px 24px',
         borderRadius: 12,
@@ -59,6 +59,7 @@ const S = {
         alignItems: 'center',
         textAlign: 'center' as const,
         position: 'relative' as const,
+        background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E") repeat, linear-gradient(90deg, hsla(39, 100%, 71%, 1) 0%, hsla(216, 100%, 62%, 1) 100%)`,
     },
     heroBadge: {
         padding: '6px 16px',
@@ -73,20 +74,39 @@ const S = {
         marginBottom: 24,
         animation: 'fadeSlideUp 0.5s ease-out forwards',
     },
+    certBadge: {
+        position: 'absolute' as const,
+        top: 100,
+        right: '8vw',
+        background: 'white',
+        border: '2px solid #3B82F6',
+        borderRadius: 40,
+        padding: '14px 24px',
+        fontWeight: 600,
+        fontSize: 14,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        cursor: 'pointer',
+        color: '#1e2a78',
+    },
     heroTitle: {
-        fontSize: 'clamp(42px, 6vw, 76px)',
-        fontWeight: 900,
-        lineHeight: 1.05,
+        fontFamily: '"Inter", "Helvetica Neue", Arial, sans-serif',
+        fontSize: '80px',
+        fontWeight: 700,
+        lineHeight: 1.1,
+        color: '#1a1a2e',
         letterSpacing: '-2px',
         marginBottom: 24,
         maxWidth: 900,
     },
     heroSub: {
         fontSize: 'clamp(16px, 2vw, 20px)',
-        color: 'var(--muted)',
+        color: '#0d0d14',
         lineHeight: 1.6,
         maxWidth: 700,
         marginBottom: 44,
+        fontWeight: 600,
     },
     ctaRow: {
         display: 'flex',
@@ -94,7 +114,7 @@ const S = {
         animation: 'fadeSlideUp 0.8s ease-out forwards',
     },
     btnPrimaryLg: {
-        background: 'var(--ink)',
+        background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)',
         color: 'white',
         padding: '16px 36px',
         borderRadius: 14,
@@ -107,9 +127,9 @@ const S = {
         transition: 'all 0.2s',
     },
     btnSecondaryLg: {
-        background: 'white',
-        color: 'var(--ink)',
-        border: '1.5px solid var(--border)',
+        background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)',
+        color: 'white',
+        border: 'none',
         padding: '16px 36px',
         borderRadius: 14,
         fontSize: 16,
@@ -162,8 +182,8 @@ const S = {
         lineHeight: 1.65,
     },
     impactSection: {
-        background: 'var(--ink)',
-        color: 'white',
+        background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E") repeat, linear-gradient(90deg, hsla(39, 100%, 71%, 1) 0%, hsla(216, 100%, 62%, 1) 100%)`,
+        color: 'var(--ink)',
         padding: '100px 8vw',
         borderRadius: '40px 40px 0 0',
         marginTop: 60,
@@ -187,7 +207,7 @@ const S = {
     },
     statLabel: {
         fontSize: 16,
-        color: 'rgba(255,255,255,0.7)',
+        color: '#6b6976',
         fontWeight: 600,
     },
 };
@@ -230,7 +250,13 @@ export default function LandingPage() {
                 <div style={S.heroBadge}>Research-Grade Career Intelligence</div>
                 <h1 style={S.heroTitle} className="fade-in-up">
                     Stop guessing keywords. <br />
-                    Start <span style={{ color: '#6c47ff' }}>engineering</span> your career.
+                    Start <span style={{
+                        background: 'linear-gradient(90deg, #1a1a2e 0%, #7C3AED 50%, #1D4ED8 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        fontWeight: 900,
+                    }}>engineering</span> your career.
                 </h1>
                 <p style={S.heroSub} className="fade-in-up fade-in-up-delay-1">
                     A truly innovative Hybrid Resume Orchestrator. We don't just match keywords—we analyze semantic skill gaps, auto-cluster your experience, and generate highly targeted, hallucination-free LaTeX resumes tailored to exact Job Descriptions.
@@ -250,7 +276,7 @@ export default function LandingPage() {
             </section>
 
             {/* ── Project Motto / Vision ── */}
-            <section style={{ ...S.section, background: 'rgba(108,71,255,0.03)', borderTop: '1px solid rgba(108,71,255,0.1)', borderBottom: '1px solid rgba(108,71,255,0.1)', textAlign: 'center' }}>
+            <section style={{ ...S.section, background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E") repeat, rgba(108,71,255,0.03)`, borderTop: '1px solid rgba(108,71,255,0.1)', borderBottom: '1px solid rgba(108,71,255,0.1)', textAlign: 'center' }}>
                 <h2 style={{ fontSize: 14, fontWeight: 700, color: '#6c47ff', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}>
                     Our Vision
                 </h2>
@@ -326,7 +352,7 @@ export default function LandingPage() {
                     <h2 style={{ fontSize: 46, fontWeight: 900, letterSpacing: '-1.5px', marginBottom: 20 }}>
                         What is the Impact?
                     </h2>
-                    <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.7)', lineHeight: 1.7 }}>
+                    <p style={{ fontSize: 18, color: '#6b6976', lineHeight: 1.7 }}>
                         We've revolutionized how job applications are generated. By integrating deep semantic mapping with <strong>strict logic constraints</strong>, we eliminate the ethical, formatting, and optimization problems found in standard ChatGPT outputs.
                     </p>
                 </div>

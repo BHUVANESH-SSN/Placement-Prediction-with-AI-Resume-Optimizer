@@ -1,7 +1,7 @@
 'use client';
 
 import { clearAuth, getAuth } from '@/lib/api';
-import { LogOut, RotateCcw, Send, Sparkles, RefreshCw } from 'lucide-react';
+import { Bot, LogOut, RotateCcw, Send, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -73,11 +73,11 @@ async function* streamSSE(
 /* ── NAVBAR ── */
 function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
   const paths: Record<string, string> = {
     Dashboard: '/home', Development: '/development',
     'Resume Builder': '/resume', DSA: '/dsa',
-    Predict: '/predict', resuMate: '/career-coach',
+    Predict: '/predict', 'Nova AI': '/career-coach',
   };
   return (
     <nav style={{ display: 'flex', alignItems: 'center', height: 60, padding: '0 34px', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
@@ -186,8 +186,8 @@ function renderMarkdown(raw: string): React.ReactNode[] {
 /* ── AVATARS ── */
 function BotAvatar() {
   return (
-    <div style={{ width: 34, height: 34, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 10, flexShrink: 0, boxShadow: `0 3px 10px ${C.accent}40` }}>
-      rM
+    <div style={{ width: 34, height: 34, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0, boxShadow: `0 3px 10px ${C.accent}40` }}>
+      <Bot size={17} />
     </div>
   );
 }
@@ -219,7 +219,7 @@ function MessageBubble({
       <div style={{ maxWidth: '78%', minWidth: 60 }}>
         {isBot && (
           <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, fontWeight: 700, color: C.accent, margin: '0 0 5px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
-            resuMate
+            Nova AI
           </p>
         )}
 
@@ -250,11 +250,11 @@ function MessageBubble({
             <button
               onClick={onAnalyze}
               disabled={analyzing}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', background: analyzing ? C.muted : C.accent, border: 'none', borderRadius: 12, fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 700, color: '#fff', cursor: analyzing ? 'not-allowed' : 'pointer', boxShadow: analyzing ? 'none' : `0 4px 14px ${C.accent}40`, transition: 'all 0.2s' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', background: analyzing ? C.muted : 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 12, fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 700, color: '#fff', cursor: analyzing ? 'not-allowed' : 'pointer', boxShadow: analyzing ? 'none' : `0 4px 14px ${C.accent}40`, transition: 'all 0.2s' }}
             >
               {analyzing
                 ? <><RefreshCw size={14} className="rm-spin" /> Analyzing...</>
-                : <><Sparkles size={14} /> Analyze My Profile</>}
+                : <>✦ Analyze My Profile</>}
             </button>
           </div>
         )}
@@ -292,7 +292,7 @@ export default function ChatbotPage() {
     setMessages([{
       id: 'welcome',
       role: 'bot',
-      content: "Hi! I'm **resuMate** — your personal AI career coach.\\n\\nI'll analyze your complete profile including your resume, skills, projects, GitHub and LeetCode stats, then give you a detailed and honest improvement report.\\n\\nAfter the analysis, feel free to ask me anything about your career, skills, or profile!",
+      content: "Hi! I'm **Nova AI** — your personal AI career coach.\\n\\nI'll analyze your complete profile including your resume, skills, projects, GitHub and LeetCode stats, then give you a detailed and honest improvement report.\\n\\nAfter the analysis, feel free to ask me anything about your career, skills, or profile!",
       isWelcome: true,
     }]);
   }, []);
@@ -309,7 +309,7 @@ export default function ChatbotPage() {
     setMessages([{
       id: 'welcome',
       role: 'bot',
-      content: "Hi! I'm **resuMate** — your personal AI career coach.\\n\\nI'll analyze your complete profile including your resume, skills, projects, GitHub and LeetCode stats, then give you a detailed and honest improvement report.\\n\\nAfter the analysis, feel free to ask me anything about your career, skills, or profile!",
+      content: "Hi! I'm **Nova AI** — your personal AI career coach.\\n\\nI'll analyze your complete profile including your resume, skills, projects, GitHub and LeetCode stats, then give you a detailed and honest improvement report.\\n\\nAfter the analysis, feel free to ask me anything about your career, skills, or profile!",
       isWelcome: true,
     }]);
     setAnalyzing(false);
@@ -410,12 +410,12 @@ export default function ChatbotPage() {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Fira Code', monospace", overflow: 'hidden' }}>
-      <Navbar active="resuMate" />
+      <Navbar active="Nova AI" />
 
       {/* ICON SIDEBAR */}
       <aside style={{ position: 'fixed', top: 60, left: 0, width: 72, height: 'calc(100vh - 60px)', borderRight: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0', zIndex: 100, gap: 10 }}>
-        <div style={{ width: 38, height: 38, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 10 }}>
-          rM
+        <div style={{ width: 38, height: 38, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+          <Bot size={19} />
         </div>
         <div style={{ flex: 1 }} />
         <button onClick={resetChat} title="New Chat"
@@ -437,11 +437,11 @@ export default function ChatbotPage() {
 
         {/* Chat header bar */}
         <div style={{ padding: '12px 36px', borderBottom: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 10 }}>
-            rM
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+            <Bot size={18} />
           </div>
           <div>
-            <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 15, color: C.ink, margin: 0 }}>resuMate</p>
+            <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 15, color: C.ink, margin: 0 }}>Nova AI</p>
             <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: isLoading ? C.accent : C.success, margin: 0, fontWeight: 600 }}>
               {analyzing ? '● analyzing your profile...' : chatting ? '● typing...' : '● online'}
             </p>
@@ -477,7 +477,7 @@ export default function ChatbotPage() {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
               disabled={inputDisabled}
-              placeholder={analyzed ? 'Ask resuMate about your skills, projects, career path...' : 'Analyze your profile first to start chatting'}
+              placeholder={analyzed ? 'Ask Nova AI about your skills, projects, career path...' : 'Analyze your profile first to start chatting'}
               style={{ flex: 1, padding: '11px 16px', borderRadius: 14, border: `1.5px solid ${inputDisabled ? C.border : C.border}`, fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.ink, background: inputDisabled ? '#f8fafc' : C.surface, outline: 'none', transition: 'border-color 0.2s', opacity: inputDisabled ? 0.55 : 1 }}
               onFocus={e => { if (!inputDisabled) e.currentTarget.style.borderColor = C.accent; }}
               onBlur={e => { e.currentTarget.style.borderColor = C.border; }}
@@ -485,7 +485,7 @@ export default function ChatbotPage() {
             <button
               onClick={sendMessage}
               disabled={inputDisabled || !input.trim()}
-              style={{ width: 44, height: 44, borderRadius: 12, background: (inputDisabled || !input.trim()) ? C.border : C.accent, border: 'none', cursor: (inputDisabled || !input.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', boxShadow: (inputDisabled || !input.trim()) ? 'none' : `0 4px 12px ${C.accent}40`, flexShrink: 0 }}
+              style={{ width: 44, height: 44, borderRadius: 12, background: (inputDisabled || !input.trim()) ? C.border : 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', cursor: (inputDisabled || !input.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', boxShadow: (inputDisabled || !input.trim()) ? 'none' : `0 4px 12px ${C.accent}40`, flexShrink: 0 }}
             >
               {chatting
                 ? <RefreshCw size={16} color="#fff" className="rm-spin" />

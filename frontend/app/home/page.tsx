@@ -78,7 +78,7 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
   return (
     <nav style={{
       display: 'flex',
@@ -132,10 +132,10 @@ export function Navbar({ active }: { active?: string }) {
           <button key={label} onClick={() => {
             if (label === 'Dashboard') router.push('/home');
             if (label === 'Development') router.push('/development');
-            if (label === 'Resume builder') router.push('/resume');
+            if (label === 'Resume Builder') router.push('/resume');
             if (label === 'DSA') router.push('/dsa');
             if (label === 'Predict') router.push('/predict');
-            if (label === 'resuMate') router.push('/career-coach');
+            if (label === 'Nova AI') router.push('/career-coach');
           }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
             {label}
           </button>
@@ -193,7 +193,7 @@ function ProfileModal({ data, onSave, onClose }: { data: Partial<Profile>; onSav
 
       <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
         <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: "'Fira Code', monospace", fontSize: 14, fontWeight: 600 }}>Cancel</button>
-        <button onClick={async () => { setSaving(true); await onSave({ full_name: f, email: e, phone: p, location: l, institute: i }); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
+        <button onClick={async () => { setSaving(true); await onSave({ full_name: f, email: e, phone: p, location: l, institute: i }); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
           {saving ? 'Saving…' : 'Save Changes'}
         </button>
       </div>
@@ -231,7 +231,7 @@ function SkillsModal({ existing, onSave, onClose }: { existing: Skill[]; onSave:
       </button>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
         <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: "'Fira Code', monospace", fontSize: 14, fontWeight: 600 }}>Cancel</button>
-        <button onClick={save} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
+        <button onClick={save} disabled={saving} style={{ padding: '10px 28px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
           {saving ? 'Saving…' : 'Save Skills'}
         </button>
       </div>
@@ -252,9 +252,9 @@ function SectionHead({ title, count, subtitle, onAdd, addLabel = '+ Add' }: { ti
         <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: 0 }}>{subtitle}</p>
       </div>
       <button onClick={onAdd}
-        onMouseEnter={e => { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 10px 28px ${C.accent}50`; }}
-        onMouseLeave={e => { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.accent}40`; }}
-        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 24px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 6px 20px ${C.accent}40`, whiteSpace: 'nowrap' }}>
+        onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #c4b5fd 0%, #7c3aed 50%, #0d0d14 100%)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 10px 28px ${C.accent}50`; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.accent}40`; }}
+        style={{ background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', color: '#fff', border: 'none', borderRadius: 14, padding: '12px 24px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 6px 20px ${C.accent}40`, whiteSpace: 'nowrap' }}>
         {addLabel}
       </button>
     </div>
@@ -292,7 +292,7 @@ function InfoCard({ accentColor, typeBadge, yearBadge, title, subtitle, stats, f
           </span>
         )}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, opacity: hov ? 1 : 0, transition: 'opacity 0.2s' }}>
-          <button onClick={onEdit} style={{ background: C.accentSoft, border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <button onClick={onEdit} style={{ background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: '#fff', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
             <Pencil size={12} /> Edit
           </button>
           <button onClick={onDelete} style={{ background: '#fee2e2', border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent2, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -338,9 +338,9 @@ function Empty({ icon, text, onAdd, label }: { icon: React.ReactNode; text: stri
       </div>
       <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, color: C.muted, margin: '0 0 22px', fontWeight: 500 }}>{text}</p>
       <button onClick={onAdd}
-        onMouseEnter={e => { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; }}
-        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 28px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}40`, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+        onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #c4b5fd 0%, #7c3aed 50%, #0d0d14 100%)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)'; e.currentTarget.style.transform = 'none'; }}
+        style={{ background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', color: '#fff', border: 'none', borderRadius: 14, padding: '12px 28px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}40`, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 7 }}>
         <Plus size={16} /> {label}
       </button>
     </div>

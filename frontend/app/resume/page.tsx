@@ -1,7 +1,6 @@
 "use client";
 
 import AtsScoreCard from "@/components/AtsScoreCard";
-import Footer from "@/components/Footer";
 import GeneratedResume from "@/components/GeneratedResume";
 import Heatmap from "@/components/Heatmap";
 import JDSection from "@/components/JDSection";
@@ -39,7 +38,7 @@ const C = {
 /* ── NAVBAR ── */
 function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'resuMate'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
   return (
     <nav style={{
       display: 'flex', alignItems: 'center', height: 60, padding: '0 34px',
@@ -195,13 +194,13 @@ function CreateMode({ auth }: { auth: Auth | null }) {
         onClick={handleCreate}
         disabled={isGenerating}
         style={{
-          width: '100%', padding: 16, background: isGenerating ? `${C.accent}99` : C.accent, color: '#fff',
+          width: '100%', padding: 16, background: isGenerating ? 'rgba(167,139,250,0.6)' : 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', color: '#fff',
           border: 'none', borderRadius: 14, fontFamily: "'Fira Code', monospace", fontWeight: 700,
           fontSize: 15, cursor: isGenerating ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
           boxShadow: `0 4px 20px ${C.accent}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
         }}
-        onMouseEnter={e => { if (!isGenerating) { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; } }}
-        onMouseLeave={e => { if (!isGenerating) { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; } }}
+        onMouseEnter={e => { if (!isGenerating) { e.currentTarget.style.background = 'linear-gradient(135deg, #c4b5fd 0%, #7c3aed 50%, #0d0d14 100%)'; e.currentTarget.style.transform = 'translateY(-2px)'; } }}
+        onMouseLeave={e => { if (!isGenerating) { e.currentTarget.style.background = 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)'; e.currentTarget.style.transform = 'none'; } }}
       >
         {isGenerating ? (
           <><div style={{ width: 18, height: 18, border: `2px solid rgba(255,255,255,0.4)`, borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} /> Building your resume...</>
@@ -413,7 +412,7 @@ const Index = () => {
         </div>
       </main>
 
-      <Footer />
+
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>

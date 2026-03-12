@@ -28,11 +28,15 @@ _KNOWN_BRANCHES = {"CS", "IT", "ECE", "EEE", "Mechanical", "Chemical", "Civil", 
 def _normalise_branch(raw: str | None) -> str | None:
     if not raw:
         return None
-    normalised = _BRANCH_ALIASES.get(raw.strip().lower())
+    stripped = raw.strip()
+    # If already a canonical value, return it directly
+    if stripped in _KNOWN_BRANCHES:
+        return stripped
+    normalised = _BRANCH_ALIASES.get(stripped.lower())
     if normalised:
         return normalised
     # Try prefix match for degree strings like "B.E. Computer Science"
-    raw_lower = raw.lower()
+    raw_lower = stripped.lower()
     for alias, canonical in _BRANCH_ALIASES.items():
         if alias in raw_lower:
             return canonical
@@ -75,6 +79,15 @@ def _extract_profile_prefill(user: dict) -> dict:
     result["branch"] = _normalise_branch(
         latest_edu.get("branch") or latest_edu.get("degree")
     )
+    # backlogs is stored by the education form as an integer
+    raw_backlogs = latest_edu.get("backlogs")
+    if raw_backlogs is not None:
+        try:
+            result["backlog_count"] = int(raw_backlogs)
+        except (TypeError, ValueError):
+            result["backlog_count"] = None
+    else:
+        result["backlog_count"] = None
 
     # ── Experience / Internships ──────────────────────────────
     experience: list = user.get("experience") or []
@@ -82,26 +95,20 @@ def _extract_profile_prefill(user: dict) -> dict:
         e for e in experience
         if "intern" in (e.get("role") or "").lower()
     ]
-    result["internship_count"] = len(internship_entries) if internship_entries else (
-        len(experience) if experience else None
-    )
+    # Fall back to ALL experience entries if none labelled as intern
+    entries_for_count    = internship_entries if internship_entries else experience
+    entries_for_duration = internship_entries if internship_entries else experience
+    result["internship_count"] = len(entries_for_count) if entries_for_count else None
     total_months = sum(
         _months_between(e.get("start_date"), e.get("end_date"))
-        for e in internship_entries
+        for e in entries_for_duration
     )
-    result["internship_duration_months"] = round(total_months, 1) if internship_entries else None
+    result["internship_duration_months"] = round(total_months, 1) if entries_for_duration else None
 
-    # ── Projects + Skills (scored via placement_scorer) ─────
+    # ── Projects ──────────────────────────────────────────────
     projects: list = user.get("projects") or []
     result["project_count"] = len(projects) if projects else None
-
-    # Extract skill name strings (DB stores skill objects with 'name')
-    raw_skills = user.get("skills") or []
-    skill_names: list[str] = [
-        s.get("name") if isinstance(s, dict) else str(s)
-        for s in raw_skills
-        if s
-    ]
+    skill_names: list[str] = [s.get("name", "") for s in (user.get("skills") or []) if s.get("name")]
 
     if projects or skill_names:
         scored = placement_feature_score(projects, skill_names)
@@ -170,7 +177,7 @@ async def prefill_predict(
         "prefill": {
             # Academic
             "cgpa": profile_prefill.get("cgpa"),
-            "backlog_count": None,          # not stored in profile form
+            "backlog_count": profile_prefill.get("backlog_count"),
             "branch": profile_prefill.get("branch"),
             # Experience
             "internship_count": profile_prefill.get("internship_count"),
@@ -187,7 +194,6 @@ async def prefill_predict(
             # LeetCode
             "leetcode_problems_solved": leetcode_problems_solved,
             "leetcode_ranking": leetcode_ranking,
+            "leetcode_contest_rating": (leetcode.get("contest") or {}).get("rating"),
         },
-        "github_username": github.get("username"),
-        "leetcode_username": leetcode.get("username"),
     }

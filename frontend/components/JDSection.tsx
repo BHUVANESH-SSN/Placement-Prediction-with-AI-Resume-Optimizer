@@ -270,10 +270,10 @@ const JDSection = ({ onGenerate, isGenerating, setIsGenerating }: JDSectionProps
       <button
         onClick={handleGenerate}
         disabled={isGenerating}
-        onMouseEnter={e => { if (!isGenerating) { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 28px ${C.accent}45`; } }}
-        onMouseLeave={e => { if (!isGenerating) { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 4px 20px ${C.accent}35`; } }}
+        onMouseEnter={e => { if (!isGenerating) { e.currentTarget.style.background = 'linear-gradient(135deg, #c4b5fd 0%, #7c3aed 50%, #0d0d14 100%)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 28px ${C.accent}45`; } }}
+        onMouseLeave={e => { if (!isGenerating) { e.currentTarget.style.background = 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 4px 20px ${C.accent}35`; } }}
         style={{
-          width: '100%', padding: 16, background: C.accent, color: '#fff', border: 'none', borderRadius: 14, fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: isGenerating ? 'not-allowed' : 'pointer', transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 4px 20px ${C.accent}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, letterSpacing: '0.2px', opacity: isGenerating ? 0.7 : 1
+          width: '100%', padding: 16, background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', color: '#fff', border: 'none', borderRadius: 14, fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 15, cursor: isGenerating ? 'not-allowed' : 'pointer', transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 4px 20px ${C.accent}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, letterSpacing: '0.2px', opacity: isGenerating ? 0.7 : 1
         }}
       >
         {isGenerating ? (

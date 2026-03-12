@@ -25,7 +25,7 @@ const Header = ({ onHistoryClick, onGoBack }: HeaderProps) => {
           <polyline points="16 7 22 12 16 17" />
         </svg>
         <span style={{
-          fontFamily: "'Fira Code', sans-serif",
+          fontFamily: "'Fira Code', monospace",
           fontWeight: 900,
           fontSize: "20px",
           letterSpacing: "-0.5px",
@@ -57,7 +57,7 @@ const Header = ({ onHistoryClick, onGoBack }: HeaderProps) => {
             alignItems: "center",
             gap: 7,
             fontSize: 13,
-            fontFamily: "'Fira Code', sans-serif",
+            fontFamily: "'Fira Code', monospace",
             fontWeight: 700,
             color: "var(--accent)",
             background: "rgba(108,71,255,0.06)",
@@ -78,7 +78,7 @@ const Header = ({ onHistoryClick, onGoBack }: HeaderProps) => {
             alignItems: "center",
             gap: 7,
             fontSize: 13,
-            fontFamily: "'Fira Code', sans-serif",
+            fontFamily: "'Fira Code', monospace",
             fontWeight: 700,
             color: "var(--ink)",
             background: "var(--color-card, #eef0f5)",

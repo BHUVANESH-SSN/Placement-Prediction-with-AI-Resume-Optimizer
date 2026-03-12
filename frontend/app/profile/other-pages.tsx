@@ -9,14 +9,14 @@ import { Navbar } from '@/app/home/page';
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 999, background: type === 'success' ? '#22c55e' : '#ef4444', color: 'white', borderRadius: 10, padding: '12px 18px', fontFamily: 'Fira Code', monospace, fontWeight: 500, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 16px rgba(0,0,0,.12)' }}>
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 999, background: type === 'success' ? '#22c55e' : '#ef4444', color: 'white', borderRadius: 10, padding: '12px 18px', fontFamily: "'Fira Code', monospace", fontWeight: 500, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 16px rgba(0,0,0,.12)' }}>
       {type === 'success' ? '✓' : '✕'} {msg}
     </div>
   );
 }
 
-const inp: React.CSSProperties = { width: '100%', padding: '10px 14px', borderRadius: 8, border: '1.5px solid #e5e7eb', fontFamily: 'Fira Code', monospace, fontSize: 14, outline: 'none', background: 'white', color: '#1a1a2e', boxSizing: 'border-box' };
-const lbl: React.CSSProperties = { fontSize: 12.5, fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: 5, fontFamily: 'Fira Code', monospace };
+const inp: React.CSSProperties = { width: '100%', padding: '10px 14px', borderRadius: 8, border: '1.5px solid #e5e7eb', fontFamily: "'Fira Code', monospace", fontSize: 14, outline: 'none', background: 'white', color: '#1a1a2e', boxSizing: 'border-box' };
+const lbl: React.CSSProperties = { fontSize: 12.5, fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: 5, fontFamily: "'Fira Code', monospace" };
 
 /* ══════════════════════════════════════════════════════════
    SKILLS PAGE
@@ -44,8 +44,8 @@ function SkillLevelPicker({ value, onChange }: { value: number; onChange: (v: nu
         ))}
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-        <span style={{ fontSize: 10, color: '#9ca3af', fontFamily: 'Fira Code', monospace }}>Beginner</span>
-        <span style={{ fontSize: 10, color: '#9ca3af', fontFamily: 'Fira Code', monospace }}>Expert</span>
+        <span style={{ fontSize: 10, color: '#9ca3af', fontFamily: "'Fira Code', monospace" }}>Beginner</span>
+        <span style={{ fontSize: 10, color: '#9ca3af', fontFamily: "'Fira Code', monospace" }}>Expert</span>
       </div>
     </div>
   );
@@ -161,15 +161,15 @@ export function SkillsPage() {
     <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
       <Navbar active="Dashboard" />
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 24px 80px' }}>
-        <button onClick={() => router.push('/home')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 13.5, marginBottom: 24, padding: 0, fontFamily: 'Fira Code', monospace }}>
+        <button onClick={() => router.push('/home')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 13.5, marginBottom: 24, padding: 0, fontFamily: "'Fira Code', monospace" }}>
           ← Back to Dashboard
         </button>
 
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: 'Fira Code', monospace, fontWeight: 800, fontSize: 28, color: '#1a1a2e', marginBottom: 4 }}>
+          <h1 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 28, color: '#1a1a2e', marginBottom: 4 }}>
             🛠️ {isEdit ? 'Edit Skill' : 'Add Skills'}
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: 14, fontFamily: 'Fira Code', monospace }}>
+          <p style={{ color: '#9ca3af', fontSize: 14, fontFamily: "'Fira Code', monospace" }}>
             {isEdit ? 'Update skill details' : 'Showcase your technical expertise'}
           </p>
         </div>
@@ -177,24 +177,24 @@ export function SkillsPage() {
         {/* existing skills list */}
         {!isEdit && allSkills.length > 0 && (
           <div style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.5px', color: '#9ca3af', textTransform: 'uppercase', marginBottom: 12, fontFamily: 'Fira Code', monospace }}>
+            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.5px', color: '#9ca3af', textTransform: 'uppercase', marginBottom: 12, fontFamily: "'Fira Code', monospace" }}>
               Saved Skills ({allSkills.length})
             </p>
             {allSkills.map((sk, i) => (
               <div key={i} style={{ background: 'white', borderRadius: 10, padding: '12px 18px', border: '1px solid #e5e7eb', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ width: 34, height: 34, borderRadius: 8, background: '#f0f9ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>🛠️</div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 14, color: '#1a1a2e', marginBottom: 2 }}>{sk.name}</p>
+                  <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, color: '#1a1a2e', marginBottom: 2 }}>{sk.name}</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'Fira Code', monospace }}>{sk.category === 'Other' ? sk.customCategory || 'Other' : sk.category}</span>
+                    <span style={{ fontSize: 11, color: '#9ca3af', fontFamily: "'Fira Code', monospace" }}>{sk.category === 'Other' ? sk.customCategory || 'Other' : sk.category}</span>
                     <div style={{ display: 'flex', gap: 2 }}>
                       {[1,2,3,4,5].map(n => <div key={n} style={{ width: 10, height: 4, borderRadius: 2, background: n <= sk.level ? '#f97316' : '#e5e7eb' }} />)}
                     </div>
-                    <span style={{ fontSize: 11, color: '#f97316', fontFamily: 'Fira Code', monospace, fontWeight: 600 }}>{LEVEL_LABELS[sk.level]}</span>
+                    <span style={{ fontSize: 11, color: '#f97316', fontFamily: "'Fira Code', monospace", fontWeight: 600 }}>{LEVEL_LABELS[sk.level]}</span>
                   </div>
                 </div>
-                <button onClick={() => router.push(`/profile/skills?edit=${i}`)} style={{ background: 'none', border: '1.5px solid #e5e7eb', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#6b7280', cursor: 'pointer', fontFamily: 'Fira Code', monospace, fontWeight: 600, flexShrink: 0 }}>✏️ Edit</button>
-                <button onClick={() => handleDelete(i)} disabled={loading} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#ef4444', cursor: 'pointer', fontFamily: 'Fira Code', monospace, fontWeight: 600, flexShrink: 0 }}>🗑 Delete</button>
+                <button onClick={() => router.push(`/profile/skills?edit=${i}`)} style={{ background: 'none', border: '1.5px solid #e5e7eb', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#6b7280', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 600, flexShrink: 0 }}>✏️ Edit</button>
+                <button onClick={() => handleDelete(i)} disabled={loading} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#ef4444', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 600, flexShrink: 0 }}>🗑 Delete</button>
               </div>
             ))}
           </div>
@@ -202,7 +202,7 @@ export function SkillsPage() {
 
         <form onSubmit={handleSave}>
           <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e5e7eb', padding: '28px 32px', boxShadow: '0 1px 4px rgba(0,0,0,.06)' }}>
-            <h2 style={{ fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 20 }}>
+            <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 20 }}>
               {isEdit ? 'Edit Skill' : 'New Skill'}
             </h2>
 
@@ -210,15 +210,15 @@ export function SkillsPage() {
               <div key={i} style={{ border: '1.5px solid #e5e7eb', borderRadius: 12, padding: '20px 22px', marginBottom: 16 }}>
                 {!isEdit && entries.length > 1 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                    <span style={{ fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 13, color: '#1a1a2e' }}>{sk.name || `Skill #${i + 1}`}</span>
-                    <button type="button" onClick={() => { setEntries(p => p.filter((_, idx) => idx !== i)); setErrors(p => p.filter((_, idx) => idx !== i)); }} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '3px 9px', color: '#ef4444', fontSize: 12, cursor: 'pointer', fontFamily: 'Fira Code', monospace }}>Remove</button>
+                    <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13, color: '#1a1a2e' }}>{sk.name || `Skill #${i + 1}`}</span>
+                    <button type="button" onClick={() => { setEntries(p => p.filter((_, idx) => idx !== i)); setErrors(p => p.filter((_, idx) => idx !== i)); }} style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '3px 9px', color: '#ef4444', fontSize: 12, cursor: 'pointer', fontFamily: "'Fira Code', monospace" }}>Remove</button>
                   </div>
                 )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
                     <label style={lbl}>Skill Name *</label>
                     <input style={{ ...inp, border: `1.5px solid ${errors[i]?.name ? '#ef4444' : '#e5e7eb'}` }} placeholder="e.g. React, Python, Docker" value={sk.name} onChange={e => change(i, 'name', e.target.value)} />
-                    {errors[i]?.name && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'Fira Code', monospace, marginTop: 3, display: 'block' }}>{errors[i].name}</span>}
+                    {errors[i]?.name && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: "'Fira Code', monospace", marginTop: 3, display: 'block' }}>{errors[i].name}</span>}
                   </div>
 
                   {/* domain selector */}
@@ -226,12 +226,12 @@ export function SkillsPage() {
                     <label style={lbl}>Domain / Category *</label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
                       {SKILL_DOMAINS.map(d => (
-                        <button key={d} type="button" onClick={() => change(i, 'category', d)} style={{ padding: '8px 6px', borderRadius: 8, border: `1.5px solid ${sk.category === d ? '#f97316' : '#e5e7eb'}`, background: sk.category === d ? '#fff7ed' : 'white', color: sk.category === d ? '#f97316' : '#6b7280', fontFamily: 'Fira Code', monospace, fontWeight: sk.category === d ? 700 : 500, fontSize: 11.5, cursor: 'pointer', textAlign: 'center', transition: 'all .15s' }}>
+                        <button key={d} type="button" onClick={() => change(i, 'category', d)} style={{ padding: '8px 6px', borderRadius: 8, border: `1.5px solid ${sk.category === d ? '#f97316' : '#e5e7eb'}`, background: sk.category === d ? '#fff7ed' : 'white', color: sk.category === d ? '#f97316' : '#6b7280', fontFamily: "'Fira Code', monospace", fontWeight: sk.category === d ? 700 : 500, fontSize: 11.5, cursor: 'pointer', textAlign: 'center', transition: 'all .15s' }}>
                           {d}
                         </button>
                       ))}
                     </div>
-                    {errors[i]?.category && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'Fira Code', monospace, marginTop: 3, display: 'block' }}>{errors[i].category}</span>}
+                    {errors[i]?.category && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: "'Fira Code', monospace", marginTop: 3, display: 'block' }}>{errors[i].category}</span>}
                   </div>
 
                   {/* custom domain input — shown only when "Other" is selected */}
@@ -244,7 +244,7 @@ export function SkillsPage() {
                         value={sk.customCategory}
                         onChange={e => change(i, 'customCategory', e.target.value)}
                       />
-                      {errors[i]?.customCategory && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: 'Fira Code', monospace, marginTop: 3, display: 'block' }}>{errors[i].customCategory}</span>}
+                      {errors[i]?.customCategory && <span style={{ fontSize: 12, color: '#ef4444', fontFamily: "'Fira Code', monospace", marginTop: 3, display: 'block' }}>{errors[i].customCategory}</span>}
                     </div>
                   )}
 
@@ -254,14 +254,14 @@ export function SkillsPage() {
             ))}
 
             {!isEdit && (
-              <button type="button" onClick={() => { setEntries(p => [...p, { ...EMPTY_SKILL }]); setErrors(p => [...p, {}]); }} style={{ width: '100%', padding: '12px', border: '2px dashed #e5e7eb', borderRadius: 10, background: 'transparent', cursor: 'pointer', color: '#f97316', fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 13.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 24 }}>
+              <button type="button" onClick={() => { setEntries(p => [...p, { ...EMPTY_SKILL }]); setErrors(p => [...p, {}]); }} style={{ width: '100%', padding: '12px', border: '2px dashed #e5e7eb', borderRadius: 10, background: 'transparent', cursor: 'pointer', color: '#f97316', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 24 }}>
                 + Add Another Skill
               </button>
             )}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
-              <button type="button" onClick={() => router.push('/home')} style={{ padding: '12px 24px', border: '1.5px solid #e5e7eb', borderRadius: 10, background: 'none', cursor: 'pointer', color: '#6b7280', fontFamily: 'Fira Code', monospace, fontSize: 14 }}>Cancel</button>
-              <button type="submit" disabled={loading} style={{ padding: '12px 32px', background: '#1a1a2e', border: 'none', borderRadius: 10, color: 'white', fontFamily: 'Fira Code', monospace, fontWeight: 700, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+              <button type="button" onClick={() => router.push('/home')} style={{ padding: '12px 24px', border: '1.5px solid #e5e7eb', borderRadius: 10, background: 'none', cursor: 'pointer', color: '#6b7280', fontFamily: "'Fira Code', monospace", fontSize: 14 }}>Cancel</button>
+              <button type="submit" disabled={loading} style={{ padding: '12px 32px', background: '#1a1a2e', border: 'none', borderRadius: 10, color: 'white', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Saving...' : isEdit ? '✓ Update Skill' : '✓ Save Skills'}
               </button>
             </div>
