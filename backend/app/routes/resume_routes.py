@@ -6,7 +6,8 @@ import ast
 import traceback
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.services.resume_service import process_jd_input, run_resume_pipeline
+from app.services.resume_service import process_jd_input, run_resume_pipeline, create_plain_resume
+from app.services.ai.resume_parser import parse_resume_file
 from app.services.user_service import generate_resume_data
 from app.db.connection import get_db
 
@@ -23,6 +24,7 @@ async def extract_and_tailor(
     text: Annotated[Optional[str], Form()] = None,
     url: Annotated[Optional[str], Form()] = None,
     file: Annotated[Optional[UploadFile], File()] = None,
+    resume_file: Annotated[Optional[UploadFile], File()] = None,
     resume_json: Annotated[Optional[str], Form()] = None
 ):
     print(f">>> HIT /api/extract | input_type={input_type}")
@@ -30,8 +32,10 @@ async def extract_and_tailor(
         # Parse JD from whatever input type was sent
         jd_info = await process_jd_input(input_type, text, url, file)
 
-        # Determine the user resume: form field or fetch from DB
-        if resume_json:
+        # Determine the user resume: uploaded file > form JSON > DB profile
+        if resume_file:
+            user_resume = await parse_resume_file(resume_file)
+        elif resume_json:
             try:
                 user_resume = json.loads(resume_json)
             except json.JSONDecodeError:
@@ -46,7 +50,7 @@ async def extract_and_tailor(
             except Exception:
                 raise HTTPException(
                     status_code=400,
-                    detail="No resume_json provided and could not load profile from DB."
+                    detail="No resume file or JSON provided and could not load profile from DB."
                 )
 
         result = await run_resume_pipeline(user_resume, jd_info, verbose=False)
@@ -65,6 +69,41 @@ async def download_pdf(path: str):
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(path, media_type="application/pdf", filename=os.path.basename(path))
+
+
+@resume_router.post("/api/create")
+async def create_resume(
+    req: Request,
+    resume_file: Annotated[Optional[UploadFile], File()] = None,
+):
+    """
+    Create an ATS-friendly resume directly from the user's dashboard profile
+    (or from an uploaded PDF/DOCX) — no JD required, no AI tailoring.
+    """
+    print(">>> HIT /api/create")
+    try:
+        if resume_file:
+            user_resume = await parse_resume_file(resume_file)
+        else:
+            try:
+                email = req.state.user["email"]
+                db = await get_db()
+                user_resume = await generate_resume_data(db, email)
+            except Exception:
+                raise HTTPException(
+                    status_code=400,
+                    detail="No resume file provided and could not load profile from DB."
+                )
+
+        result = await create_plain_resume(user_resume)
+        return {"status": "success", **result}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 

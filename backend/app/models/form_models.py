@@ -9,6 +9,7 @@ class EducationModel(BaseModel):
     cgpa: Optional[float] = None
     start_year: Optional[int] = None
     end_year: Optional[int] = None
+    backlogs: Optional[int] = None
 
 class Skill(BaseModel):
     name: str

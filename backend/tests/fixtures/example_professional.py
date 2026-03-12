@@ -1,6 +1,8 @@
 
 import os
-from resume_generator import generate_resume
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from app.services.ai.generator import generate_resume
 
 
 

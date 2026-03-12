@@ -32,3 +32,24 @@ resume_generator/output/
 backend/app.log
 backend/static/
 backend/temp/
+
+# Machine learning artifacts
+# dataset files (CSV, etc.) stored under ml/data
+ml/data/
+ml/data/*.csv
+
+# trained models & serialized objects
+ml/*.pkl
+ml/models/
+ml/plots/
+*.h5
+*.pt
+*.joblib
+*.model
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# general logs and temporary files
+logs/
+*.log

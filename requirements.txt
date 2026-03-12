@@ -62,3 +62,8 @@ webencodings==0.5.1
 Werkzeug==3.1.6
 PyPDF2
 python-multipart
+python-jose[cryptography]
+python-multipart
+httpx
+
+brnaches should have only 8  categroies mentioned in the ml models, then degress shoudl be only be and me why it not getting the contest score form the leetcode , while prediciton i got placemnt predicted eprcetn and the compamy tier i ddidnt get the actual placed 1 or not placed 0 is it ok, then

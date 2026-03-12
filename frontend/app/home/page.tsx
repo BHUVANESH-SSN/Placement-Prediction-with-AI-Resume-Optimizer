@@ -1,13 +1,27 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAuth, clearAuth, apiGet, apiPatch } from '@/lib/api';
+import { apiGet, apiPatch, clearAuth, getAuth } from '@/lib/api';
 import {
-  GraduationCap, Briefcase, Trophy, Zap, Laptop2, MapPin, Phone,
-  LogOut, CheckCircle2, Building2, Calendar, Star, Package, Globe,
-  Github, Clock, Pencil, Trash2, Plus, PencilLine, Award,
+  Award,
+  Briefcase,
+  Building2, Calendar,
+  CheckCircle2,
+  Clock,
+  Github,
+  Globe,
+  GraduationCap,
+  Laptop2,
+  LogOut,
+  Package,
+  Pencil,
+  PencilLine,
+  Plus,
+  Star,
+  Trash2,
+  Trophy, Zap
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /* ── TYPES ── */
 interface Auth { token: string; email: string | null; name: string | null; }
@@ -17,7 +31,7 @@ interface Skill { name: string; category?: string; level?: number; }
 interface Experience { role?: string; company?: string; start_date?: string; end_date?: string; description?: string; }
 interface Achievement { title: string; description?: string; date?: string; }
 interface Profile {
-  full_name?: string; email?: string; phone?: string; location?: string;
+  full_name?: string; email?: string; phone?: string; location?: string; institute?: string;
   education?: Education[]; projects?: Project[]; skills?: Skill[];
   experience?: Experience[]; achievements?: Achievement[]; certifications?: Certification[];
 }
@@ -25,22 +39,22 @@ interface Certification { title: string; issuer: string; issue_date?: string; li
 
 /* ── DESIGN SYSTEM ── */
 const C = {
-  ink:        '#0f172a',
-  paper:      '#f8fafc',
-  surface:    '#ffffff',
-  accent:     '#7c3aed',
-  accentHov:  '#6d28d9',
+  ink: '#0f172a',
+  paper: '#f8fafc',
+  surface: '#ffffff',
+  accent: '#7c3aed',
+  accentHov: '#6d28d9',
   accentSoft: '#ede9fe',
-  accent2:    '#ef4444',
-  muted:      '#64748b',
-  border:     '#e2e8f0',
-  success:    '#16a34a',
+  accent2: '#ef4444',
+  muted: '#64748b',
+  border: '#e2e8f0',
+  success: '#16a34a',
 };
 
 /* ── INPUT STYLES ── */
 const inp: React.CSSProperties = {
   width: '100%', padding: '11px 15px', borderRadius: 12,
-  border: `1px solid ${C.border}`, fontFamily: 'Montserrat, sans-serif', fontSize: 14,
+  border: `1px solid ${C.border}`, fontFamily: "'Fira Code', monospace", fontSize: 14,
   outline: 'none', background: C.surface, color: C.ink, boxSizing: 'border-box', transition: 'all 0.2s',
 };
 const mlbl: React.CSSProperties = {
@@ -64,19 +78,69 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume builder', 'DSA'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
   return (
-    <nav style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 60, gap: 36, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>
-      {NAV.map(label => (
-        <button key={label} onClick={() => {
-          if (label === 'Dashboard') router.push('/home');
-          if (label === 'Development') router.push('/development');
-          if (label === 'Resume builder') router.push('/resume');
-          if (label === 'DSA') router.push('/dsa');
-        }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
-          {label}
-        </button>
-      ))}
+    <nav style={{
+      display: 'flex',
+      alignItems: 'center',
+      height: 60,
+      padding: '0 34px',
+      background: 'rgba(255,255,255,0.82)',
+      backdropFilter: 'blur(16px)',
+      borderBottom: `1px solid ${C.border}`,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 200
+    }}>
+      {/* Logo on the left */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/home')}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6c47ff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="8 7 2 12 8 17" />
+          <polyline points="16 7 22 12 16 17" />
+        </svg>
+        <span style={{
+          fontFamily: "'Fira Code', monospace",
+          fontWeight: 900,
+          fontSize: '18px',
+          letterSpacing: '-0.5px',
+          color: '#0d0d14',
+          display: 'flex',
+          alignItems: 'baseline',
+          lineHeight: 1,
+        }}>
+          AIRO
+          <div style={{
+            width: '6px',
+            height: '6px',
+            backgroundColor: '#6c47ff',
+            marginLeft: '4px'
+          }} />
+        </span>
+      </div>
+
+      {/* Centered navigation links */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 36,
+        marginRight: '120px' // Offset to balance the logo's space
+      }}>
+        {NAV.map(label => (
+          <button key={label} onClick={() => {
+            if (label === 'Dashboard') router.push('/home');
+            if (label === 'Development') router.push('/development');
+            if (label === 'Resume Builder') router.push('/resume');
+            if (label === 'DSA') router.push('/dsa');
+            if (label === 'Predict') router.push('/predict');
+            if (label === 'Nova AI') router.push('/career-coach');
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
+            {label}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 }
@@ -85,7 +149,7 @@ export function Navbar({ active }: { active?: string }) {
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)', animation: 'slideUp 0.3s cubic-bezier(.4,0,.2,1)' }}>
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, background: type === 'success' ? C.success : C.accent2, color: '#fff', borderRadius: 14, padding: '13px 20px', fontFamily: "'Fira Code', monospace", fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 9, boxShadow: '0 8px 32px rgba(15,23,42,0.18)', animation: 'slideUp 0.3s cubic-bezier(.4,0,.2,1)' }}>
       {type === 'success' ? <CheckCircle2 size={16} /> : '✕'} {msg}
     </div>
   );
@@ -97,7 +161,7 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(15,23,42,0.45)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ background: C.surface, borderRadius: 24, padding: '30px 34px', width: '100%', maxWidth: 580, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 32px 80px rgba(15,23,42,0.2)', border: `1px solid ${C.border}` }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 20, color: C.ink, margin: 0 }}>{title}</h2>
+          <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 20, color: C.ink, margin: 0 }}>{title}</h2>
           <button onClick={onClose} style={{ background: C.paper, border: 'none', borderRadius: 10, width: 34, height: 34, cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.muted }}>×</button>
         </div>
         {children}
@@ -106,17 +170,31 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
   );
 }
 
-/* ── CONTACT MODAL ── */
-function ContactModal({ phone, location, onSave, onClose }: { phone: string; location: string; onSave: (p: string, l: string) => Promise<void>; onClose: () => void; }) {
-  const [p, setP] = useState(phone); const [l, setL] = useState(location); const [saving, setSaving] = useState(false);
+/* ── PROFILE MODAL ── */
+function ProfileModal({ data, onSave, onClose }: { data: Partial<Profile>; onSave: (p: Partial<Profile>) => Promise<void>; onClose: () => void; }) {
+  const [f, setF] = useState(data.full_name || '');
+  const [e, setE] = useState(data.email || '');
+  const [p, setP] = useState(data.phone || '');
+  const [l, setL] = useState(data.location || '');
+  const [i, setI] = useState(data.institute || '');
+  const [saving, setSaving] = useState(false);
+
   return (
-    <Modal title="Edit Contact Info" onClose={onClose}>
-      <div style={fg}><label style={mlbl}>Phone Number</label><input style={inp} placeholder="+91 9876543210" value={p} onChange={e => setP(e.target.value)} /></div>
-      <div style={fg}><label style={mlbl}>Location</label><input style={inp} placeholder="Chennai, Tamil Nadu" value={l} onChange={e => setL(e.target.value)} /></div>
-      <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
-        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 600 }}>Cancel</button>
-        <button onClick={async () => { setSaving(true); await onSave(p, l); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
-          {saving ? 'Saving…' : 'Save'}
+    <Modal title="Edit Profile Details" onClose={onClose}>
+      <div style={fg}><label style={mlbl}>Full Name</label><input style={inp} placeholder="Alex Johnson" value={f} onChange={ev => setF(ev.target.value)} /></div>
+      <div style={fg}><label style={mlbl}>Email Address</label><input style={inp} placeholder="you@example.com" value={e} onChange={ev => setE(ev.target.value)} /></div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div style={fg}><label style={mlbl}>Phone Number</label><input style={inp} placeholder="+1 234 567 890" value={p} onChange={ev => setP(ev.target.value)} /></div>
+        <div style={fg}><label style={mlbl}>City / Location</label><input style={inp} placeholder="New York, NY" value={l} onChange={ev => setL(ev.target.value)} /></div>
+      </div>
+
+      <div style={fg}><label style={mlbl}>Educational Institute</label><input style={inp} placeholder="Stanford University" value={i} onChange={ev => setI(ev.target.value)} /></div>
+
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: "'Fira Code', monospace", fontSize: 14, fontWeight: 600 }}>Cancel</button>
+        <button onClick={async () => { setSaving(true); await onSave({ full_name: f, email: e, phone: p, location: l, institute: i }); setSaving(false); }} disabled={saving} style={{ padding: '10px 28px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
+          {saving ? 'Saving…' : 'Save Changes'}
         </button>
       </div>
     </Modal>
@@ -138,8 +216,8 @@ function SkillsModal({ existing, onSave, onClose }: { existing: Skill[]; onSave:
       {skills.map((s, i) => (
         <div key={i} style={{ border: `1px solid ${C.border}`, borderRadius: 14, padding: '14px 18px', marginBottom: 12, background: C.paper }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 13, color: C.ink }}>{s.name || `Skill #${i + 1}`}</span>
-            <button onClick={() => remove(i)} style={{ background: '#fee2e2', border: 'none', borderRadius: 8, padding: '4px 12px', fontSize: 12, color: C.accent2, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 600 }}>Remove</button>
+            <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13, color: C.ink }}>{s.name || `Skill #${i + 1}`}</span>
+            <button onClick={() => remove(i)} style={{ background: '#fee2e2', border: 'none', borderRadius: 8, padding: '4px 12px', fontSize: 12, color: C.accent2, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 600 }}>Remove</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 0.8fr', gap: 10 }}>
             <div style={fg}><label style={mlbl}>Name *</label><input style={inp} placeholder="e.g. React" value={s.name} onChange={e => change(i, 'name', e.target.value)} /></div>
@@ -148,12 +226,12 @@ function SkillsModal({ existing, onSave, onClose }: { existing: Skill[]; onSave:
           </div>
         </div>
       ))}
-      <button onClick={add} style={{ width: '100%', padding: 13, border: `2px dashed ${C.border}`, borderRadius: 12, background: 'transparent', cursor: 'pointer', color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+      <button onClick={add} style={{ width: '100%', padding: 13, border: `2px dashed ${C.border}`, borderRadius: 12, background: 'transparent', cursor: 'pointer', color: C.accent, fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
         <Plus size={16} /> Add Skill
       </button>
       <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: 'Montserrat, sans-serif', fontSize: 14, fontWeight: 600 }}>Cancel</button>
-        <button onClick={save} disabled={saving} style={{ padding: '10px 28px', background: C.accent, border: 'none', borderRadius: 12, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
+        <button onClick={onClose} style={{ padding: '10px 24px', border: `1px solid ${C.border}`, borderRadius: 12, background: 'none', cursor: 'pointer', color: C.muted, fontFamily: "'Fira Code', monospace", fontSize: 14, fontWeight: 600 }}>Cancel</button>
+        <button onClick={save} disabled={saving} style={{ padding: '10px 28px', background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 12, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}50` }}>
           {saving ? 'Saving…' : 'Save Skills'}
         </button>
       </div>
@@ -168,15 +246,15 @@ function SectionHead({ title, count, subtitle, onAdd, addLabel = '+ Add' }: { ti
     <div ref={reveal.ref} style={{ ...reveal.style, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 24 }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>{title}</h2>
-          <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{count}</span>
+          <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 28, color: C.ink, margin: 0, letterSpacing: '-0.5px' }}>{title}</h2>
+          <span style={{ minWidth: 28, height: 28, borderRadius: 14, background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, color: '#fff', fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', boxShadow: `0 4px 12px ${C.accent}40` }}>{count}</span>
         </div>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: 0 }}>{subtitle}</p>
+        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: 0 }}>{subtitle}</p>
       </div>
       <button onClick={onAdd}
-        onMouseEnter={e => { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 10px 28px ${C.accent}50`; }}
-        onMouseLeave={e => { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.accent}40`; }}
-        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 24px', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 6px 20px ${C.accent}40`, whiteSpace: 'nowrap' }}>
+        onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #c4b5fd 0%, #7c3aed 50%, #0d0d14 100%)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 10px 28px ${C.accent}50`; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.accent}40`; }}
+        style={{ background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', color: '#fff', border: 'none', borderRadius: 14, padding: '12px 24px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.2s cubic-bezier(.4,0,.2,1)', boxShadow: `0 6px 20px ${C.accent}40`, whiteSpace: 'nowrap' }}>
         {addLabel}
       </button>
     </div>
@@ -206,18 +284,18 @@ function InfoCard({ accentColor, typeBadge, yearBadge, title, subtitle, stats, f
       {/* Badge + actions row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '18px 22px 0', flexWrap: 'wrap' }}>
         {typeBadge && (
-          <span style={{ background: `${accentColor}15`, border: `1.5px solid ${accentColor}40`, borderRadius: 999, padding: '5px 16px', fontSize: 12.5, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, color: accentColor, whiteSpace: 'nowrap' }}>{typeBadge}</span>
+          <span style={{ background: `${accentColor}15`, border: `1.5px solid ${accentColor}40`, borderRadius: 999, padding: '5px 16px', fontSize: 12.5, fontFamily: "'Fira Code', monospace", fontWeight: 700, color: accentColor, whiteSpace: 'nowrap' }}>{typeBadge}</span>
         )}
         {yearBadge && (
-          <span style={{ background: C.paper, border: `1px solid ${C.border}`, borderRadius: 999, padding: '5px 13px', fontSize: 12, fontFamily: 'Montserrat, sans-serif', fontWeight: 600, color: C.muted, display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}>
+          <span style={{ background: C.paper, border: `1px solid ${C.border}`, borderRadius: 999, padding: '5px 13px', fontSize: 12, fontFamily: "'Fira Code', monospace", fontWeight: 600, color: C.muted, display: 'inline-flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}>
             <Clock size={12} color={C.muted} /> {yearBadge}
           </span>
         )}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, opacity: hov ? 1 : 0, transition: 'opacity 0.2s' }}>
-          <button onClick={onEdit} style={{ background: C.accentSoft, border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <button onClick={onEdit} style={{ background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: '#fff', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
             <Pencil size={12} /> Edit
           </button>
-          <button onClick={onDelete} style={{ background: '#fee2e2', border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent2, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <button onClick={onDelete} style={{ background: '#fee2e2', border: 'none', borderRadius: 9, padding: '6px 14px', fontSize: 12.5, color: C.accent2, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5 }}>
             <Trash2 size={12} /> Delete
           </button>
         </div>
@@ -225,8 +303,8 @@ function InfoCard({ accentColor, typeBadge, yearBadge, title, subtitle, stats, f
 
       {/* Body */}
       <div style={{ padding: '14px 22px 24px' }}>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 20, color: C.ink, lineHeight: 1.3, margin: '0 0 6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{title}</p>
-        {subtitle && <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 14, color: C.muted, margin: '0 0 18px', lineHeight: 1.65, wordBreak: 'break-word' }}>{subtitle}</p>}
+        <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 20, color: C.ink, lineHeight: 1.3, margin: '0 0 6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{title}</p>
+        {subtitle && <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 14, color: C.muted, margin: '0 0 18px', lineHeight: 1.65, wordBreak: 'break-word' }}>{subtitle}</p>}
 
         {stats && stats.length > 0 && (
           <div style={{ border: `1px solid ${C.border}`, borderRadius: 16, overflow: 'hidden', marginTop: subtitle ? 0 : 14, background: C.paper }}>
@@ -236,9 +314,9 @@ function InfoCard({ accentColor, typeBadge, yearBadge, title, subtitle, stats, f
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                   {s.icon && <span style={{ color: C.muted, display: 'flex', alignItems: 'center' }}>{s.icon}</span>}
-                  <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 11, color: C.muted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</span>
+                  <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 11, color: C.muted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</span>
                 </div>
-                <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: C.ink, margin: 0, textAlign: 'right', wordBreak: 'break-word', maxWidth: '60%' }}>{s.value}</p>
+                <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, color: C.ink, margin: 0, textAlign: 'right', wordBreak: 'break-word', maxWidth: '60%' }}>{s.value}</p>
               </div>
             ))}
           </div>
@@ -258,11 +336,11 @@ function Empty({ icon, text, onAdd, label }: { icon: React.ReactNode; text: stri
       <div style={{ width: 60, height: 60, borderRadius: 18, background: C.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: C.accent }}>
         {icon}
       </div>
-      <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: '0 0 22px', fontWeight: 500 }}>{text}</p>
+      <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, color: C.muted, margin: '0 0 22px', fontWeight: 500 }}>{text}</p>
       <button onClick={onAdd}
-        onMouseEnter={e => { e.currentTarget.style.background = C.accentHov; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = C.accent; e.currentTarget.style.transform = 'none'; }}
-        style={{ background: C.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '12px 28px', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}40`, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+        onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #c4b5fd 0%, #7c3aed 50%, #0d0d14 100%)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)'; e.currentTarget.style.transform = 'none'; }}
+        style={{ background: 'linear-gradient(135deg, #A78BFA 0%, #6c47ff 50%, #1a1a2e 100%)', color: '#fff', border: 'none', borderRadius: 14, padding: '12px 28px', fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: `0 6px 20px ${C.accent}40`, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 7 }}>
         <Plus size={16} /> {label}
       </button>
     </div>
@@ -313,13 +391,18 @@ export default function HomePage() {
   }
 
   const del = {
-    edu:  (i: number) => patch({ education:      (profile?.education      ?? []).filter((_, idx) => idx !== i) }, 'Education removed'),
-    proj: (i: number) => patch({ projects:       (profile?.projects       ?? []).filter((_, idx) => idx !== i) }, 'Project removed'),
-    exp:  (i: number) => patch({ experience:     (profile?.experience     ?? []).filter((_, idx) => idx !== i) }, 'Experience removed'),
-    ach:  (i: number) => patch({ achievements:   (profile?.achievements   ?? []).filter((_, idx) => idx !== i) }, 'Achievement removed'),
+    edu: (i: number) => patch({ education: (profile?.education ?? []).filter((_, idx) => idx !== i) }, 'Education removed'),
+    proj: (i: number) => patch({ projects: (profile?.projects ?? []).filter((_, idx) => idx !== i) }, 'Project removed'),
+    exp: (i: number) => patch({ experience: (profile?.experience ?? []).filter((_, idx) => idx !== i) }, 'Experience removed'),
+    ach: (i: number) => patch({ achievements: (profile?.achievements ?? []).filter((_, idx) => idx !== i) }, 'Achievement removed'),
     cert: (i: number) => patch({ certifications: (profile?.certifications ?? []).filter((_, idx) => idx !== i) }, 'Certification removed'),
-    skill:(i: number) => patch({ skills:         (profile?.skills         ?? []).filter((_, idx) => idx !== i) }, 'Skill removed'),
+    skill: (i: number) => patch({ skills: (profile?.skills ?? []).filter((_, idx) => idx !== i) }, 'Skill removed'),
   };
+
+  const [sbHover, setSbHover] = useState(false);
+  const SB_MIN = 88;
+  const SB_MAX = 285;
+  const NAV_H = 60;
 
   if (!auth) return null;
 
@@ -327,58 +410,188 @@ export default function HomePage() {
   const initials = displayName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
   const fmtDate = (d?: string) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present';
 
-  const SIDEBAR_W = 285;
-  const NAV_H = 60;
-
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Fira Code', monospace" }}>
       <Navbar active="Dashboard" />
 
       {/* SIDEBAR */}
-      <aside style={{ position: 'fixed', top: NAV_H, left: 0, width: SIDEBAR_W, height: `calc(100vh - ${NAV_H}px)`, overflowY: 'auto', borderRight: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', padding: '40px 28px 40px 34px', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+      <aside
+        onMouseEnter={() => setSbHover(true)}
+        onMouseLeave={() => setSbHover(false)}
+        style={{
+          position: 'fixed',
+          top: NAV_H,
+          left: 0,
+          width: sbHover ? SB_MAX : SB_MIN,
+          height: `calc(100vh - ${NAV_H}px)`,
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          borderRight: `1px solid ${C.border}`,
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(20px)',
+          padding: sbHover ? '40px 28px 40px 34px' : '40px 14px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: sbHover ? 'flex-start' : 'center',
+          zIndex: 100,
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          scrollbarWidth: 'none'
+        }}>
         {/* Avatar */}
-        <div style={{ width: 72, height: 72, borderRadius: '50%', background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 24, marginBottom: 16, flexShrink: 0, boxShadow: `0 12px 30px ${C.accent}45` }}>{initials}</div>
+        <div style={{
+          width: sbHover ? 72 : 52,
+          height: sbHover ? 72 : 52,
+          borderRadius: '50%',
+          background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#fff',
+          fontWeight: 800,
+          fontSize: sbHover ? 24 : 18,
+          marginBottom: sbHover ? 16 : 32,
+          flexShrink: 0,
+          boxShadow: `0 12px 30px ${C.accent}45`,
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}>{initials}</div>
 
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px' }}>{displayName}</p>
-        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
+        <div style={{ opacity: sbHover ? 1 : 0, height: sbHover ? 'auto' : 0, transition: 'all 0.3s', visibility: sbHover ? 'visible' : 'hidden', width: '100%' }}>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 18, color: C.ink, margin: '0 0 4px', whiteSpace: 'nowrap' }}>{displayName}</p>
+          <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 12, color: C.muted, margin: '0 0 24px', wordBreak: 'break-all', lineHeight: 1.5 }}>{auth.email}</p>
+        </div>
 
-        {/* Location */}
+        {/* Institute */}
+        {profile?.institute && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            padding: sbHover ? '10px 13px' : '0',
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            fontSize: 13.5,
+            color: C.ink,
+            fontFamily: "'Fira Code', monospace",
+            marginBottom: sbHover ? 24 : 12,
+            background: 'rgba(124, 58, 237, 0.05)',
+            borderRadius: 12,
+            border: `1px solid ${C.accentSoft}`,
+            transition: 'all 0.3s'
+          }} title={!sbHover ? profile.institute : ''}>
+            <Building2 size={20} color={C.accent} style={{ flexShrink: 0 }} />
+            {sbHover && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>{profile.institute}</span>}
+          </div>
+        )}
+
         <button onClick={() => setModal('contact')}
-          onMouseEnter={e => (e.currentTarget.style.borderColor = C.accent)}
-          onMouseLeave={e => (e.currentTarget.style.borderColor = C.border)}
-          style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 13px', fontSize: 13.5, color: profile?.location ? C.ink : C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', textAlign: 'left', marginBottom: 8, transition: 'border-color 0.2s' }}>
-          <MapPin size={16} color={C.muted} />
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile?.location || 'Add location'}</span>
+          onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            background: 'none',
+            border: `1.5px solid ${C.border}`,
+            borderRadius: 12,
+            padding: sbHover ? '10px 13px' : '0',
+            fontSize: 13,
+            color: C.muted,
+            cursor: 'pointer',
+            fontFamily: "'Fira Code', monospace",
+            fontWeight: 600,
+            transition: 'all 0.2s',
+            marginBottom: 8,
+            flexShrink: 0
+          }} title={!sbHover ? 'Edit Profile' : ''}>
+          <Pencil size={18} style={{ flexShrink: 0 }} />
+          {sbHover && <span>Edit Profile Info</span>}
         </button>
 
-        {/* Phone */}
-        <button onClick={() => setModal('contact')}
-          onMouseEnter={e => (e.currentTarget.style.borderColor = C.accent)}
-          onMouseLeave={e => (e.currentTarget.style.borderColor = C.border)}
-          style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 13px', fontSize: 13.5, color: profile?.phone ? C.ink : C.muted, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', textAlign: 'left', marginBottom: 32, transition: 'border-color 0.2s' }}>
-          <Phone size={16} color={C.muted} />
-          <span>{profile?.phone || 'Add phone'}</span>
-        </button>
+        <div style={{ flex: 1 }} />
 
         <button onClick={logout}
           onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent2; e.currentTarget.style.color = C.accent2; e.currentTarget.style.background = '#fff0f0'; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; e.currentTarget.style.background = 'none'; }}
-          style={{ width: '100%', background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: '10px 14px', fontFamily: 'Montserrat, sans-serif', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.muted, transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <LogOut size={15} /> Logout
+          style={{
+            width: sbHover ? '100%' : 44,
+            height: 44,
+            justifyContent: sbHover ? 'flex-start' : 'center',
+            background: 'none',
+            border: `1.5px solid ${C.border}`,
+            borderRadius: 12,
+            padding: sbHover ? '10px 14px' : '0',
+            fontFamily: "'Fira Code', monospace",
+            fontSize: 13.5,
+            fontWeight: 600,
+            cursor: 'pointer',
+            color: C.muted,
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            flexShrink: 0
+          }} title={!sbHover ? 'Logout' : ''}>
+          <LogOut size={18} style={{ flexShrink: 0 }} />
+          {sbHover && <span>Logout</span>}
         </button>
       </aside>
 
       {/* MAIN */}
-      <main style={{ marginLeft: SIDEBAR_W, paddingTop: NAV_H, minHeight: '100vh' }}>
+      <main style={{
+        marginLeft: sbHover ? SB_MAX : SB_MIN,
+        paddingTop: NAV_H,
+        minHeight: '100vh',
+        transition: 'margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}>
         <div style={{ padding: '56px 64px 110px' }}>
 
-          <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
-            My <span style={{ color: C.accent }}>Profile</span>
-          </h1>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 15, color: C.muted, margin: '0 0 56px', fontWeight: 500 }}>
-            Manage, update, and track all your profile information
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 48 }}>
+            <div>
+              <h1 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 900, fontSize: 48, color: C.ink, margin: '0 0 10px', letterSpacing: '-2px', lineHeight: 1 }}>
+                Welcome, <span style={{ color: C.accent }}>{displayName.split(' ')[0]}</span>
+              </h1>
+              <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 15, color: C.muted, margin: 0, fontWeight: 500 }}>
+                {new Date().getHours() < 12 ? 'Good morning! ' : new Date().getHours() < 18 ? 'Good afternoon! ' : 'Good evening! '}
+                Ready to land your next big role?
+              </p>
+            </div>
+            {/* AI Insights Panel */}
+            <div style={{ background: `linear-gradient(135deg, ${C.accent}, #9f67ff)`, borderRadius: 24, padding: '20px 24px', maxWidth: 320, color: '#fff', boxShadow: `0 12px 30px ${C.accent}40`, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: -10, right: -10, opacity: 0.1 }}><Zap size={100} /></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <Zap size={18} />
+                <span style={{ fontSize: 13, fontWeight: 900, letterSpacing: 0.5 }}>AI INSIGHTS</span>
+              </div>
+              <p style={{ fontSize: 13, lineHeight: 1.5, fontWeight: 600, margin: 0 }}>
+                Your resume strength is <span style={{ textDecoration: 'underline' }}>Good</span>. Add a few more projects to reach the Top 5% of candidates.
+              </p>
+            </div>
+          </div>
 
+          {/* Quick Actions Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 66 }}>
+            {[
+              { title: 'Resume Builder', desc: 'Craft professional resumes', icon: <Plus size={24} />, route: '/resume', color: '#7c3aed' },
+              { title: 'Resume Optimizer', desc: 'Tailor for specific JDs', icon: <Zap size={24} />, route: '/resume', color: '#f97316' },
+              { title: 'DSA Practice', desc: 'Sharpen logic & algorithms', icon: <Star size={24} />, route: '/dsa', color: '#16a34a' },
+              { title: 'Dev Portfolio', desc: 'Analyze GitHub presence', icon: <Github size={24} />, route: '/development', color: '#06b6d4' },
+            ].map(act => (
+              <button key={act.title} onClick={() => router.push(act.route)}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = `0 15px 35px ${act.color}25`; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 18px rgba(15,23,42,0.06)'; }}
+                style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 24, padding: '24px', textAlign: 'left', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(.4,0,.2,1)', boxShadow: '0 4px 18px rgba(15,23,42,0.06)', display: 'flex', gap: 16, alignItems: 'center' }}>
+                <div style={{ width: 54, height: 54, borderRadius: 16, background: `${act.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: act.color, flexShrink: 0 }}>{act.icon}</div>
+                <div>
+                  <h3 style={{ margin: '0 0 4px', fontSize: 16, fontWeight: 800, color: C.ink, fontFamily: "'Fira Code', monospace" }}>{act.title}</h3>
+                  <p style={{ margin: 0, fontSize: 12, color: C.muted, fontWeight: 500, fontFamily: "'Fira Code', monospace" }}>{act.desc}</p>
+                </div>
+              </button>
+            ))}
+          </div>
           {loading ? (
             <div style={{ textAlign: 'center', padding: 100 }}>
               <span className="spinner" style={{ borderColor: `${C.accent}25`, borderTopColor: C.accent, width: 40, height: 40 }} />
@@ -399,9 +612,9 @@ export default function HomePage() {
                       title={e.branch || e.degree} subtitle={e.institution}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Institution', value: e.institution || '—' },
-                        { icon: <Star size={14} />,      label: 'CGPA',        value: e.cgpa ? String(e.cgpa) : '—' },
-                        { icon: <Calendar size={14} />,  label: 'Start Year',  value: e.start_year ? String(e.start_year) : '—' },
-                        { icon: <Calendar size={14} />,  label: 'End Year',    value: e.end_year ? String(e.end_year) : 'Present' },
+                        { icon: <Star size={14} />, label: 'CGPA', value: e.cgpa ? String(e.cgpa) : '—' },
+                        { icon: <Calendar size={14} />, label: 'Start Year', value: e.start_year ? String(e.start_year) : '—' },
+                        { icon: <Calendar size={14} />, label: 'End Year', value: e.end_year ? String(e.end_year) : 'Present' },
                       ]}
                       onEdit={() => router.push(`/profile/education?edit=${i}`)}
                       onDelete={() => del.edu(i)} />
@@ -423,14 +636,14 @@ export default function HomePage() {
                       yearBadge={p.tech_stack?.slice(0, 2).join(' · ') || undefined}
                       title={p.title} subtitle={p.description}
                       stats={[
-                        { icon: <Package size={14} />, label: 'Stack',     value: p.tech_stack?.slice(0, 2).join(', ') || '—' },
+                        { icon: <Package size={14} />, label: 'Stack', value: p.tech_stack?.slice(0, 2).join(', ') || '—' },
                         { icon: <Package size={14} />, label: 'More Tech', value: p.tech_stack && p.tech_stack.length > 2 ? `+${p.tech_stack.length - 2} more` : '—' },
                       ]}
                       footer={
                         (p.github_link || p.live_link) ? (
                           <div style={{ display: 'flex', gap: 16 }}>
-                            {p.github_link && <a href={p.github_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Github size={13} /> GitHub</a>}
-                            {p.live_link   && <a href={p.live_link}   target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
+                            {p.github_link && <a href={p.github_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: "'Fira Code', monospace", fontWeight: 700, textDecoration: 'none' }}><Github size={13} /> GitHub</a>}
+                            {p.live_link && <a href={p.live_link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.success, fontFamily: "'Fira Code', monospace", fontWeight: 700, textDecoration: 'none' }}><Globe size={13} /> Live</a>}
                           </div>
                         ) : undefined
                       }
@@ -452,7 +665,7 @@ export default function HomePage() {
                     <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: '10px 16px', boxShadow: '0 2px 8px rgba(15,23,42,0.06)', transition: 'all 0.2s' }}
                       onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'none'; }}>
-                      <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: C.ink }}>{s.name}</span>
+                      <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, color: C.ink }}>{s.name}</span>
                       {s.category && <span style={{ fontSize: 11.5, color: C.accent, background: C.accentSoft, borderRadius: 6, padding: '2px 9px', fontWeight: 700 }}>{s.category}</span>}
                       {s.level !== undefined && <span style={{ fontSize: 11.5, color: C.muted, fontWeight: 600 }}>Lv{s.level}</span>}
                       <button onClick={() => del.skill(i)} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', padding: 0, lineHeight: 1, display: 'flex' }}>
@@ -463,7 +676,7 @@ export default function HomePage() {
                   <button onClick={() => setModal('skills')}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.surface, border: `2px dashed ${C.border}`, borderRadius: 12, padding: '10px 18px', color: C.muted, fontSize: 13.5, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 700, transition: 'all 0.2s' }}>
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.surface, border: `2px dashed ${C.border}`, borderRadius: 12, padding: '10px 18px', color: C.muted, fontSize: 13.5, cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 700, transition: 'all 0.2s' }}>
                     <PencilLine size={14} /> Edit all
                   </button>
                 </SkillsReveal>
@@ -484,10 +697,10 @@ export default function HomePage() {
                       title={e.role || 'Role'} subtitle={e.company}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Company', value: e.company || '—' },
-                        { icon: <Calendar size={14} />,  label: 'Period',  value: `${fmtDate(e.start_date)} – ${fmtDate(e.end_date)}` },
+                        { icon: <Calendar size={14} />, label: 'Period', value: `${fmtDate(e.start_date)} – ${fmtDate(e.end_date)}` },
                       ]}
                       footer={e.description ? (
-                        <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 13, color: C.muted, lineHeight: 1.65, margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.description}</p>
+                        <p style={{ fontFamily: "'Fira Code', monospace", fontSize: 13, color: C.muted, lineHeight: 1.65, margin: 0, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.description}</p>
                       ) : undefined}
                       onEdit={() => router.push(`/profile/experience?edit=${i}`)}
                       onDelete={() => del.exp(i)} />
@@ -531,10 +744,10 @@ export default function HomePage() {
                       title={c.title} subtitle={c.issuer}
                       stats={[
                         { icon: <Building2 size={14} />, label: 'Issuer', value: c.issuer || '—' },
-                        { icon: <Calendar size={14} />,  label: 'Issued', value: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' },
+                        { icon: <Calendar size={14} />, label: 'Issued', value: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' },
                       ]}
                       footer={c.link ? (
-                        <a href={c.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: 'Montserrat, sans-serif', fontWeight: 700, textDecoration: 'none' }}>
+                        <a href={c.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: C.accent, fontFamily: "'Fira Code', monospace", fontWeight: 700, textDecoration: 'none' }}>
                           <Award size={13} /> View Certificate
                         </a>
                       ) : undefined}
@@ -551,9 +764,11 @@ export default function HomePage() {
       </main>
 
       {modal === 'contact' && (
-        <ContactModal phone={profile?.phone || ''} location={profile?.location || ''}
-          onSave={async (p, l) => { await patch({ phone: p, location: l }, 'Contact updated!'); }}
-          onClose={() => setModal(null)} />
+        <ProfileModal
+          data={profile || {}}
+          onSave={async (updates) => { await patch(updates, 'Profile updated!'); }}
+          onClose={() => setModal(null)}
+        />
       )}
       {modal === 'skills' && (
         <SkillsModal existing={profile?.skills ?? []}

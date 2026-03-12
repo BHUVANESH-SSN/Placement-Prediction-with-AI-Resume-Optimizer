@@ -73,15 +73,38 @@ async def update_github(
 
 
 @dev_router.get("/github/contributions/{username}")
-async def get_github_contributions(username: str):
-    """Retrieve GitHub contribution heatmap data via GraphQL."""
+async def get_github_contributions(
+    username: str,
+    req: Request,
+    db: Annotated[AsyncIOMotorDatabase, Depends(get_db)],
+):
+    """Retrieve GitHub contribution heatmap data via GraphQL.
+
+    Also persists `total_contributions` into the user's dev document so the
+    placement predictor can use it without requiring a separate fetch.
+    """
     if not GITHUB_TOKEN:
         raise HTTPException(
             status_code=500,
             detail="GITHUB_TOKEN is not configured. Set it in your .env file."
         )
     try:
-        return await github_service.get_contribution_heatmap(username, GITHUB_TOKEN)
+        data = await github_service.get_contribution_heatmap(username, GITHUB_TOKEN)
+
+        # Persist total_contributions into dev.github so /predict/prefill can read it
+        try:
+            email = req.state.user.get("email") if hasattr(req.state, "user") else None
+            if email:
+                dev = await user_repo.find_dev_by_email(db, email)
+                if dev and "github" in dev:
+                    await user_repo.upsert_dev_fields(
+                        db, email,
+                        {"github.total_contributions": data["total_contributions"]}
+                    )
+        except Exception:
+            pass  # Non-critical — heatmap response is still returned
+
+        return data
     except HTTPException:
         raise
     except Exception as e:

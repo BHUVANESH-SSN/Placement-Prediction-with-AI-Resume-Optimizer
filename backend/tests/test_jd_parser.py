@@ -1,7 +1,7 @@
 """Tests for jd_parser module."""
 
 import pytest
-from resume_generator.tailoring.jd_parser import parse_jd, extract_jd_keywords, JDProfile
+from app.services.ai.tailoring.jd_parser import parse_jd, extract_jd_keywords, JDProfile
 
 
 class TestParseJD:

@@ -6,10 +6,13 @@ Routers registered:
   /auth    — Authentication (login, signup, OTP)
   /form    — Profile data (education, summary, profile)
   /dev     — Developer integrations (GitHub, LeetCode, LinkedIn)
-  /api     — Resume extraction + PDF generation   ← was previously MISSING
-  /resume  — Resume version history               ← was previously MISSING
+  /api     — Resume extraction + PDF generation
+  /resume  — Resume version history
+  /chatbot — Nova AI Career Coach (SSE streaming analysis + follow-up chat)
 """
+from dotenv import load_dotenv
 
+load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -23,6 +26,9 @@ from app.routes.form_routes import form_router
 from app.routes.dev_routes import dev_router        # NEW: developer integrations
 from app.routes.resume_routes import resume_router
 from app.routes.roadmap_routes import roadmap_router  # FIX: was never registered
+from app.routes.resume_routes import resume_router  # FIX: was never registered
+from app.routes.predict_routes import predict_router  # ML placement prediction
+from app.routes.chatbot_routes import chatbot_router   # Nova AI Career Coach
 
 app = FastAPI(
     title="AIRO — AI Resume Optimizer API",
@@ -35,7 +41,8 @@ app.add_middleware(LoggingMiddleware)
 app.add_middleware(RateLimitMiddleware)
 app.add_middleware(AuthMiddleware)
 app.add_middleware(CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000","http://localhost:5000",
+    "http://127.0.0.1:5000",],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,6 +55,9 @@ app.include_router(dev_router)     # /dev/*
 app.include_router(resume_router)
 app.include_router(roadmap_router)  # /api/extract, /api/download, /resume/*
 
+app.include_router(resume_router)  # /api/extract, /api/download, /resume/*
+app.include_router(predict_router) # /predict
+app.include_router(chatbot_router) # /chatbot
 
 # ── Health Check ─────────────────────────────────────────────────────────────
 @app.get("/", tags=["Health"])

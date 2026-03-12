@@ -8,16 +8,18 @@ import { Navbar } from '@/app/home/page';
 interface EducationEntry {
   degree: string; branch: string; institution: string;
   cgpa: string; start_year: string; end_year: string;
+  backlogs: string;
 }
 
-const EMPTY: EducationEntry = { degree: '', branch: '', institution: '', cgpa: '', start_year: '', end_year: 'Present' };
-const DEGREES = ['High School', 'Diploma', "Associate's", "Bachelor's", "Master's", 'MBA', 'Ph.D.', 'Other'];
+const EMPTY: EducationEntry = { degree: '', branch: '', institution: '', cgpa: '', start_year: '', end_year: 'Present', backlogs: '0' };
+const DEGREES = ['B.E. / B.Tech', 'M.E. / M.Tech'];
+const BRANCHES = ['CS', 'IT', 'ECE', 'EEE', 'Mechanical', 'Civil', 'Chemical', 'Biotech'];
 const YEARS = Array.from({ length: 30 }, (_, i) => String(new Date().getFullYear() + 1 - i));
 
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 999, background: type === 'success' ? '#22c55e' : '#ef4444', color: 'white', borderRadius: 10, padding: '12px 18px', fontFamily: 'Montserrat, sans-serif', fontWeight: 500, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 999, background: type === 'success' ? '#22c55e' : '#ef4444', color: 'white', borderRadius: 10, padding: '12px 18px', fontFamily: "'Fira Code', monospace", fontWeight: 500, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
       {type === 'success' ? '✓' : '✕'} {msg}
     </div>
   );
@@ -36,6 +38,7 @@ function serverToForm(e: Record<string, unknown>): EducationEntry {
     cgpa:        e.cgpa  != null ? String(e.cgpa)       : '',
     start_year:  e.start_year != null ? String(e.start_year) : '',
     end_year:    e.end_year   != null ? String(e.end_year)   : 'Present',
+    backlogs:    e.backlogs   != null ? String(e.backlogs)   : '0',
   };
 }
 
@@ -51,6 +54,7 @@ function formToServer(e: EducationEntry) {
     ...(e.cgpa       ? { cgpa:       parseFloat(e.cgpa)       } : {}),
     ...(e.start_year ? { start_year: parseInt(e.start_year)   } : {}),
     end_year: (e.end_year === 'Present' || !e.end_year) ? null : parseInt(e.end_year),
+    backlogs: e.backlogs ? parseInt(e.backlogs) : 0,
   };
 }
 
@@ -129,12 +133,12 @@ export default function EducationPage() {
   /* ── styles ── */
   const inp: React.CSSProperties = {
     width: '100%', padding: '10px 14px', borderRadius: 8,
-    border: '1.5px solid #e5e7eb', fontFamily: 'Montserrat, sans-serif', fontSize: 14,
+    border: '1.5px solid #e5e7eb', fontFamily: "'Fira Code', monospace", fontSize: 14,
     outline: 'none', background: 'white', color: '#1a1a2e', boxSizing: 'border-box',
   };
   const lbl: React.CSSProperties = {
     fontSize: 12.5, fontWeight: 600, color: '#6b7280',
-    marginBottom: 5, fontFamily: 'Montserrat, sans-serif', display: 'block',
+    marginBottom: 5, fontFamily: "'Fira Code', monospace", display: 'block',
   };
 
   return (
@@ -142,15 +146,15 @@ export default function EducationPage() {
       <Navbar active="Dashboard" />
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 24px 80px' }}>
-        <button onClick={() => router.push('/home')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 13.5, marginBottom: 24, padding: 0, fontFamily: 'Montserrat, sans-serif' }}>
+        <button onClick={() => router.push('/home')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 13.5, marginBottom: 24, padding: 0, fontFamily: "'Fira Code', monospace" }}>
           ← Back to Dashboard
         </button>
 
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 800, fontSize: 28, color: '#1a1a2e', marginBottom: 4 }}>
+          <h1 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 800, fontSize: 28, color: '#1a1a2e', marginBottom: 4 }}>
             🎓 {isEditMode ? 'Edit Education' : 'Add Education'}
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: 14, fontFamily: 'Montserrat, sans-serif' }}>
+          <p style={{ color: '#9ca3af', fontSize: 14, fontFamily: "'Fira Code', monospace" }}>
             {isEditMode ? 'Update your academic record' : 'Add your academic background'}
           </p>
         </div>
@@ -158,21 +162,21 @@ export default function EducationPage() {
         {/* Existing records shown only in Add mode */}
         {!isEditMode && allEducation.length > 0 && (
           <div style={{ marginBottom: 28 }}>
-            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.5px', color: '#9ca3af', textTransform: 'uppercase', marginBottom: 12, fontFamily: 'Montserrat, sans-serif' }}>
+            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.5px', color: '#9ca3af', textTransform: 'uppercase', marginBottom: 12, fontFamily: "'Fira Code', monospace" }}>
               Saved Records ({allEducation.length})
             </p>
             {allEducation.map((edu, i) => (
               <div key={i} style={{ background: 'white', borderRadius: 10, padding: '14px 18px', border: '1px solid #e5e7eb', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>🎓</div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 14, color: '#1a1a2e', marginBottom: 1 }}>{edu.degree} — {edu.branch}</p>
-                  <p style={{ fontSize: 13, color: '#9ca3af', fontFamily: 'Montserrat, sans-serif' }}>
+                  <p style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 14, color: '#1a1a2e', marginBottom: 1 }}>{edu.degree} — {edu.branch}</p>
+                  <p style={{ fontSize: 13, color: '#9ca3af', fontFamily: "'Fira Code', monospace" }}>
                     {edu.institution} · {edu.start_year} – {edu.end_year || 'Present'}
                     {edu.cgpa ? ` · CGPA ${edu.cgpa}` : ''}
                   </p>
                 </div>
                 <button onClick={() => router.push(`/profile/education?edit=${i}`)}
-                  style={{ background: 'none', border: '1.5px solid #e5e7eb', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#6b7280', cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', fontWeight: 600 }}>
+                  style={{ background: 'none', border: '1.5px solid #e5e7eb', borderRadius: 7, padding: '5px 12px', fontSize: 12, color: '#6b7280', cursor: 'pointer', fontFamily: "'Fira Code', monospace", fontWeight: 600 }}>
                   ✏️ Edit
                 </button>
               </div>
@@ -182,7 +186,7 @@ export default function EducationPage() {
 
         <form onSubmit={handleSave}>
           <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e5e7eb', padding: '28px 32px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-            <h2 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 20 }}>
+            <h2 style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 16, color: '#1a1a2e', marginBottom: 20 }}>
               {isEditMode ? 'Edit Record' : 'New Record'}
             </h2>
 
@@ -190,9 +194,9 @@ export default function EducationPage() {
               <div key={i} style={{ border: '1.5px solid #e5e7eb', borderRadius: 12, padding: '20px 22px', marginBottom: 16 }}>
                 {!isEditMode && entries.length > 1 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                    <span style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, fontSize: 13, color: '#1a1a2e' }}>{edu.institution || `Education #${i + 1}`}</span>
+                    <span style={{ fontFamily: "'Fira Code', monospace", fontWeight: 700, fontSize: 13, color: '#1a1a2e' }}>{edu.institution || `Education #${i + 1}`}</span>
                     <button type="button" onClick={() => { setEntries(p => p.filter((_, idx) => idx !== i)); setErrors(p => p.filter((_, idx) => idx !== i)); }}
-                      style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '3px 9px', color: '#ef4444', fontSize: 12, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif' }}>
+                      style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '3px 9px', color: '#ef4444', fontSize: 12, cursor: 'pointer', fontFamily: "'Fira Code', monospace" }}>
                       Remove
                     </button>
                   </div>
@@ -207,16 +211,18 @@ export default function EducationPage() {
                       <option value="">Select degree</option>
                       {DEGREES.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
-                    {errors[i]?.degree && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: 'Montserrat, sans-serif' }}>Required</span>}
+                    {errors[i]?.degree && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: "'Fira Code', monospace" }}>Required</span>}
                   </div>
 
                   {/* Branch */}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={lbl}>Branch *</label>
-                    <input style={{ ...inp, border: `1.5px solid ${errors[i]?.branch ? '#ef4444' : '#e5e7eb'}` }}
-                      placeholder="e.g. Computer Science" value={edu.branch}
-                      onChange={e => change(i, 'branch', e.target.value)} />
-                    {errors[i]?.branch && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: 'Montserrat, sans-serif' }}>Required</span>}
+                    <select style={{ ...inp, border: `1.5px solid ${errors[i]?.branch ? '#ef4444' : '#e5e7eb'}` }}
+                      value={edu.branch} onChange={e => change(i, 'branch', e.target.value)}>
+                      <option value="">Select branch</option>
+                      {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                    {errors[i]?.branch && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: "'Fira Code', monospace" }}>Required</span>}
                   </div>
 
                   {/* CGPA */}
@@ -233,7 +239,7 @@ export default function EducationPage() {
                     <input style={{ ...inp, border: `1.5px solid ${errors[i]?.institution ? '#ef4444' : '#e5e7eb'}` }}
                       placeholder="e.g. IIT Bombay" value={edu.institution}
                       onChange={e => change(i, 'institution', e.target.value)} />
-                    {errors[i]?.institution && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: 'Montserrat, sans-serif' }}>Required</span>}
+                    {errors[i]?.institution && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: "'Fira Code', monospace" }}>Required</span>}
                   </div>
 
                   {/* Start Year */}
@@ -244,7 +250,7 @@ export default function EducationPage() {
                       <option value="">Select year</option>
                       {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
-                    {errors[i]?.start_year && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: 'Montserrat, sans-serif' }}>Required</span>}
+                    {errors[i]?.start_year && <span style={{ fontSize: 12, color: '#ef4444', marginTop: 3, fontFamily: "'Fira Code', monospace" }}>Required</span>}
                   </div>
 
                   {/* End Year — "Present" is the default/first option */}
@@ -255,6 +261,14 @@ export default function EducationPage() {
                       {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
                   </div>
+
+                  {/* Backlogs */}
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <label style={lbl}>Backlogs</label>
+                    <input style={inp} type="number" min="0" max="20" step="1"
+                      placeholder="0" value={edu.backlogs}
+                      onChange={e => change(i, 'backlogs', e.target.value)} />
+                  </div>
                 </div>
               </div>
             ))}
@@ -262,18 +276,18 @@ export default function EducationPage() {
             {!isEditMode && (
               <button type="button"
                 onClick={() => { setEntries(p => [...p, { ...EMPTY }]); setErrors(p => [...p, {}]); }}
-                style={{ width: '100%', padding: '12px', border: '2px dashed #e5e7eb', borderRadius: 10, background: 'transparent', cursor: 'pointer', color: '#7c3aed', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, fontSize: 13.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 24 }}>
+                style={{ width: '100%', padding: '12px', border: '2px dashed #e5e7eb', borderRadius: 10, background: 'transparent', cursor: 'pointer', color: '#7c3aed', fontFamily: "'Fira Code', monospace", fontWeight: 600, fontSize: 13.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 24 }}>
                 + Add Another
               </button>
             )}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
               <button type="button" onClick={() => router.push('/home')}
-                style={{ padding: '12px 24px', border: '1.5px solid #e5e7eb', borderRadius: 10, background: 'none', cursor: 'pointer', color: '#6b7280', fontFamily: 'Montserrat, sans-serif', fontSize: 14 }}>
+                style={{ padding: '12px 24px', border: '1.5px solid #e5e7eb', borderRadius: 10, background: 'none', cursor: 'pointer', color: '#6b7280', fontFamily: "'Fira Code', monospace", fontSize: 14 }}>
                 Cancel
               </button>
               <button type="submit" disabled={loading}
-                style={{ padding: '12px 32px', background: '#1a1a2e', border: 'none', borderRadius: 10, color: 'white', fontFamily: 'Montserrat, sans-serif', fontWeight: 600, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+                style={{ padding: '12px 32px', background: '#1a1a2e', border: 'none', borderRadius: 10, color: 'white', fontFamily: "'Fira Code', monospace", fontWeight: 600, fontSize: 14, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
                 {loading ? 'Saving...' : isEditMode ? '✓ Update Education' : '✓ Save Education'}
               </button>
             </div>

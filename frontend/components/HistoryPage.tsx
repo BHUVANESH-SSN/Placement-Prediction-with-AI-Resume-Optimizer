@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-const API_BASE = process.env.NEXT_PUBLIC_RT_BACKEND_URL || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_RT_BACKEND_URL || "http://localhost:5000";
 const USER_ID =
   typeof window !== "undefined"
     ? localStorage.getItem("user_id") || "664f1b2c8e1d2a3b4c5d6e7f"
@@ -41,7 +41,7 @@ const ScoreBadge = ({ score }: { score: number }) => {
         border: `1px solid ${border}`,
         borderRadius: 10,
         padding: "5px 12px",
-        fontFamily: "'Montserrat', sans-serif",
+        fontFamily: "'Fira Code', monospace",
         fontSize: 13,
         fontWeight: 700,
         color,
@@ -215,7 +215,7 @@ const PreviewModal = ({
               alignItems: "center", justifyContent: "center",
               gap: 12, height: 260,
               color: "var(--muted)", fontSize: 14,
-              fontFamily: "'Montserrat', sans-serif",
+              fontFamily: "'Fira Code', monospace",
             }}>
               <FileText size={44} opacity={0.3} />
               No preview URL available for this version.
@@ -310,7 +310,7 @@ export default function HistoryPage({ onGoBack }: { onGoBack: () => void }) {
           onClick={onGoBack}
           style={{
             display: "flex", alignItems: "center", gap: 8,
-            fontSize: 13, fontFamily: "'Montserrat', sans-serif",
+            fontSize: 13, fontFamily: "'Fira Code', monospace",
             fontWeight: 700, color: "var(--ink)",
             background: "var(--color-card, #eef0f5)",
             border: "none", cursor: "pointer",
@@ -385,7 +385,7 @@ export default function HistoryPage({ onGoBack }: { onGoBack: () => void }) {
                 onClick={() => setSortDir((d) => (d === "desc" ? "asc" : "desc"))}
                 style={{
                   display: "flex", alignItems: "center", gap: 6,
-                  fontSize: 12, fontFamily: "'Montserrat', sans-serif", fontWeight: 700,
+                  fontSize: 12, fontFamily: "'Fira Code', monospace", fontWeight: 700,
                   color: "var(--accent)", background: "rgba(108,71,255,0.06)",
                   border: "1.5px solid rgba(108,71,255,0.18)",
                   cursor: "pointer", padding: "8px 16px",
@@ -407,7 +407,7 @@ export default function HistoryPage({ onGoBack }: { onGoBack: () => void }) {
                   onChange={(e) => setFilterMin(Number(e.target.value))}
                   style={{
                     padding: "8px 14px 8px 32px", fontSize: 12,
-                    fontFamily: "'Montserrat', sans-serif",
+                    fontFamily: "'Fira Code', monospace",
                     fontWeight: 600, height: "auto", cursor: "pointer",
                   }}
                 >
@@ -423,7 +423,7 @@ export default function HistoryPage({ onGoBack }: { onGoBack: () => void }) {
                 onClick={fetchHistory}
                 style={{
                   display: "flex", alignItems: "center", gap: 6,
-                  fontSize: 12, fontFamily: "'Montserrat', sans-serif", fontWeight: 700,
+                  fontSize: 12, fontFamily: "'Fira Code', monospace", fontWeight: 700,
                   color: "var(--muted)", background: "var(--color-card, #eef0f5)",
                   border: "none", cursor: "pointer", padding: "8px 16px",
                 }}
@@ -440,7 +440,7 @@ export default function HistoryPage({ onGoBack }: { onGoBack: () => void }) {
             <div style={{
               display: "flex", flexDirection: "column", alignItems: "center",
               gap: 16, padding: "60px 0",
-              color: "var(--muted)", fontFamily: "'Montserrat', sans-serif",
+              color: "var(--muted)", fontFamily: "'Fira Code', monospace",
             }}>
               <div className="spinner" style={{
                 borderTopColor: "var(--accent)",
@@ -475,7 +475,7 @@ export default function HistoryPage({ onGoBack }: { onGoBack: () => void }) {
             <div style={{
               display: "flex", flexDirection: "column", alignItems: "center",
               gap: 14, padding: "60px 0",
-              color: "var(--muted)", fontFamily: "'Montserrat', sans-serif", textAlign: "center",
+              color: "var(--muted)", fontFamily: "'Fira Code', monospace", textAlign: "center",
             }}>
               <FileText size={44} opacity={0.3} />
               <p style={{ fontSize: 14, maxWidth: 280, lineHeight: 1.6 }}>

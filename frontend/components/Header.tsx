@@ -1,7 +1,7 @@
 "use client"
 
+import { ArrowLeft, Clock, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Clock, ArrowLeft } from "lucide-react";
 
 interface HeaderProps {
   onHistoryClick?: () => void;
@@ -19,8 +19,24 @@ const Header = ({ onHistoryClick, onGoBack }: HeaderProps) => {
   return (
     <header className="home-nav">
       {/* Logo */}
-      <div className="home-nav-logo">
-        <span style={{ color: "var(--accent)" }}>AI</span> Resume
+      <div className="home-nav-logo" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6c47ff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="8 7 2 12 8 17" />
+          <polyline points="16 7 22 12 16 17" />
+        </svg>
+        <span style={{
+          fontFamily: "'Fira Code', monospace",
+          fontWeight: 900,
+          fontSize: "20px",
+          letterSpacing: "-0.5px",
+          color: "var(--ink)",
+          display: "flex",
+          alignItems: "baseline",
+          lineHeight: 1,
+        }}>
+          AIRO
+          <div style={{ width: "6px", height: "6px", backgroundColor: "#6c47ff", marginLeft: "4px" }} />
+        </span>
       </div>
 
       {/* Center badge */}
@@ -41,7 +57,7 @@ const Header = ({ onHistoryClick, onGoBack }: HeaderProps) => {
             alignItems: "center",
             gap: 7,
             fontSize: 13,
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "'Fira Code', monospace",
             fontWeight: 700,
             color: "var(--accent)",
             background: "rgba(108,71,255,0.06)",
@@ -62,7 +78,7 @@ const Header = ({ onHistoryClick, onGoBack }: HeaderProps) => {
             alignItems: "center",
             gap: 7,
             fontSize: 13,
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "'Fira Code', monospace",
             fontWeight: 700,
             color: "var(--ink)",
             background: "var(--color-card, #eef0f5)",

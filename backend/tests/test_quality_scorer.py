@@ -3,7 +3,7 @@
 # ──────────────────────────────────────────────────────────
 
 import pytest
-from resume_generator.tailoring.quality_scorer import (
+from app.services.ai.tailoring.quality_scorer import (
     score_response_quality,
     detect_vague_bullets,
     QualityResult,
