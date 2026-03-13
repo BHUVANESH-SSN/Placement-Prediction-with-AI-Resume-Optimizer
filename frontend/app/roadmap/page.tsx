@@ -240,7 +240,7 @@ function MindMap({ data, onTopicSelect }: { data: any, onTopicSelect: (topic: an
             <div style={{
                 background: C.ink, borderRadius: 28, padding: '28px 56px',
                 boxShadow: `0 24px 48px rgba(15,23,42,0.2)`, zIndex: 20, textAlign: 'center', minWidth: 320,
-                fontFamily: 'Montserrat, sans-serif', fontWeight: 950, color: '#fff', fontSize: 24,
+                fontFamily: "'Fira Code', monospace", fontWeight: 950, color: '#fff', fontSize: 24,
                 marginBottom: 120, position: 'relative', border: '1px solid rgba(255,255,255,0.15)',
                 letterSpacing: '-0.5px'
             }}>
@@ -350,8 +350,13 @@ const RoadmapView = ({
     router: any
 }) => {
     const [selectedTopic, setSelectedTopic] = useState<any>(null);
-    const data = dynamicRoadmap || { title: `${roleId.charAt(0).toUpperCase() + roleId.slice(1)} Roadmap`, steps: [] };
+    const data = (dynamicRoadmap && dynamicRoadmap.steps) ? dynamicRoadmap : { title: `${roleId.charAt(0).toUpperCase() + roleId.slice(1)} Roadmap`, steps: [] };
     const isFrontend = roleId === 'frontend' || (dynamicRoadmap?.title?.toLowerCase().includes('frontend'));
+
+    // Reset scroll when view mode changes to re-trigger animations
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [viewMode]);
 
     return (
         <div style={{ position: 'relative' }}>
@@ -417,7 +422,7 @@ const RoadmapView = ({
             </div>
 
             {viewMode === 'mindmap' ? (
-                <MindMap data={data} onTopicSelect={(t) => setSelectedTopic(t)} />
+                <MindMap key={`mindmap-${roleId}-${viewMode}`} data={data} onTopicSelect={(t) => setSelectedTopic(t)} />
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 24, position: 'relative', paddingLeft: 30 }}>
                     <div style={{ position: 'absolute', top: 0, left: 6, bottom: 0, width: 2, background: `linear-gradient(to bottom, ${C.accent}, transparent)` }} />
@@ -572,7 +577,7 @@ export default function RoadmapPage() {
     const initials = displayName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
 
     return (
-        <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: 'Montserrat, sans-serif' }}>
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Fira Code', monospace" }}>
             <Navbar active="Roadmap" />
 
             {/* SIDEBAR */}
@@ -605,7 +610,7 @@ export default function RoadmapPage() {
                     onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; e.currentTarget.style.background = 'none'; }}
                     style={{
                         width: sbHover ? '100%' : 44, height: 44, display: 'flex', alignItems: 'center', gap: 12, justifyContent: sbHover ? 'flex-start' : 'center',
-                        background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: sbHover ? '10px 14px' : '0', fontFamily: 'Montserrat, sans-serif',
+                        background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: sbHover ? '10px 14px' : '0', fontFamily: "'Fira Code', monospace",
                         fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.muted, transition: 'all 0.2s', flexShrink: 0
                     }} title={!sbHover ? 'Logout' : ''}>
                     <LogOut size={18} />
@@ -671,15 +676,15 @@ export default function RoadmapPage() {
 
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
                                     {[
-                                        { n: "Absolute Beginners", u: "https://roadmap.sh/roadmaps?g=Absolute+Beginners", i: <Compass size={18} /> },
-                                        { n: "Web Development", u: "https://roadmap.sh/roadmaps?g=Web+Development", i: <Layout size={18} /> },
-                                        { n: "AI & Machine Learning", u: "https://roadmap.sh/roadmaps?g=AI+%26+Machine+Learning", i: <Cpu size={18} /> },
-                                        { n: "DevOps", u: "https://roadmap.sh/roadmaps?g=DevOps", i: <Cloud size={18} /> },
-                                        { n: "Mobile Development", u: "https://roadmap.sh/roadmaps?g=Mobile+Development", i: <Smartphone size={18} /> },
-                                        { n: "Databases", u: "https://roadmap.sh/roadmaps?g=Databases", i: <Database size={18} /> },
-                                        { n: "Cyber Security", u: "https://roadmap.sh/roadmaps?g=Cyber+Security", i: <Shield size={18} /> },
-                                        { n: "Blockchain", u: "https://roadmap.sh/roadmaps?g=Blockchain", i: <Layers size={18} /> },
-                                        { n: "Best Practices", u: "https://roadmap.sh/roadmaps?g=Best+Practices", i: <Sparkles size={18} /> }
+                                        { n: "Absolute Beginners", u: "https://roadmap.sh/roadmaps", i: <Compass size={18} /> },
+                                        { n: "Web Development", u: "https://roadmap.sh/full-stack", i: <Layout size={18} /> },
+                                        { n: "AI & Machine Learning", u: "https://roadmap.sh/ai-data-scientist", i: <Cpu size={18} /> },
+                                        { n: "DevOps", u: "https://roadmap.sh/devops", i: <Cloud size={18} /> },
+                                        { n: "Mobile Development", u: "https://roadmap.sh/android", i: <Smartphone size={18} /> },
+                                        { n: "Databases", u: "https://roadmap.sh/postgresql-dba", i: <Database size={18} /> },
+                                        { n: "Cyber Security", u: "https://roadmap.sh/cyber-security", i: <Shield size={18} /> },
+                                        { n: "Blockchain", u: "https://roadmap.sh/blockchain", i: <Layers size={18} /> },
+                                        { n: "Best Practices", u: "https://roadmap.sh/guides", i: <Sparkles size={18} /> }
                                     ].map((cat, i) => (
                                         <a key={i} href={cat.u} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                                             <div style={{

@@ -73,11 +73,11 @@ async function* streamSSE(
 /* ── NAVBAR ── */
 function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Roadmap', 'Predict', 'Nova AI'];
   const paths: Record<string, string> = {
     Dashboard: '/home', Development: '/development',
     'Resume Builder': '/resume', DSA: '/dsa',
-    Predict: '/predict', 'Nova AI': '/career-coach',
+    Roadmap: '/roadmap', Predict: '/predict', 'Nova AI': '/career-coach',
   };
   return (
     <nav style={{ display: 'flex', alignItems: 'center', height: 60, padding: '0 34px', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${C.border}`, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200 }}>

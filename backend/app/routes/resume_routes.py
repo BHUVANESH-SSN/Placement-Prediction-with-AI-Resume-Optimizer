@@ -6,7 +6,7 @@ import ast
 import traceback
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.services.resume_service import process_jd_input, run_resume_pipeline, create_plain_resume
+from app.services.resume_service import process_jd_input, run_resume_pipeline, create_plain_resume, merge_resumes
 from app.services.ai.resume_parser import parse_resume_file
 from app.services.user_service import generate_resume_data
 from app.db.connection import get_db
@@ -32,26 +32,39 @@ async def extract_and_tailor(
         # Parse JD from whatever input type was sent
         jd_info = await process_jd_input(input_type, text, url, file)
 
-        # Determine the user resume: uploaded file > form JSON > DB profile
+        # Get DB Profile if available
+        db_resume = None
+        try:
+            email = req.state.user.get("email")
+            if email:
+                db = await get_db()
+                db_resume = await generate_resume_data(db, email)
+        except Exception:
+            pass
+
+        # Get File Resume if available
+        file_resume = None
         if resume_file:
-            user_resume = await parse_resume_file(resume_file)
+            file_resume = await parse_resume_file(resume_file)
         elif resume_json:
             try:
-                user_resume = json.loads(resume_json)
+                file_resume = json.loads(resume_json)
             except json.JSONDecodeError:
                 import ast
-                user_resume = ast.literal_eval(resume_json)
+                file_resume = ast.literal_eval(resume_json)
+
+        # Merge them giving preference to DB profile
+        if db_resume and file_resume:
+            user_resume = merge_resumes(db_resume, file_resume)
+        elif db_resume:
+            user_resume = db_resume
+        elif file_resume:
+            user_resume = file_resume
         else:
-            # Fall back to DB profile (requires auth token in req)
-            try:
-                email = req.state.user["email"]
-                db = await get_db()
-                user_resume = await generate_resume_data(db, email)
-            except Exception:
-                raise HTTPException(
-                    status_code=400,
-                    detail="No resume file or JSON provided and could not load profile from DB."
-                )
+            raise HTTPException(
+                status_code=400,
+                detail="No resume file or JSON provided and could not load profile from DB."
+            )
 
         result = await run_resume_pipeline(user_resume, jd_info, verbose=False)
         return {"status": "success", **result}
@@ -82,18 +95,33 @@ async def create_resume(
     """
     print(">>> HIT /api/create")
     try:
-        if resume_file:
-            user_resume = await parse_resume_file(resume_file)
-        else:
-            try:
-                email = req.state.user["email"]
+        # Get DB Profile if available
+        db_resume = None
+        try:
+            email = req.state.user.get("email")
+            if email:
                 db = await get_db()
-                user_resume = await generate_resume_data(db, email)
-            except Exception:
-                raise HTTPException(
-                    status_code=400,
-                    detail="No resume file provided and could not load profile from DB."
-                )
+                db_resume = await generate_resume_data(db, email)
+        except Exception:
+            pass
+
+        # Get File Resume if available
+        file_resume = None
+        if resume_file:
+            file_resume = await parse_resume_file(resume_file)
+
+        # Merge them giving preference to DB profile
+        if db_resume and file_resume:
+            user_resume = merge_resumes(db_resume, file_resume)
+        elif db_resume:
+            user_resume = db_resume
+        elif file_resume:
+            user_resume = file_resume
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="No resume file provided and could not load profile from DB."
+            )
 
         result = await create_plain_resume(user_resume)
         return {"status": "success", **result}

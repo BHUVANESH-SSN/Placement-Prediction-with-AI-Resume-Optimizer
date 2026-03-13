@@ -12,6 +12,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
             "/docs",
             "/openapi.json",
             "/redoc",
+            "/plots",
         )
 
         public_exact = {"/", "/favicon.ico"}

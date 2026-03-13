@@ -3,17 +3,20 @@
 main.py — AIRO FastAPI Application Entry Point
 
 Routers registered:
-  /auth    — Authentication (login, signup, OTP)
-  /form    — Profile data (education, summary, profile)
-  /dev     — Developer integrations (GitHub, LeetCode, LinkedIn)
-  /api     — Resume extraction + PDF generation
-  /resume  — Resume version history
-  /chatbot — Nova AI Career Coach (SSE streaming analysis + follow-up chat)
+  /auth     — Authentication (login, signup, OTP)
+  /form     — Profile data (education, summary, profile)
+  /dev      — Developer integrations (GitHub, LeetCode, LinkedIn)
+  /api      — Resume extraction + PDF generation
+  /resume   — Resume version history
+  /roadmap  — Career roadmap (standard + AI-personalized)
+  /chatbot  — Nova AI Career Coach (SSE streaming analysis + follow-up chat)
 """
 from dotenv import load_dotenv
 
 load_dotenv()
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+import os
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
@@ -23,10 +26,9 @@ from app.middlewares.rate_limit import RateLimitMiddleware
 
 from app.routes.auth_routes import auth_router
 from app.routes.form_routes import form_router
-from app.routes.dev_routes import dev_router        # NEW: developer integrations
+from app.routes.dev_routes import dev_router        # developer integrations
 from app.routes.resume_routes import resume_router
-from app.routes.roadmap_routes import roadmap_router  # FIX: was never registered
-from app.routes.resume_routes import resume_router  # FIX: was never registered
+from app.routes.roadmap_routes import roadmap_router  # career roadmap endpoints
 from app.routes.predict_routes import predict_router  # ML placement prediction
 from app.routes.chatbot_routes import chatbot_router   # Nova AI Career Coach
 
@@ -52,11 +54,15 @@ app.add_middleware(CORSMiddleware,
 app.include_router(auth_router)    # /auth/*
 app.include_router(form_router)    # /form/*
 app.include_router(dev_router)     # /dev/*
-app.include_router(resume_router)
-app.include_router(roadmap_router)  # /api/extract, /api/download, /resume/*
-
 app.include_router(resume_router)  # /api/extract, /api/download, /resume/*
+app.include_router(roadmap_router) # /roadmap/*
 app.include_router(predict_router) # /predict
+# Mount ML plots for EDA
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PLOT_DIR = os.path.join(BASE_DIR, "ml", "plots")
+if os.path.exists(PLOT_DIR):
+    app.mount("/plots", StaticFiles(directory=PLOT_DIR), name="plots")
+
 app.include_router(chatbot_router) # /chatbot
 
 # ── Health Check ─────────────────────────────────────────────────────────────

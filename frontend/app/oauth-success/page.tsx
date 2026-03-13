@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
-export default function OAuthSuccess() {
+function OAuthSuccessInner() {
   const router = useRouter()
   const params = useSearchParams()
 
@@ -24,4 +24,12 @@ export default function OAuthSuccess() {
   }, [params, router])
 
   return <p>Signing you in...</p>
+}
+
+export default function OAuthSuccess() {
+  return (
+    <Suspense fallback={<p>Signing you in...</p>}>
+      <OAuthSuccessInner />
+    </Suspense>
+  )
 }
