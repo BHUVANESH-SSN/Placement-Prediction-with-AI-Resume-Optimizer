@@ -2,7 +2,6 @@
 
 import { apiGet, apiPatch, apiPostAuth, clearAuth, getAuth } from '@/lib/api';
 import {
-  Building2,
   BookOpen,
   CheckCircle2,
   Code2,
