@@ -47,7 +47,7 @@ services:
     startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        sync: false # Set to https://airo-backend-xxx.onrender.com after deployment
+        value: https://airo-backend-xxx.onrender.com # Backend URL on Render
       - key: NODE_ENV
         value: production
       - key: NODE_OPTIONS

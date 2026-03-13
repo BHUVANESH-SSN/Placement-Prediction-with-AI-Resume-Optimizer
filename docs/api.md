@@ -1,6 +1,6 @@
 # API Reference — AIRO
 
-All API endpoints are prefixed with the backend URL (default: `http://localhost:8000`).
+All API endpoints are prefixed with the backend URL (default: `http://localhost:5000`).
 
 ## 1. Authentication (`/auth`)
 
