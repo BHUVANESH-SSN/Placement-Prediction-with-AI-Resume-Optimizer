@@ -12,8 +12,8 @@ interface EducationEntry {
 }
 
 const EMPTY: EducationEntry = { degree: '', branch: '', institution: '', cgpa: '', start_year: '', end_year: 'Present', backlogs: '0' };
-const DEGREES = ['B.E. / B.Tech', 'M.E. / M.Tech'];
-const BRANCHES = ['CS', 'IT', 'ECE', 'EEE', 'Mechanical', 'Civil', 'Chemical', 'Biotech'];
+const DEGREES = ['B.E.', 'B.Tech', 'M.E.', 'M.Tech', 'High School' , 'PhD', 'Diploma' , 'Others' ];
+const BRANCHES = ['CS', 'IT', 'ECE', 'EEE', 'Mechanical', 'Civil', 'Chemical', 'Biotech' , 'MPC' , 'Commerce', 'Arts', 'Other'];
 const YEARS = Array.from({ length: 30 }, (_, i) => String(new Date().getFullYear() + 1 - i));
 
 function Toast({ msg, type, onClose }: { msg: string; type: 'success' | 'error'; onClose: () => void }) {

@@ -85,16 +85,16 @@ def build_user_prompt(
 
     return f"""\
 RESUME (original):
-{json.dumps(resume_sections, indent=2)}
+{json.dumps(resume_sections, indent=2, default=str)}
 
 JOB DESCRIPTION:
-{json.dumps(jd, indent=2)}
+{json.dumps(jd, indent=2, default=str)}
 
 SKILL ANALYSIS RESULTS:
 {scored_summary}
 
 TAILORED SKILLS LIST (use ONLY these):
-{json.dumps(tailored_skills)}
+{json.dumps(tailored_skills, default=str)}
 
 Now produce the optimized JSON. Remember: NO fabrication, preserve facts.
 """

@@ -96,9 +96,16 @@ def validate_tailored_resume(
             f"Project count increased: {orig_proj_count} → {tail_proj_count}"
         )
 
-    # --- Date alteration warning ---
-    orig_dates = _extract_set(original.get("experience", []), "duration")
-    tail_dates = _extract_set(tailored.get("experience", []), "duration")
+    # --- Date alteration warning (schema uses start_date / end_date) ---
+    def _date_pairs(items: list) -> set:
+        pairs = set()
+        for e in items:
+            if isinstance(e, dict):
+                pairs.add((str(e.get("start_date", "")), str(e.get("end_date", ""))))
+        return pairs
+
+    orig_dates = _date_pairs(original.get("experience", []))
+    tail_dates = _date_pairs(tailored.get("experience", []))
     altered_dates = tail_dates - orig_dates
     if altered_dates:
         result.warnings.append(

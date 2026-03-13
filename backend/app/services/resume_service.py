@@ -132,80 +132,101 @@ async def create_plain_resume(user_resume: dict) -> dict:
         "resume_data": user_resume,
         "pdf_path": pdf_path,
     }
+def _norm(s: str) -> str:
+    """Normalise a string for dedup comparison: lowercase, collapse whitespace."""
+    return " ".join(str(s).lower().split())
+
+
+def _cert_key(c) -> str:
+    """Stable dedup key for a certification — handles 'name' vs 'title' key difference."""
+    if isinstance(c, dict):
+        return _norm(c.get("name") or c.get("title") or "")
+    return _norm(str(c))
+
+
+def _ach_key(a) -> str:
+    """Stable dedup key for an achievement regardless of shape."""
+    if isinstance(a, dict):
+        return _norm(a.get("title") or a.get("description") or "")
+    return _norm(str(a))
+
+
 def merge_resumes(db_res: dict, file_res: dict) -> dict:
-    """Merge uploaded resume data with dashboard data, giving DB (dashboard) priority."""
-    import copy
-    merged = {}
-    
+    """
+    Merge uploaded-resume data with dashboard (DB) data.
+
+    Rules:
+    - Scalar identity fields (name, email, ...): DB wins if non-empty.
+    - Experience / Projects: if DB has ANY entries, use DB exclusively.
+      The uploaded file is only a supplement when the dashboard is empty.
+    - Education / Certifications / Achievements: fuzzy-deduplicated union,
+      DB items kept first; file items appended only when genuinely absent.
+    - Skills: deduplicated flat union (DB first).
+    """
+    merged: dict = {}
+
     # 1. Scalar fields (DB > File)
-    for field in ["id", "name", "phone", "email", "github", "linkedin", "professional_summary"]:
+    for field in ["id", "name", "phone", "email", "github", "linkedin",
+                  "professional_summary", "career_objective"]:
         db_val = db_res.get(field, "")
-        if isinstance(db_val, str) and db_val.strip():
-            merged[field] = db_val
-        else:
-            merged[field] = file_res.get(field, "")
+        merged[field] = (db_val if isinstance(db_val, str) and db_val.strip()
+                         else file_res.get(field, ""))
 
-    # 2. Lists (Merge unique, prioritizing DB logic if needed, but here we just union them to not lose data, keeping DB items first)
-    
-    # Skills (List of strings)
-    db_skills = [s.lower() for s in (db_res.get("skills") or []) if isinstance(s, str)]
-    merged_skills = list((db_res.get("skills") or []))
-    for s in (file_res.get("skills") or []):
-        if isinstance(s, str) and s.lower() not in db_skills:
-            merged_skills.append(s)
-            db_skills.append(s.lower())
+    # 2. Skills — deduplicated flat list
+    seen_skills: set = set()
+    merged_skills: list = []
+    for s in list(db_res.get("skills") or []) + list(file_res.get("skills") or []):
+        if isinstance(s, str):
+            key = _norm(s)
+            if key and key not in seen_skills:
+                seen_skills.add(key)
+                merged_skills.append(s)
     merged["skills"] = merged_skills
-    
-    # Education
-    db_edu_titles = [f'{e.get('degree', '')} {e.get('institution', '')}'.lower() for e in (db_res.get("education") or [])]
-    merged_edu = list((db_res.get("education") or []))
+
+    # 3. Education — fuzzy-deduplicated union (degree + institution as key)
+    db_edu = list(db_res.get("education") or [])
+    seen_edu = {
+        _norm("{} {}".format(e.get("degree", ""),
+                             e.get("institution") or e.get("college", "")))
+        for e in db_edu
+    }
     for e in (file_res.get("education") or []):
-        title = f'{e.get('degree', '')} {e.get('institution', '')}'.lower()
-        if title not in db_edu_titles:
-            merged_edu.append(e)
-            db_edu_titles.append(title)
-    merged["education"] = merged_edu
+        key = _norm("{} {}".format(e.get("degree", ""),
+                                   e.get("institution") or e.get("college", "")))
+        if key and key not in seen_edu:
+            db_edu.append(e)
+            seen_edu.add(key)
+    merged["education"] = db_edu
 
-    # Experience
-    db_exp_titles = [f'{e.get('role', '')} {e.get('company', '')}'.lower() for e in (db_res.get("experience") or [])]
-    merged_exp = list((db_res.get("experience") or []))
-    for e in (file_res.get("experience") or []):
-        title = f'{e.get('role', '')} {e.get('company', '')}'.lower()
-        if title not in db_exp_titles:
-            merged_exp.append(e)
-            db_exp_titles.append(title)
-    merged["experience"] = merged_exp
+    # 4. Experience — DB wins entirely if non-empty; avoids bullet duplication
+    db_exp = list(db_res.get("experience") or [])
+    merged["experience"] = db_exp if db_exp else list(file_res.get("experience") or [])
 
-    # Projects
-    db_proj_titles = [p.get("title", "").lower() for p in (db_res.get("projects") or [])]
-    merged_proj = list((db_res.get("projects") or []))
-    for p in (file_res.get("projects") or []):
-        title = p.get("title", "").lower()
-        if title not in db_proj_titles:
-            merged_proj.append(p)
-            db_proj_titles.append(title)
-    merged["projects"] = merged_proj
+    # 5. Projects — same strategy as experience
+    db_proj = list(db_res.get("projects") or [])
+    merged["projects"] = db_proj if db_proj else list(file_res.get("projects") or [])
 
-    # Certifications
-    db_cert_titles = [c.get("title", "").lower() for c in (db_res.get("certifications") or [])]
-    merged_cert = list((db_res.get("certifications") or []))
+    # 6. Certifications — fuzzy-deduplicated union (handles name vs title key)
+    db_certs = list(db_res.get("certifications") or [])
+    seen_certs = {_cert_key(c) for c in db_certs}
     for c in (file_res.get("certifications") or []):
-        title = c.get("title", "").lower()
-        if title not in db_cert_titles:
-            merged_cert.append(c)
-            db_cert_titles.append(title)
-    merged["certifications"] = merged_cert
+        key = _cert_key(c)
+        if key and key not in seen_certs:
+            db_certs.append(c)
+            seen_certs.add(key)
+    merged["certifications"] = db_certs
 
-    # Achievements
-    db_ach_titles = [a.get("title", "").lower() for a in (db_res.get("achievements") or [])]
-    merged_ach = list((db_res.get("achievements") or []))
+    # 7. Achievements — fuzzy-deduplicated union
+    db_ach = list(db_res.get("achievements") or [])
+    seen_ach = {_ach_key(a) for a in db_ach}
     for a in (file_res.get("achievements") or []):
-        title = a.get("title", "").lower()
-        if title not in db_ach_titles:
-            merged_ach.append(a)
-            db_ach_titles.append(title)
-    merged["achievements"] = merged_ach
+        key = _ach_key(a)
+        if key and key not in seen_ach:
+            db_ach.append(a)
+            seen_ach.add(key)
+    merged["achievements"] = db_ach
 
-    merged["skills_categorized"] = (db_res.get("skills_categorized") or {})
+    # 8. Categorised skills — DB wins; renderer will rebuild if empty
+    merged["skills_categorized"] = db_res.get("skills_categorized") or {}
+
     return merged
-

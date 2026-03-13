@@ -119,10 +119,10 @@ def _build_gap_analysis_prompt(
 
     return f"""\
 RESUME JSON:
-{json.dumps(resume_sections, indent=2)}
+{json.dumps(resume_sections, indent=2, default=str)}
 
 JOB DESCRIPTION JSON:
-{json.dumps(jd, indent=2)}
+{json.dumps(jd, indent=2, default=str)}
 
 PRE-COMPUTED SKILL SCORING:
 {skill_context}

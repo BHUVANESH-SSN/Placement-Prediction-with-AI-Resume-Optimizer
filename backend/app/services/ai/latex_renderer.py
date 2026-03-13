@@ -4,6 +4,7 @@
 # Renders LaTeX templates with profile data. Handles:
 #   - LaTeX special character escaping
 #   - Profile field normalization (college->institution, etc.)
+#   - Skills normalization: flat list -> 5-category skills_categorized
 #   - Missing field defaults
 #   - Safe filename generation
 #   - Dynamic content fitting (spacing adjustment)
@@ -15,7 +16,7 @@
 
 import os
 import re
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from jinja2 import Environment, FileSystemLoader
 
 # Fields that should NOT be LaTeX-escaped (URLs, emails, links)
@@ -33,6 +34,88 @@ LATEX_SPECIAL_CHARS = {
     "~": r"\textasciitilde{}",
     "^": r"\^{}",
 }
+
+# ── Skill Category Buckets ────────────────────────────────
+# Used to auto-categorize a flat skills list into the
+# 5 display categories shown on the resume.
+
+_LANGUAGES = {
+    "python", "java", "javascript", "typescript", "c", "c++", "c#",
+    "go", "rust", "ruby", "php", "swift", "kotlin", "scala", "r",
+    "matlab", "bash", "shell", "perl", "dart", "elixir", "haskell",
+}
+
+_WEB = {
+    "html", "css", "react", "reactjs", "react.js", "angular", "vue",
+    "vuejs", "next.js", "nextjs", "nuxt", "svelte", "bootstrap",
+    "tailwind", "tailwindcss", "jquery", "sass", "scss", "webpack",
+    "vite", "redux",
+}
+
+_FRAMEWORKS = {
+    "flask", "django", "fastapi", "spring", "springboot", "express",
+    "expressjs", "node", "node.js", "nodejs", "laravel", "rails",
+    "nestjs", "fastify", "tensorflow", "pytorch", "keras", "sklearn",
+    "scikit-learn", "numpy", "pandas", "matplotlib", "seaborn",
+    "plotly", "scipy", "huggingface", "langchain", "celery",
+    "graphql", "rest", "restful", "grpc",
+}
+
+_DATABASES = {
+    "mysql", "postgresql", "postgres", "sqlite", "mongodb", "mongo",
+    "redis", "oracle", "oracle sql", "mssql", "sql server", "dynamodb",
+    "cassandra", "elasticsearch", "firebase", "supabase", "neo4j",
+    "mariadb", "cockroachdb", "influxdb", "sql",
+}
+
+_TOOLS = {
+    "git", "github", "gitlab", "bitbucket", "docker", "kubernetes",
+    "k8s", "jenkins", "travis", "circleci", "github actions", "terraform",
+    "ansible", "aws", "gcp", "azure", "heroku", "vercel", "netlify",
+    "linux", "unix", "nginx", "apache", "postman", "swagger", "figma",
+    "jira", "confluence", "vs code", "vscode", "intellij", "pycharm",
+    "jupyter", "colab", "notion", "slack",
+}
+
+# Display labels for the 5 categories
+_CATEGORY_ORDER = ["Languages", "Web", "Frameworks", "Databases", "Tools"]
+
+_BUCKET_MAP = {
+    "Languages":  _LANGUAGES,
+    "Web":        _WEB,
+    "Frameworks": _FRAMEWORKS,
+    "Databases":  _DATABASES,
+    "Tools":      _TOOLS,
+}
+
+
+def _auto_categorize_skills(skills: List[str]) -> Dict[str, List[str]]:
+    """
+    Distribute a flat skill list into the 5 display categories.
+
+    Skills that don't match any bucket go into the category with the
+    most matches (or 'Tools' as a final fallback), so no skill is
+    ever silently dropped.
+    """
+    buckets: Dict[str, List[str]] = {cat: [] for cat in _CATEGORY_ORDER}
+    uncategorized: List[str] = []
+
+    for skill in skills:
+        skill_lower = skill.strip().lower()
+        placed = False
+        for cat in _CATEGORY_ORDER:
+            if skill_lower in _BUCKET_MAP[cat]:
+                buckets[cat].append(skill)
+                placed = True
+                break
+        if not placed:
+            uncategorized.append(skill)
+
+    # Put uncategorized skills into Tools (catch-all)
+    buckets["Tools"].extend(uncategorized)
+
+    # Remove empty categories
+    return {cat: items for cat, items in buckets.items() if items}
 
 
 def escape_latex(text: str) -> str:
@@ -54,22 +137,50 @@ def normalize_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
             for edu in value:
                 if isinstance(edu, dict):
                     edu_copy = edu.copy()
+                    # Normalize college -> institution
                     if "college" in edu_copy:
                         edu_copy["institution"] = edu_copy.pop("college")
+                    # Normalize year fields to strings for display
+                    if "start_year" in edu_copy and edu_copy["start_year"]:
+                        edu_copy["start_year"] = str(edu_copy["start_year"])
+                    if "end_year" in edu_copy and edu_copy["end_year"]:
+                        edu_copy["end_year"] = str(edu_copy["end_year"])
                     edu_list.append(edu_copy)
                 else:
                     edu_list.append(edu)
             normalized["education"] = edu_list
+
         elif key == "certifications" and isinstance(value, list):
             certs = []
             for cert in value:
                 if isinstance(cert, str):
-                    certs.append({"name": cert})
-                else:
-                    certs.append(cert)
+                    # Plain string -> wrap in dict with name key
+                    certs.append({"name": cert, "title": cert})
+                elif isinstance(cert, dict):
+                    cert_copy = cert.copy()
+                    # Ensure both 'name' and 'title' keys exist
+                    if "title" in cert_copy and "name" not in cert_copy:
+                        cert_copy["name"] = cert_copy["title"]
+                    elif "name" in cert_copy and "title" not in cert_copy:
+                        cert_copy["title"] = cert_copy["name"]
+                    certs.append(cert_copy)
             normalized["certifications"] = certs
+
+        elif key == "skills_categorized" and isinstance(value, dict):
+            # Already categorized — pass through as-is
+            normalized["skills_categorized"] = value
+
         else:
             normalized[key] = value
+
+    # ── Build skills_categorized from flat skills list if needed ──
+    # Only auto-build if skills_categorized is missing or empty
+    has_categorized = bool(normalized.get("skills_categorized"))
+    flat_skills = normalized.get("skills", [])
+
+    if not has_categorized and flat_skills:
+        normalized["skills_categorized"] = _auto_categorize_skills(flat_skills)
+
     return normalized
 
 
@@ -87,12 +198,24 @@ def sanitize_profile(data: Any, parent_key: str = "") -> Any:
 def fill_missing_fields(profile: Dict[str, Any]) -> Dict[str, Any]:
     """Fill missing fields with defaults so templates don't error."""
     defaults = {
-        "id": "unknown", "name": "Name Not Provided",
-        "email": "", "phone": "", "linkedin": "", "github": "",
-        "website": "", "professional_summary": "", "career_objective": "",
-        "objective": "", "research_interests": "",
-        "skills": [], "projects": [], "experience": [],
-        "education": [], "publications": [], "certifications": [],
+        "id": "unknown",
+        "name": "Name Not Provided",
+        "email": "",
+        "phone": "",
+        "linkedin": "",
+        "github": "",
+        "website": "",
+        "professional_summary": "",
+        "career_objective": "",
+        "objective": "",
+        "research_interests": "",
+        "skills": [],
+        "skills_categorized": {},
+        "projects": [],
+        "experience": [],
+        "education": [],
+        "publications": [],
+        "certifications": [],
         "achievements": [],
     }
     filled = defaults.copy()
@@ -126,7 +249,7 @@ def create_jinja_env(templates_dir: str) -> Environment:
     )
 
 
-# ── Dynamic Content Fitting (#9) ────────────────────────
+# ── Dynamic Content Fitting ──────────────────────────────
 
 def _count_content_items(profile: Dict[str, Any]) -> Dict[str, int]:
     """Count content items to estimate page density."""
@@ -175,8 +298,6 @@ def _compute_spacing(counts: Dict[str, int]) -> Dict[str, str]:
     total_items = counts["experience"] + counts["projects"]
     total_bullets = counts["total_bullets"]
 
-    # Dense content (many items) -> tighter spacing
-    # Sparse content (few items) -> looser spacing for better page fill
     if total_bullets > 15 or total_items > 6:
         # Dense: compress
         return {
@@ -206,7 +327,7 @@ def _compute_spacing(counts: Dict[str, int]) -> Dict[str, str]:
         }
 
 
-# ── Template Theming (#10) ────────────────────────────────
+# ── Template Theming ─────────────────────────────────────
 
 def _resolve_theme(theme: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
     """
