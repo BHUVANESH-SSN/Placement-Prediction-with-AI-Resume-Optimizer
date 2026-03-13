@@ -240,7 +240,7 @@ function MindMap({ data, onTopicSelect }: { data: any, onTopicSelect: (topic: an
             <div style={{
                 background: C.ink, borderRadius: 28, padding: '28px 56px',
                 boxShadow: `0 24px 48px rgba(15,23,42,0.2)`, zIndex: 20, textAlign: 'center', minWidth: 320,
-                fontFamily: "'Fira Code', monospace", fontWeight: 950, color: '#fff', fontSize: 24,
+                fontFamily: "'Montserrat', sans-serif", fontWeight: 950, color: '#fff', fontSize: 24,
                 marginBottom: 120, position: 'relative', border: '1px solid rgba(255,255,255,0.15)',
                 letterSpacing: '-0.5px'
             }}>
@@ -577,7 +577,7 @@ export default function RoadmapPage() {
     const initials = displayName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
 
     return (
-        <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Fira Code', monospace" }}>
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#f8fafc 0%,#eef2ff 60%,#f5f3ff 100%)', fontFamily: "'Montserrat', sans-serif" }}>
             <Navbar active="Roadmap" />
 
             {/* SIDEBAR */}
@@ -610,7 +610,7 @@ export default function RoadmapPage() {
                     onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; e.currentTarget.style.background = 'none'; }}
                     style={{
                         width: sbHover ? '100%' : 44, height: 44, display: 'flex', alignItems: 'center', gap: 12, justifyContent: sbHover ? 'flex-start' : 'center',
-                        background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: sbHover ? '10px 14px' : '0', fontFamily: "'Fira Code', monospace",
+                        background: 'none', border: `1.5px solid ${C.border}`, borderRadius: 12, padding: sbHover ? '10px 14px' : '0', fontFamily: "'Montserrat', sans-serif",
                         fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.muted, transition: 'all 0.2s', flexShrink: 0
                     }} title={!sbHover ? 'Logout' : ''}>
                     <LogOut size={18} />

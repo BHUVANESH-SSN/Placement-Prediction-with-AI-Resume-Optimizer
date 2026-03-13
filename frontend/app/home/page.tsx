@@ -78,7 +78,7 @@ function useScrollReveal(delay = 0) {
 /* ── NAVBAR ── */
 export function Navbar({ active }: { active?: string }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Roadmap', 'Predict', 'Nova AI'];
   return (
     <nav style={{
       display: 'flex',
@@ -135,6 +135,7 @@ export function Navbar({ active }: { active?: string }) {
             if (label === 'Resume Builder') router.push('/resume');
             if (label === 'DSA') router.push('/dsa');
             if (label === 'Predict') router.push('/predict');
+if (label === 'Roadmap') router.push('/roadmap');
             if (label === 'Nova AI') router.push('/career-coach');
           }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Montserrat', sans-serif", fontSize: 14, color: active === label ? C.accent : C.muted, fontWeight: active === label ? 700 : 500, borderBottom: active === label ? `2.5px solid ${C.accent}` : '2.5px solid transparent', paddingBottom: 4, transition: 'all 0.2s' }}>
             {label}

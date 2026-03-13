@@ -68,7 +68,7 @@ const FONT = "'Montserrat', sans-serif";
 ══════════════════════════════════════════ */
 function Navbar({ active, onBack, showBack }: { active?: string; onBack?: () => void; showBack?: boolean }) {
   const router = useRouter();
-  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Predict', 'Nova AI'];
+  const NAV = ['Dashboard', 'Development', 'Resume Builder', 'DSA', 'Roadmap', 'Predict', 'Nova AI'];
   return (
     <nav style={{
       display: 'flex', alignItems: 'center', height: 60, padding: '0 34px',
@@ -87,7 +87,7 @@ function Navbar({ active, onBack, showBack }: { active?: string; onBack?: () => 
       <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 32, marginRight: '80px' }}>
         {NAV.map(label => (
           <button key={label} onClick={() => {
-            const paths: Record<string,string> = { Dashboard:'/home', Development:'/development', 'Resume Builder':'/resume', DSA:'/dsa', Predict:'/predict', 'Nova AI':'/career-coach' };
+            const paths: Record<string,string> = { Dashboard:'/home', Development:'/development', 'Resume Builder':'/resume', DSA:'/dsa', Roadmap:'/roadmap', Predict:'/predict', 'Nova AI':'/career-coach' };
             router.push(paths[label] || '/home');
           }} style={{
             background: 'none', border: 'none', cursor: 'pointer', fontFamily: FONT, fontSize: 14,

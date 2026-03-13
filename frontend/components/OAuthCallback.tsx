@@ -42,7 +42,7 @@ function OAuthCallbackInner() {
 
 export default function OAuthCallback() {
   return (
-    <Suspense fallback={<p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: "'Fira Code', monospace", color: '#6b7280' }}>Signing you in…</p>}>
+    <Suspense fallback={<p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: "'Montserrat', sans-serif", color: '#6b7280' }}>Signing you in…</p>}>
       <OAuthCallbackInner />
     </Suspense>
   );

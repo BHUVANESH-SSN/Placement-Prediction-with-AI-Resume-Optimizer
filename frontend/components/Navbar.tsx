@@ -46,7 +46,7 @@ export const Navbar = ({ active }: NavbarProps) => {
                     <polyline points="16 7 22 12 16 17" />
                 </svg>
                 <span style={{
-                    fontFamily: "'Fira Code', monospace",
+                    fontFamily: "'Montserrat', sans-serif",
                     fontWeight: 900,
                     fontSize: '18px',
                     letterSpacing: '-0.5px',
@@ -81,7 +81,7 @@ export const Navbar = ({ active }: NavbarProps) => {
                             background: 'none',
                             border: 'none',
                             cursor: 'pointer',
-                            fontFamily: "'Fira Code', monospace",
+                            fontFamily: "'Montserrat', sans-serif",
                             fontSize: 14,
                             color: active === label || (active === 'Resume Builder' && label === 'Resume Builder') ? C.accent : C.muted,
                             fontWeight: active === label || (active === 'Resume Builder' && label === 'Resume Builder') ? 700 : 500,
