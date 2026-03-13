@@ -60,12 +60,14 @@ THEME_COLORS = {
 THEME_FONT = "Latin Modern Sans"
 
 # Default section ordering
+# Education is placed immediately after Professional Summary so recruiters
+# see academic background early; skills and experience follow.
 DEFAULT_SECTION_ORDER = [
     "professional_summary",
+    "education",
     "skills",
     "experience",
     "projects",
-    "education",
     "certifications",
     "achievements",
     "publications",
