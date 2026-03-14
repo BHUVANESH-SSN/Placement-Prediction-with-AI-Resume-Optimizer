@@ -129,59 +129,85 @@ def escape_latex(text: str) -> str:
 
 
 def normalize_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
-    """Normalize profile fields to expected template format."""
-    normalized = {}
+    """
+    Normalize profile fields.
+
+    Resume data ALWAYS takes priority over profile/dashboard data.
+    If resume has education/certifications, dashboard data is completely ignored.
+    Also cleans duplicates in education, certifications, projects, experience and skills.
+    """
+
+    normalized: Dict[str, Any] = {}
+
+    # -------------------------
+    # EDUCATION
+    # -------------------------
+    # Only use resume education. Ignore profile_education completely if resume has education
+    resume_edu = profile.get("education") or []
+    
+    if resume_edu and len(resume_edu) > 0:
+        # Resume has education - use ONLY resume data
+        normalized["education"] = clean_education(resume_edu)
+    else:
+        # Resume has no education - fall back to profile data
+        profile_edu = profile.get("profile_education") or []
+        normalized["education"] = clean_education(profile_edu)
+
+    # -------------------------
+    # CERTIFICATIONS
+    # -------------------------
+    # Only use resume certifications. Ignore profile_certifications completely if resume has certs
+    resume_certs = profile.get("certifications") or []
+    
+    if resume_certs and len(resume_certs) > 0:
+        # Resume has certifications - use ONLY resume data
+        normalized["certifications"] = clean_certifications(resume_certs)
+    else:
+        # Resume has no certifications - fall back to profile data
+        profile_certs = profile.get("profile_certifications") or []
+        normalized["certifications"] = clean_certifications(profile_certs)
+
+    # -------------------------
+    # PROJECTS
+    # -------------------------
+    projects = profile.get("projects") or []
+    normalized["projects"] = clean_projects(projects)
+
+    # -------------------------
+    # EXPERIENCE
+    # -------------------------
+    experience = profile.get("experience") or []
+    normalized["experience"] = clean_experience(experience)
+
+    # -------------------------
+    # SKILLS
+    # -------------------------
+    skills = profile.get("skills") or []
+    skills = clean_skills(skills)
+
+    normalized["skills"] = skills
+    normalized["skills_categorized"] = _auto_categorize_skills(skills)
+
+    # -------------------------
+    # COPY REMAINING FIELDS
+    # -------------------------
+    blocked = {
+        "education",
+        "profile_education",
+        "certifications",
+        "profile_certifications",
+        "projects",
+        "experience",
+        "skills",
+        "skills_categorized",
+    }
+
     for key, value in profile.items():
-        if key == "education" and isinstance(value, list):
-            edu_list = []
-            for edu in value:
-                if isinstance(edu, dict):
-                    edu_copy = edu.copy()
-                    # Normalize college -> institution
-                    if "college" in edu_copy:
-                        edu_copy["institution"] = edu_copy.pop("college")
-                    # Normalize year fields to strings for display
-                    if "start_year" in edu_copy and edu_copy["start_year"]:
-                        edu_copy["start_year"] = str(edu_copy["start_year"])
-                    if "end_year" in edu_copy and edu_copy["end_year"]:
-                        edu_copy["end_year"] = str(edu_copy["end_year"])
-                    edu_list.append(edu_copy)
-                else:
-                    edu_list.append(edu)
-            normalized["education"] = edu_list
-
-        elif key == "certifications" and isinstance(value, list):
-            certs = []
-            for cert in value:
-                if isinstance(cert, str):
-                    # Plain string -> wrap in dict with name key
-                    certs.append({"name": cert, "title": cert})
-                elif isinstance(cert, dict):
-                    cert_copy = cert.copy()
-                    # Ensure both 'name' and 'title' keys exist
-                    if "title" in cert_copy and "name" not in cert_copy:
-                        cert_copy["name"] = cert_copy["title"]
-                    elif "name" in cert_copy and "title" not in cert_copy:
-                        cert_copy["title"] = cert_copy["name"]
-                    certs.append(cert_copy)
-            normalized["certifications"] = certs
-
-        elif key == "skills_categorized" and isinstance(value, dict):
-            # Already categorized — pass through as-is
-            normalized["skills_categorized"] = value
-
-        else:
+        if key not in blocked:
             normalized[key] = value
 
-    # ── Build skills_categorized from flat skills list if needed ──
-    # Only auto-build if skills_categorized is missing or empty
-    has_categorized = bool(normalized.get("skills_categorized"))
-    flat_skills = normalized.get("skills", [])
-
-    if not has_categorized and flat_skills:
-        normalized["skills_categorized"] = _auto_categorize_skills(flat_skills)
-
     return normalized
+
 
 
 def sanitize_profile(data: Any, parent_key: str = "") -> Any:
@@ -402,3 +428,190 @@ def render_latex(
         f.write(rendered_tex)
 
     return output_path
+
+def dedupe_dict_list(items: List[Dict[str, Any]], keys: List[str]) -> List[Dict[str, Any]]:
+    """
+    Remove duplicate dictionaries based on selected keys.
+    Uses improved normalization for better deduplication.
+    """
+    if not items:
+        return []
+
+    seen = set()
+    result = []
+
+    for item in items:
+        if not isinstance(item, dict):
+            result.append(item)
+            continue
+
+        key_tuple = []
+
+        for key in keys:
+            val = item.get(key, "")
+            
+            # Convert datetime objects to strings
+            if hasattr(val, 'strftime'):
+                val = val.strftime('%Y-%m-%d')
+            elif hasattr(val, 'year'):
+                val = str(val.year)
+            
+            val = str(val).lower().strip()
+            
+            # Normalize whitespace
+            val = re.sub(r"\s+", " ", val)
+            
+            # Remove timestamps (00:00:00) for cleaner comparison
+            val = re.sub(r"\s*\d{2}:\d{2}:\d{2}$", "", val)
+            
+            key_tuple.append(val)
+
+        key_tuple = tuple(key_tuple)
+
+        if key_tuple not in seen:
+            seen.add(key_tuple)
+            result.append(item)
+
+    return result
+
+def clean_education(education: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Normalize education fields and remove duplicates.
+    """
+    if not education:
+        return []
+
+    cleaned = []
+
+    for edu in education:
+        if not isinstance(edu, dict):
+            continue
+
+        edu_copy = edu.copy()
+
+        # Normalize college → institution
+        if "college" in edu_copy:
+            edu_copy["institution"] = edu_copy.pop("college")
+
+        # Normalize years and remove timestamps
+        for year_field in ["start_year", "end_year"]:
+            if year_field in edu_copy and edu_copy[year_field]:
+                val = edu_copy[year_field]
+                if hasattr(val, 'year'):
+                    edu_copy[year_field] = str(val.year)
+                elif hasattr(val, 'strftime'):
+                    edu_copy[year_field] = val.strftime('%Y')
+                else:
+                    # Convert to string and extract year
+                    val_str = str(val)
+                    # Remove timestamp if present
+                    val_str = re.sub(r"\s*\d{2}:\d{2}:\d{2}$", "", val_str)
+                    # Extract just the year (first 4 digits)
+                    year_match = re.search(r'\d{4}', val_str)
+                    if year_match:
+                        edu_copy[year_field] = year_match.group(0)
+                    else:
+                        edu_copy[year_field] = val_str.strip()
+
+        cleaned.append(edu_copy)
+
+    # Deduplicate - use degree, institution, and start_year as unique key
+    return dedupe_dict_list(cleaned, ["degree", "institution", "start_year"])
+
+def clean_certifications(certifications: List[Any]) -> List[Dict[str, Any]]:
+    """
+    Normalize certification formats and remove duplicates.
+    """
+    if not certifications:
+        return []
+
+    cleaned = []
+
+    for cert in certifications:
+        if isinstance(cert, str):
+            cleaned.append({
+                "title": cert,
+                "name": cert
+            })
+        elif isinstance(cert, dict):
+            cert_copy = cert.copy()
+
+            # Normalize date fields - remove timestamps
+            for date_field in ["date", "issue_date", "expiry_date"]:
+                if date_field in cert_copy and cert_copy[date_field]:
+                    val = cert_copy[date_field]
+                    if hasattr(val, 'strftime'):
+                        cert_copy[date_field] = val.strftime('%Y-%m-%d')
+                    else:
+                        # Remove timestamps
+                        val_str = str(val)
+                        val_str = re.sub(r"\s*\d{2}:\d{2}:\d{2}$", "", val_str)
+                        cert_copy[date_field] = val_str.strip()
+
+            # Ensure both title and name exist
+            if "title" in cert_copy and "name" not in cert_copy:
+                cert_copy["name"] = cert_copy["title"]
+
+            if "name" in cert_copy and "title" not in cert_copy:
+                cert_copy["title"] = cert_copy["name"]
+
+            cleaned.append(cert_copy)
+
+    # Deduplicate by title/name
+    return dedupe_dict_list(cleaned, ["title"])
+
+def clean_projects(projects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Remove duplicate projects by title.
+    """
+    if not projects:
+        return []
+    
+    # Use title as primary key, name as fallback
+    deduped = []
+    seen = set()
+    
+    for proj in projects:
+        if not isinstance(proj, dict):
+            continue
+            
+        # Get identifier (prefer title over name)
+        identifier = proj.get("title") or proj.get("name") or ""
+        identifier_key = identifier.lower().strip()
+        
+        if identifier_key and identifier_key not in seen:
+            seen.add(identifier_key)
+            deduped.append(proj)
+    
+    return deduped
+
+def clean_experience(experience: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Remove duplicate experience entries.
+    """
+    if not experience:
+        return []
+    
+    return dedupe_dict_list(experience, ["title", "company", "start_date"])
+
+def clean_skills(skills: List[str]) -> List[str]:
+    """
+    Remove duplicate skills (case-insensitive).
+    """
+    if not skills:
+        return []
+
+    seen = set()
+    result = []
+
+    for skill in skills:
+        if not isinstance(skill, str):
+            continue
+            
+        key = skill.lower().strip()
+
+        if key and key not in seen:
+            seen.add(key)
+            result.append(skill)
+
+    return result

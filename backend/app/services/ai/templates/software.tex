@@ -69,6 +69,7 @@
 \begin{document}
 
 %---------- HEADER ----------
+\BLOCK{if photo}
 \begin{minipage}[t]{0.75\textwidth}
   \begin{center}
     {\Huge\bfseries\scshape \VAR{name}} \\[8pt]
@@ -80,12 +81,21 @@
     \BLOCK{if website} $|$ \href{\VAR{website}}{Portfolio}\BLOCK{endif}
   \end{center}
 \end{minipage}%
-\BLOCK{if photo}
 \begin{minipage}[t]{0.25\textwidth}
   \raggedleft
   \vspace{-20pt}
   \includegraphics[width=2.5cm,height=3cm,keepaspectratio]{\VAR{photo}}
 \end{minipage}
+\BLOCK{else}
+\begin{center}
+  {\Huge\bfseries\scshape \VAR{name}} \\[8pt]
+  \small
+  \BLOCK{if email}\href{mailto:\VAR{email}}{\VAR{email}}\BLOCK{endif}%
+  \BLOCK{if phone} $|$ \VAR{phone}\BLOCK{endif}%
+  \BLOCK{if linkedin} $|$ \href{\VAR{linkedin}}{LinkedIn}\BLOCK{endif}%
+  \BLOCK{if github} $|$ \href{\VAR{github}}{GitHub}\BLOCK{endif}%
+  \BLOCK{if website} $|$ \href{\VAR{website}}{Portfolio}\BLOCK{endif}
+\end{center}
 \BLOCK{endif}
 
 \vspace{8pt}
